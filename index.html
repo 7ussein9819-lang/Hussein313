@@ -80,7 +80,7 @@
             font-family: 'Cairo', sans-serif; 
             display: flex; 
             flex-direction: column; 
-            overflow: hidden; 
+            overflow: hidden; /* هذا الخيار لترتيب الشاشة فقط، سيتم إلغاؤه في الطباعة */
             transition: background 0.3s, color 0.3s; 
         }
 
@@ -88,15 +88,17 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* تصميم شريط التمرير (السكرول) */
+        /* تصميم شريط التمرير (السكرول) بنعومة */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         body.dark-mode ::-webkit-scrollbar-thumb { background: #334155; }
+        body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         /* ================= الشريط العلوي ================= */
         .header-bar { 
             background: var(--app-surface); 
-            padding: 10px 20px; 
+            padding: 12px 20px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
@@ -105,7 +107,7 @@
             z-index: 100; 
             gap: 15px; 
             flex-wrap: wrap; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
         }
         
         .logo-area { 
@@ -115,17 +117,19 @@
             color: var(--app-primary); 
             display: flex; 
             align-items: center; 
-            gap: 8px;
+            gap: 10px;
+            letter-spacing: -0.5px;
         }
         
         .pro-badge { 
             font-size: 0.75rem; 
             background: var(--app-primary); 
             color: #fff; 
-            padding: 2px 8px; 
+            padding: 2px 10px; 
             border-radius: 12px; 
             font-family: 'Cairo', sans-serif; 
             font-weight: bold;
+            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
         }
 
         .search-box { 
@@ -139,14 +143,14 @@
         
         .search-input { 
             width: 100%; 
-            padding: 8px 40px 8px 15px; 
+            padding: 10px 40px 10px 15px; 
             border-radius: 20px; 
             border: 1px solid var(--app-border); 
             font-size: 0.95rem; 
             outline: none; 
             background: var(--app-bg); 
             color: var(--app-text); 
-            transition: 0.3s; 
+            transition: all 0.3s ease; 
         }
         
         .search-input:focus { 
@@ -157,7 +161,7 @@
         
         .search-icon { 
             position: absolute; 
-            right: 12px; 
+            right: 14px; 
             color: var(--app-text-muted); 
             width: 18px; 
             height: 18px; 
@@ -166,7 +170,7 @@
 
         .header-actions { 
             display: flex; 
-            gap: 6px; 
+            gap: 8px; 
             align-items: center; 
             flex-wrap: wrap;
         }
@@ -175,30 +179,32 @@
             background: var(--app-surface); 
             color: var(--app-text-muted); 
             border: 1px solid var(--app-border); 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 10px; 
+            width: 42px; 
+            height: 42px; 
+            border-radius: 12px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
-            transition: 0.2s ease; 
+            transition: all 0.2s ease; 
             outline: none; 
         }
         
-        .icon-btn svg { width: 20px; height: 20px; stroke-width: 2.2; }
+        .icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
         
         .icon-btn:hover { 
             background: var(--app-primary-light); 
             color: var(--app-primary); 
             border-color: var(--app-primary); 
             transform: translateY(-2px); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         
         .icon-btn.lock-active { 
             background: #fee2e2 !important; 
             color: #e11d48 !important; 
             border-color: #e11d48 !important; 
+            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
         }
 
         .dropdown { position: relative; display: inline-block; }
@@ -207,17 +213,17 @@
             display: none; 
             position: absolute; 
             left: 0; 
-            top: 48px; 
+            top: 50px; 
             background-color: var(--app-surface); 
-            min-width: 180px; 
-            padding: 6px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            border-radius: 12px; 
+            min-width: 200px; 
+            padding: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            border-radius: 14px; 
             border: 1px solid var(--app-border); 
             z-index: 1000; 
         }
         
-        body.dark-mode .dropdown-content { box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        body.dark-mode .dropdown-content { box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
         .dropdown-content.show { display: block; animation: slideDown 0.2s ease; }
         
         @keyframes slideDown { 
@@ -227,11 +233,11 @@
         
         .drop-item { 
             color: var(--app-text); 
-            padding: 10px 12px; 
+            padding: 10px 14px; 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
-            font-size: 0.9rem; 
+            gap: 12px; 
+            font-size: 0.95rem; 
             font-weight: 700; 
             cursor: pointer; 
             transition: 0.2s; 
@@ -244,8 +250,8 @@
         }
         
         .drop-item:last-child { margin-bottom: 0; }
-        .drop-item:hover { background-color: var(--app-primary-light); color: var(--app-primary); }
-        .drop-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .drop-item:hover { background-color: var(--app-primary-light); color: var(--app-primary); transform: translateX(-4px);}
+        .drop-item svg { width: 18px; height: 18px; flex-shrink: 0; }
 
         /* ================= مساحة العمل ================= */
         .workspace { 
@@ -274,7 +280,7 @@
             flex-direction: column; 
             flex-shrink: 0; 
             z-index: 10; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
             transition: opacity 0.3s;
         }
         
@@ -300,7 +306,7 @@
             color: var(--app-text-muted); 
             cursor: pointer; 
             white-space: nowrap; 
-            transition: 0.2s; 
+            transition: all 0.2s ease; 
         }
         
         .tab-btn:hover {
@@ -312,6 +318,7 @@
             background: var(--app-primary-light); 
             color: var(--app-primary); 
             border-color: var(--app-primary); 
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.1);
         }
 
         .tab-content { 
@@ -323,21 +330,27 @@
         
         .tab-content.active { 
             display: block; 
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ================= الورق والمحرر المباشر ================= */
         .paper { 
             background: #ffffff; 
             padding: var(--a4-margin); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); 
             display: flex; 
             flex-direction: column; 
             flex-shrink: 0; 
-            margin-bottom: 30px; 
+            margin-bottom: 40px; 
             position: relative; 
             overflow: hidden; 
             color: #000000; 
-            border-radius: 4px; 
+            border-radius: 8px; 
             page-break-after: always; 
         }
         
@@ -402,12 +415,17 @@
             padding: 0 !important; 
             border: var(--tbl-border-w) solid var(--tbl-border-c) !important; 
             vertical-align: middle; 
+            transition: background-color 0.2s ease;
+        }
+
+        /* لمسة احترافية: تظليل السطر عند مرور الماوس (يختفي بالطباعة) */
+        .t-print tbody tr:hover td {
+            background-color: rgba(79, 70, 229, 0.04) !important;
         }
         
-        /* الخلايا القابلة للتعديل مباشرة */
+        /* الخلايا القابلة للتعديل */
         .e-cell { 
             width: 100%; 
-            height: 100%; 
             min-height: var(--tbl-row-height); 
             border: none; 
             background: transparent; 
@@ -417,12 +435,11 @@
             color: inherit; 
             padding: var(--tbl-padding) !important; 
             outline: none; 
-            display: block; 
             box-sizing: border-box; 
             white-space: pre-wrap; 
             word-break: break-word; 
             cursor: text;
-            transition: 0.2s;
+            transition: background-color 0.2s, box-shadow 0.2s;
             display: flex;
             align-items: center;
             justify-content: var(--tbl-flex-align);
@@ -430,9 +447,10 @@
         }
         
         .e-cell:focus { 
-            background: rgba(99, 102, 241, 0.08) !important; 
+            background: rgba(99, 102, 241, 0.1) !important; 
             outline: 2px solid var(--app-primary); 
             outline-offset: -2px; 
+            border-radius: 2px;
         }
 
         .t-print th .e-cell, .t-print th { 
@@ -522,9 +540,11 @@
         /* ================= مكونات لوحة التحكم ================= */
         .stepper { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: var(--app-bg); padding: 8px 15px; border-radius: 10px; 
+            background: var(--app-bg); padding: 10px 15px; border-radius: 10px; 
             border: 1px solid var(--app-border); margin-bottom: 12px; 
+            transition: all 0.2s ease;
         }
+        .stepper:hover { border-color: var(--app-primary-light); background: var(--app-surface); }
         .step-label { font-weight: 700; font-size: 0.95rem; color: var(--app-text); }
         .step-actions { display: flex; align-items: center; gap: 15px; }
         .step-val { font-weight: bold; color: var(--app-primary); min-width: 45px; text-align: left; font-size: 1.05rem; direction: ltr;}
@@ -534,7 +554,8 @@
             background: var(--app-surface); border: 1px solid var(--app-border); 
             color: var(--app-text-muted); border-radius: 6px; cursor: pointer; 
             display: flex; align-items: center; justify-content: center; 
-            width: 30px; height: 20px; font-size: 10px; outline: none;
+            width: 32px; height: 22px; font-size: 12px; outline: none;
+            transition: all 0.2s ease;
         }
         .step-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); }
 
@@ -543,50 +564,54 @@
         
         .tool-btn { 
             background: var(--app-bg); border: 1px solid var(--app-border); 
-            padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; 
+            padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; 
             font-weight: 700; cursor: pointer; display: flex; align-items: center; 
-            justify-content: center; gap: 6px; color: var(--app-text); transition: 0.2s; flex: 1; min-width: 120px;
+            justify-content: center; gap: 6px; color: var(--app-text); transition: all 0.2s ease; flex: 1; min-width: 120px;
         }
-        .tool-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); }
+        .tool-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); transform: translateY(-1px); }
 
-        .section-title { font-family: 'Reem Kufi', sans-serif; font-size: 1.15rem; color: var(--app-primary); margin: 20px 0 15px; border-bottom: 1px dashed var(--app-border); padding-bottom: 8px; }
+        .section-title { font-family: 'Reem Kufi', sans-serif; font-size: 1.2rem; color: var(--app-primary); margin: 20px 0 15px; border-bottom: 2px dashed var(--app-border); padding-bottom: 8px; }
         .section-title:first-child { margin-top: 0; }
         
         .form-row { margin-bottom: 15px; }
-        .form-row label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; color: var(--app-text); }
+        .form-row label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; color: var(--app-text); }
         
         .control { 
-            width: 100%; padding: 10px; border: 1px solid var(--app-border); 
-            border-radius: 8px; font-size: 0.95rem; background: var(--app-bg); 
-            color: var(--app-text); outline:none; transition:0.3s;
+            width: 100%; padding: 12px; border: 1px solid var(--app-border); 
+            border-radius: 10px; font-size: 0.95rem; background: var(--app-bg); 
+            color: var(--app-text); outline:none; transition: all 0.3s ease;
         }
         .control:focus { border-color: var(--app-primary); box-shadow: 0 0 0 3px var(--app-primary-light); background:var(--app-surface);}
-        input[type="color"].control { height: 40px; padding: 2px; cursor: pointer; }
+        input[type="color"].control { height: 45px; padding: 2px; cursor: pointer; }
         
         .flex-box { display: flex; gap: 15px; align-items: center; } 
         .flex-box > * { flex: 1; }
         
         .check-box { 
-            display: flex; align-items: center; gap: 10px; padding: 12px; 
-            border: 1px solid var(--app-border); border-radius: 8px; cursor: pointer; 
+            display: flex; align-items: center; gap: 10px; padding: 12px 15px; 
+            border: 1px solid var(--app-border); border-radius: 10px; cursor: pointer; 
             font-weight: 700; font-size: 0.95rem; background: var(--app-bg); color: var(--app-text);
+            transition: all 0.2s ease;
         }
+        .check-box:hover { border-color: var(--app-primary); background: var(--app-surface); }
         
         .themes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         .theme-card { 
-            height: 45px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; 
+            height: 50px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; 
             display: flex; align-items: center; justify-content: center; font-weight: bold; 
             color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-size: 0.85rem; 
+            transition: all 0.2s ease;
         }
-        .theme-card.active { border-color: #000; transform: scale(0.95); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        .theme-card:hover { transform: scale(1.03); }
+        .theme-card.active { border-color: #000; transform: scale(0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
         body.dark-mode .theme-card.active { border-color: #fff; }
 
         .tpl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
         .tpl-card { 
-            border: 1px solid var(--app-border); padding: 15px 10px; border-radius: 12px; 
-            text-align: center; cursor: pointer; background: var(--app-surface); transition: 0.2s; 
+            border: 1px solid var(--app-border); padding: 20px 10px; border-radius: 14px; 
+            text-align: center; cursor: pointer; background: var(--app-surface); transition: all 0.2s ease; 
         }
-        .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-3px);}
+        .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05);}
 
         /* ================= شريط الموبايل السفلي ================= */
         .mobile-nav { 
@@ -613,6 +638,7 @@
             .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto;}
             .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
             
+            /* نظام الشاشتين في الموبايل */
             body.show-controls .preview-area { display: none !important; }
             body.show-controls .control-panel { display: flex !important; }
             
@@ -625,16 +651,26 @@
             .paper.size-a3.landscape { transform: scale(0.21); margin-bottom: -360%; }
         }
 
-        /* ================= الطباعة وحفظ الـ PDF (إصلاح شامل) ================= */
+        /* ================= الطباعة وحفظ الـ PDF (الحل الجذري للمشكلة) ================= */
         @media print {
+            /* إجبار المتصفح على طباعة الألوان والخلفيات */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 color-adjust: exact !important;
             }
             
-            body { background: none !important; }
-            .header-bar, .control-panel, .mobile-nav, .icon-toolbar, .search-box { display: none !important; }
+            /* هنا الحل السحري لإظهار كل الصفحات ومنع الاختصاص */
+            html, body { 
+                background: none !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+                display: block !important;
+            }
+            
+            .header-bar, .control-panel, .mobile-nav, .icon-toolbar, .search-box, .lock-hide { 
+                display: none !important; 
+            }
             
             .workspace { 
                 display: block !important; 
@@ -662,6 +698,7 @@
                 width: 100% !important; 
                 height: auto !important; 
                 background-color: #ffffff !important;
+                position: relative !important;
             }
             
             .paper:last-child { 
@@ -679,6 +716,11 @@
 
             .e-cell { 
                 border: none !important; 
+            }
+            
+            /* إزالة تأثير الماوس في الطباعة */
+            .t-print tbody tr:hover td {
+                background-color: transparent !important;
             }
             
             tr {
@@ -711,11 +753,11 @@
                 </div>
             </div>
             <button class="icon-btn lock-hide" onclick="clearAllSystemData()" title="تصفير السجل ومسح البيانات"><svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-            <button class="icon-btn" onclick="executePrint()" title="طباعة الأوراق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
+            <button class="icon-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
         </div>
     </header>
 
-    <!-- منطقة العمل -->
+    <!-- منطقة العمل (شاشة مقسومة) -->
     <div class="workspace">
         
         <!-- منطقة الأوراق والمحرر المباشر -->
@@ -737,9 +779,6 @@
 
             <!-- Tab 1: التحكم بالبيانات -->
             <div id="tab1" class="tab-content active">
-                <div style="text-align: center; margin-bottom: 15px; background: var(--app-primary-light); padding: 10px; border-radius: 10px;">
-                    <p style="font-size:0.95rem; font-weight:bold; color:var(--app-primary);">✨ تعديل البيانات يتم مباشرة على الورقة (في الأعلى).</p>
-                </div>
                 
                 <div class="icon-toolbar lock-hide" style="margin-bottom: 15px;">
                     <div class="toolbar-grid" style="margin-bottom: 10px;">
@@ -762,7 +801,7 @@
                 </div>
 
                 <!-- ميزة تمييز وتلوين الخلية -->
-                <div class="lock-hide" style="border-top: 1px dashed var(--app-border); padding-top: 15px;">
+                <div class="lock-hide" style="border-top: 2px dashed var(--app-border); padding-top: 15px;">
                     <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--app-primary); font-family: 'Reem Kufi', sans-serif;">🎨 تمييز الخلية المحددة (انقر على أي مربع في الورقة ولونه)</h4>
                     <div class="flex-box">
                         <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveCell('#dcfce7', '#059669')">🟢 إيجابي (أخضر)</button>
@@ -977,7 +1016,7 @@
         </button>
     </nav>
 
-    <!-- ================= الأكواد البرمجية (كاملة ومفتوحة) ================= -->
+    <!-- ================= الأكواد البرمجية ================= -->
     <script>
         // ================= كود حماية الموقع =================
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -989,7 +1028,7 @@
             if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
         });
 
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v6_cells'; 
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v7_final'; 
         const MAXIMUM_ALLOWED_ROWS = 250; 
         
         let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
