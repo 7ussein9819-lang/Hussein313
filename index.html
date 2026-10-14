@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>رَقِيم Pro - منصة الأرشفة المباشرة</title>
     
-    <!-- مكتبة قراءة ملفات الإكسل (Feature 4) -->
+    <!-- مكتبة قراءة ملفات الإكسل (استيراد مباشر) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <!-- مجموعة الخطوط العربية الاحترافية -->
+    <!-- مجموعة الخطوط العربية الاحترافية الكاملة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700&family=Amiri:wght@400;700&family=Readex+Pro:wght@400;600;700&family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style id="printStyle">
@@ -65,6 +65,7 @@
             --preview-bg: #020617;
         }
 
+        /* تصفير الإعدادات الافتراضية للمتصفح */
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -87,6 +88,7 @@
             font-family: 'Cairo', sans-serif;
         }
 
+        /* تصميم شريط التمرير (السكرول) */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
         body.dark-mode ::-webkit-scrollbar-thumb { background: #334155; }
@@ -402,9 +404,10 @@
             vertical-align: middle; 
         }
         
-        /* الخلايا القابلة للتعديل (السنترة العمودية والأفقية الدقيقة) */
+        /* الخلايا القابلة للتعديل مباشرة */
         .e-cell { 
             width: 100%; 
+            height: 100%; 
             min-height: var(--tbl-row-height); 
             border: none; 
             background: transparent; 
@@ -414,11 +417,12 @@
             color: inherit; 
             padding: var(--tbl-padding) !important; 
             outline: none; 
+            display: block; 
             box-sizing: border-box; 
             white-space: pre-wrap; 
             word-break: break-word; 
             cursor: text;
-            transition: background-color 0.2s, box-shadow 0.2s;
+            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: var(--tbl-flex-align);
@@ -448,7 +452,6 @@
             color: var(--td-color) !important; 
         }
         
-        /* جعل الألوان المخصصة للصفوف (Feature 5) تطغى على باقي الألوان */
         .t-print td {
             background: var(--td-bg) !important;
         }
@@ -610,7 +613,6 @@
             .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto;}
             .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
             
-            /* نظام الشاشتين في الموبايل */
             body.show-controls .preview-area { display: none !important; }
             body.show-controls .control-panel { display: flex !important; }
             
@@ -623,9 +625,8 @@
             .paper.size-a3.landscape { transform: scale(0.21); margin-bottom: -360%; }
         }
 
-        /* ================= الطباعة وحفظ الـ PDF (إصلاح شامل للألوان والعيوب) ================= */
+        /* ================= الطباعة وحفظ الـ PDF (إصلاح شامل) ================= */
         @media print {
-            /* إجبار المتصفح على طباعة الألوان والخلفيات */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -701,10 +702,10 @@
             <div class="dropdown">
                 <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="خيارات التصدير"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg></button>
                 <div class="dropdown-content" id="exportDropdown">
-                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير Excel</button>
-                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير Word</button>
+                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير إلى Excel</button>
+                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word</button>
                     <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
-                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة (Backup)</button>
+                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة احتياطية</button>
                     <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
                     <input type="file" id="uploadBackupInput" style="display:none;" accept=".json" onchange="processUploadedBackup(event)">
                 </div>
@@ -714,7 +715,7 @@
         </div>
     </header>
 
-    <!-- منطقة العمل (شاشة مقسومة) -->
+    <!-- منطقة العمل -->
     <div class="workspace">
         
         <!-- منطقة الأوراق والمحرر المباشر -->
@@ -736,9 +737,12 @@
 
             <!-- Tab 1: التحكم بالبيانات -->
             <div id="tab1" class="tab-content active">
+                <div style="text-align: center; margin-bottom: 15px; background: var(--app-primary-light); padding: 10px; border-radius: 10px;">
+                    <p style="font-size:0.95rem; font-weight:bold; color:var(--app-primary);">✨ تعديل البيانات يتم مباشرة على الورقة (في الأعلى).</p>
+                </div>
                 
-                <div class="icon-toolbar lock-hide">
-                    <div class="toolbar-grid">
+                <div class="icon-toolbar lock-hide" style="margin-bottom: 15px;">
+                    <div class="toolbar-grid" style="margin-bottom: 10px;">
                         <button class="tool-btn" onclick="performUndo()">↩️ تراجع</button>
                         <button class="tool-btn" onclick="performRedo()">↪️ تقدم</button>
                         <button class="tool-btn" onclick="moveActiveRowBy(-1)">🔼 صعد الصف</button>
@@ -749,23 +753,23 @@
                         <button class="tool-btn" onclick="deleteActiveRow()">➖ حذف صف</button>
                     </div>
                     
-                    <!-- أزرار الإكسل والمجموع -->
-                    <div class="flex-box" style="margin-top:15px;">
+                    <div class="flex-box">
                         <input type="file" id="excelImportInput" accept=".xlsx, .xls" style="display:none" onchange="processExcelImport(event)">
-                        <button class="tool-btn" onclick="document.getElementById('excelImportInput').click()" style="background:var(--app-primary-light); color:var(--app-primary); border-color:var(--app-primary);">📥 استيراد ملف إكسل (.xlsx)</button>
+                        <button class="tool-btn" onclick="document.getElementById('excelImportInput').click()" style="background:var(--app-primary-light); color:var(--app-primary); border-color:var(--app-primary);">📥 استيراد ملف إكسل</button>
                         <button class="tool-btn" onclick="pasteDataFromExcel()">📋 لصق من الإكسل</button>
                         <button class="tool-btn" onclick="calculateAutomaticSum()" style="background:#dcfce7; color:#059669; border-color:#10b981;">🧮 استخراج المجموع</button>
                     </div>
                 </div>
 
-                <!-- ميزة تمييز وتلوين الصفوف (Feature 5) -->
-                <div class="lock-hide" style="margin-top: 15px; border-top: 1px dashed var(--app-border); padding-top: 15px;">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 8px; color: var(--app-text);">🎨 تمييز الصف المحدد (اختر اسماً من الورقة ثم لونه)</h4>
+                <!-- ميزة تمييز وتلوين الخلية -->
+                <div class="lock-hide" style="border-top: 1px dashed var(--app-border); padding-top: 15px;">
+                    <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--app-primary); font-family: 'Reem Kufi', sans-serif;">🎨 تمييز الخلية المحددة (انقر على أي مربع في الورقة ولونه)</h4>
                     <div class="flex-box">
-                        <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveRow('#dcfce7')">أخضر (إيجابي)</button>
-                        <button class="tool-btn" style="background:#fee2e2; color:#e11d48; border-color:#f43f5e;" onclick="setHighlightColorForActiveRow('#fee2e2')">أحمر (تنبيه)</button>
-                        <button class="tool-btn" style="background:#fef9c3; color:#ca8a04; border-color:#facc15;" onclick="setHighlightColorForActiveRow('#fef9c3')">أصفر (ملاحظة)</button>
-                        <button class="tool-btn" onclick="setHighlightColorForActiveRow('')">⚪ مسح اللون</button>
+                        <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveCell('#dcfce7', '#059669')">🟢 إيجابي (أخضر)</button>
+                        <button class="tool-btn" style="background:#fee2e2; color:#e11d48; border-color:#f43f5e;" onclick="setHighlightColorForActiveCell('#fee2e2', '#e11d48')">🔴 تنبيه (أحمر)</button>
+                        <button class="tool-btn" style="background:#fef9c3; color:#ca8a04; border-color:#facc15;" onclick="setHighlightColorForActiveCell('#fef9c3', '#ca8a04')">🟡 ملاحظة (أصفر)</button>
+                        <button class="tool-btn" style="background:#e0f2fe; color:#0369a1; border-color:#38bdf8;" onclick="setHighlightColorForActiveCell('#e0f2fe', '#0369a1')">🔵 إجازة (أزرق)</button>
+                        <button class="tool-btn" onclick="setHighlightColorForActiveCell('', '')">⚪ مسح</button>
                     </div>
                 </div>
             </div>
@@ -973,9 +977,9 @@
         </button>
     </nav>
 
-    <!-- ================= الأكواد البرمجية (كاملة وبدون ضغط) ================= -->
+    <!-- ================= الأكواد البرمجية (كاملة ومفتوحة) ================= -->
     <script>
-        // ================= كود حماية الموقع (منع السرقة والاختصارات) =================
+        // ================= كود حماية الموقع =================
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', function(e) {
             if(e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
@@ -985,7 +989,7 @@
             if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
         });
 
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v3_ultimate'; 
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v6_cells'; 
         const MAXIMUM_ALLOWED_ROWS = 250; 
         
         let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
@@ -996,8 +1000,11 @@
             ["3", "علي حسين", "محاسب", "المالية"]
         ];
         
-        // مصفوفة لتخزين ألوان الصفوف المميزة (Feature 5) بشكل موازي للبيانات
-        let appRowColors = ["", "", ""]; 
+        let appCellColors = [
+            ["", "", "", ""],
+            ["", "", "", ""],
+            ["", "", "", ""]
+        ];
         
         let appHistoryStates = []; 
         let currentHistoryIndex = -1; 
@@ -1112,8 +1119,10 @@
                 isSortOrderAscending = true; 
             }
             
-            // دمج البيانات مع الألوان حتى لا نفقد التلوين عند الفرز
-            let zippedArray = appDataRows.map((row, idx) => ({ row: row, color: appRowColors[idx] }));
+            let zippedArray = appDataRows.map((row, idx) => ({ 
+                row: row, 
+                colors: appCellColors[idx] || Array(appColumns.length).fill("") 
+            }));
 
             zippedArray.sort((a, b) => {
                 let valueA = a.row[columnIndex], valueB = b.row[columnIndex]; 
@@ -1127,7 +1136,7 @@
             });
             
             appDataRows = zippedArray.map(item => item.row);
-            appRowColors = zippedArray.map(item => item.color);
+            appCellColors = zippedArray.map(item => item.colors);
 
             recalculateRowNumbers(); 
             saveCurrentStateToHistory(); 
@@ -1317,11 +1326,13 @@
 
         function saveAllDataToLocalStorage() { 
             try { 
+                while(appCellColors.length < appDataRows.length) appCellColors.push(Array(appColumns.length).fill(""));
+                
                 const systemStateObject = { 
                     savedColumns: appColumns, 
                     savedWidths: appColumnWidths, 
                     savedData: appDataRows, 
-                    savedRowColors: appRowColors, // حفظ الألوان
+                    savedCellColors: appCellColors, 
                     savedLogo: globalLogoImageBase64, 
                     savedTitle: document.getElementById('inputMainTitle') ? document.getElementById('inputMainTitle').value : '', 
                     savedDirectorate: document.getElementById('inputDirectorate') ? document.getElementById('inputDirectorate').value : '', 
@@ -1374,11 +1385,11 @@
                         }
                     }
                     
-                    // استرجاع ألوان الصفوف أو تعبئتها بفراغات
-                    if(parsedState.savedRowColors) {
-                        appRowColors = parsedState.savedRowColors;
+                    if(parsedState.savedCellColors) {
+                        appCellColors = parsedState.savedCellColors;
                     } else {
-                        appRowColors = Array(appDataRows.length).fill("");
+                        appCellColors = [];
+                        for(let r=0; r<appDataRows.length; r++) appCellColors.push(Array(appColumns.length).fill(""));
                     }
                     
                     if(parsedState.savedLogo) globalLogoImageBase64 = parsedState.savedLogo; 
@@ -1546,7 +1557,6 @@
             fileReader.readAsText(uploadedFile); 
         }
 
-        // ================= استيراد ملفات الإكسل (Feature 4) =================
         function processExcelImport(event) {
             if(isEditingLocked) { alert("تم قفل السجل."); return; }
             let file = event.target.files[0];
@@ -1567,13 +1577,12 @@
                             
                             const newRowInsertion = Array(appColumns.length).fill("");
                             for(let i=0; i<appColumns.length; i++) {
-                                // الإكسل قد لا يحتوي على ترقيم، نبدأ الإضافة من العمود الثاني
                                 if(i > 0) {
                                     newRowInsertion[i] = rowArray[i-1] ? String(rowArray[i-1]) : "";
                                 }
                             }
                             appDataRows.push(newRowInsertion);
-                            appRowColors.push(""); // حفظ مكان فارغ للون
+                            appCellColors.push(Array(appColumns.length).fill("")); 
                         });
                         
                         recalculateRowNumbers();
@@ -1585,20 +1594,24 @@
                 }
             };
             reader.readAsArrayBuffer(file);
-            event.target.value = null; // إعادة تعيين الحقل
+            event.target.value = null;
         }
 
-        // ================= تلوين الصف المحدد (Feature 5) =================
-        function setHighlightColorForActiveRow(hexColor) {
+        function setHighlightColorForActiveCell(bgColor, txtColor) {
             if(isEditingLocked) { alert("تم قفل السجل."); return; }
-            if(activeFocusRow < 0 || activeFocusRow >= appDataRows.length) {
-                alert("يرجى النقر على أي كلمة في الصف الذي تريد تلوينه أولاً!");
+            if(activeFocusRow < 0 || activeFocusRow >= appDataRows.length || activeFocusCol < 0 || activeFocusCol >= appColumns.length) {
+                alert("يرجى النقر داخل الخلية (المربع) الذي تريد تلوينه أولاً!");
                 return;
             }
-            // لا يجوز تلوين المجموع الكلي
             if(appDataRows[activeFocusRow][1] === 'المجموع الكلي:') return;
             
-            appRowColors[activeFocusRow] = hexColor;
+            if(!appCellColors[activeFocusRow]) {
+                appCellColors[activeFocusRow] = Array(appColumns.length).fill("");
+            }
+            
+            let combinedColorString = bgColor ? `${bgColor}|${txtColor}` : "";
+            appCellColors[activeFocusRow][activeFocusCol] = combinedColorString;
+            
             saveCurrentStateToHistory();
             renderPaperPages();
         }
@@ -1740,15 +1753,18 @@
                 appHistoryStates = appHistoryStates.slice(0, currentHistoryIndex + 1);
             }
             
-            // التأكد من استقرار طول المصفوفات
-            while(appRowColors.length < appDataRows.length) appRowColors.push("");
-            if(appRowColors.length > appDataRows.length) appRowColors = appRowColors.slice(0, appDataRows.length);
+            while(appCellColors.length < appDataRows.length) {
+                appCellColors.push(Array(appColumns.length).fill(""));
+            }
+            appCellColors.forEach(rowColors => {
+                while(rowColors.length < appColumns.length) rowColors.push("");
+            });
 
             appHistoryStates.push({ 
                 cols: [...appColumns], 
                 colWidths: [...appColumnWidths], 
                 data: JSON.parse(JSON.stringify(appDataRows)),
-                colors: [...appRowColors]
+                cellColors: JSON.parse(JSON.stringify(appCellColors))
             }); 
             if(appHistoryStates.length > 30) {
                 appHistoryStates.shift(); 
@@ -1765,7 +1781,7 @@
                 appColumns = [...restoredState.cols]; 
                 appColumnWidths = [...restoredState.colWidths]; 
                 appDataRows = JSON.parse(JSON.stringify(restoredState.data)); 
-                if(restoredState.colors) appRowColors = [...restoredState.colors];
+                if(restoredState.cellColors) appCellColors = JSON.parse(JSON.stringify(restoredState.cellColors));
                 renderColumnWidthSliders(); 
                 renderPaperPages(); 
             } 
@@ -1778,7 +1794,7 @@
                 appColumns = [...restoredState.cols]; 
                 appColumnWidths = [...restoredState.colWidths]; 
                 appDataRows = JSON.parse(JSON.stringify(restoredState.data)); 
-                if(restoredState.colors) appRowColors = [...restoredState.colors];
+                if(restoredState.cellColors) appCellColors = JSON.parse(JSON.stringify(restoredState.cellColors));
                 renderColumnWidthSliders(); 
                 renderPaperPages(); 
             } 
@@ -1801,13 +1817,15 @@
             if(appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return; 
             
             const newEmptyRow = Array(appColumns.length).fill(""); 
+            const newColorRow = Array(appColumns.length).fill("");
+            
             if(activeFocusRow > -1 && activeFocusRow < appDataRows.length) { 
                 appDataRows.splice(activeFocusRow + 1, 0, newEmptyRow); 
-                appRowColors.splice(activeFocusRow + 1, 0, ""); // موازنة الألوان
+                appCellColors.splice(activeFocusRow + 1, 0, newColorRow); 
                 activeFocusRow++; 
             } else { 
                 appDataRows.push(newEmptyRow); 
-                appRowColors.push("");
+                appCellColors.push(newColorRow);
             } 
             recalculateRowNumbers(); 
             saveCurrentStateToHistory(); 
@@ -1820,6 +1838,8 @@
             appColumns.splice(targetInsertIndex, 0, "عمود جديد"); 
             appColumnWidths.splice(targetInsertIndex, 0, 100); 
             appDataRows.forEach(rowArr => rowArr.splice(targetInsertIndex, 0, "")); 
+            appCellColors.forEach(rowColors => rowColors.splice(targetInsertIndex, 0, ""));
+            
             if(activeFocusCol > -1) activeFocusCol++; 
             saveCurrentStateToHistory(); 
             renderColumnWidthSliders(); 
@@ -1831,11 +1851,11 @@
             if(appDataRows.length === 0) return; 
             if(activeFocusRow > -1 && activeFocusRow < appDataRows.length) { 
                 appDataRows.splice(activeFocusRow, 1); 
-                appRowColors.splice(activeFocusRow, 1); // موازنة الألوان
+                appCellColors.splice(activeFocusRow, 1); 
                 activeFocusRow = -1; 
             } else { 
                 appDataRows.pop(); 
-                appRowColors.pop();
+                appCellColors.pop();
             } 
             recalculateRowNumbers(); 
             saveCurrentStateToHistory(); 
@@ -1851,6 +1871,8 @@
             appColumns.splice(targetDeleteIndex, 1); 
             appColumnWidths.splice(targetDeleteIndex, 1); 
             appDataRows.forEach(rowArr => rowArr.splice(targetDeleteIndex, 1)); 
+            appCellColors.forEach(rowColors => rowColors.splice(targetDeleteIndex, 1));
+            
             activeFocusCol = -1; 
             saveCurrentStateToHistory(); 
             renderColumnWidthSliders(); 
@@ -1867,9 +1889,9 @@
             appDataRows[activeFocusRow] = appDataRows[targetSwapIndex]; 
             appDataRows[targetSwapIndex] = tempRowData; 
             
-            let tempColor = appRowColors[activeFocusRow];
-            appRowColors[activeFocusRow] = appRowColors[targetSwapIndex];
-            appRowColors[targetSwapIndex] = tempColor;
+            let tempColorRow = appCellColors[activeFocusRow];
+            appCellColors[activeFocusRow] = appCellColors[targetSwapIndex];
+            appCellColors[targetSwapIndex] = tempColorRow;
 
             activeFocusRow = targetSwapIndex; 
             
@@ -1903,7 +1925,7 @@
             }
             if(!hasValidNumbers) { alert("لم يتم العثور على أرقام لجمعها!"); return; }
             appDataRows.push(sumRowData); 
-            appRowColors.push(""); // موازنة الألوان
+            appCellColors.push(Array(appColumns.length).fill("")); 
             saveCurrentStateToHistory(); 
             renderPaperPages(); 
         }
@@ -1927,7 +1949,7 @@
                         newRowInsertion[i] = parsedTabularData[i-1] || ""; 
                     } 
                     appDataRows.push(newRowInsertion); 
-                    appRowColors.push("");
+                    appCellColors.push(Array(appColumns.length).fill(""));
                 });
                 
                 recalculateRowNumbers(); 
@@ -2039,20 +2061,17 @@
                         let globalRowIndexId = dataStartIndex + rowRelativeIndex; 
                         let isRowSummary = (rowArray[1] === 'المجموع الكلي:');
                         
-                        // قراءة لون الصف المخصص من الذاكرة (Feature 5)
-                        let customRowColor = appRowColors[globalRowIndexId] || "";
+                        let customCellColorStr = (appCellColors[globalRowIndexId] && appCellColors[globalRowIndexId][0]) ? appCellColors[globalRowIndexId][0] : "";
                         let rowStyleCss = "";
-                        
                         if (isRowSummary) {
                             rowStyleCss = 'font-weight:bold; background:var(--app-primary-light) !important;';
-                        } else if (customRowColor !== "") {
-                            rowStyleCss = `background-color: ${customRowColor} !important;`;
                         }
                         
                         tableBodyHtmlString += `<tr style="${rowStyleCss}">`;
                         
                         rowArray.forEach((cellStringValue, cellColIndex) => { 
                             let editableAttributeRow = (isEditingLocked || isRowSummary) ? 'contenteditable="false"' : 'contenteditable="true"';
+                            
                             let conditionCssClasses = ""; 
                             if(useCondFormatting && !isRowSummary && cellColIndex > 1) { 
                                 let parsedNumberValue = parseFloat(cellStringValue); 
@@ -2062,7 +2081,15 @@
                                     conditionCssClasses = "cond-warn";
                                 }
                             }
-                            tableBodyHtmlString += `<td><div ${editableAttributeRow} class="e-cell ${conditionCssClasses}" id="cell_${globalRowIndexId}_${cellColIndex}" onfocus="updateCellFocusPosition(${globalRowIndexId}, ${cellColIndex})" onblur="updateMemoryValue('cell', ${globalRowIndexId}, ${cellColIndex}, this.innerText)">${escapeDangerousHtml(cellStringValue)}</div></td>`; 
+
+                            let customCellColorStr = (appCellColors[globalRowIndexId] && appCellColors[globalRowIndexId][cellColIndex]) ? appCellColors[globalRowIndexId][cellColIndex] : "";
+                            let cellInlineStyle = "";
+                            if (customCellColorStr !== "" && !isRowSummary) {
+                                let colorParts = customCellColorStr.split('|');
+                                cellInlineStyle = `background-color: ${colorParts[0]} !important; color: ${colorParts[1]} !important; font-weight: 900 !important; border-radius: 4px; box-shadow: inset 0 0 0 2px ${colorParts[1]};`;
+                            }
+
+                            tableBodyHtmlString += `<td><div ${editableAttributeRow} class="e-cell ${conditionCssClasses}" style="${cellInlineStyle}" id="cell_${globalRowIndexId}_${cellColIndex}" onfocus="updateCellFocusPosition(${globalRowIndexId}, ${cellColIndex})" onblur="updateMemoryValue('cell', ${globalRowIndexId}, ${cellColIndex}, this.innerText)">${escapeDangerousHtml(cellStringValue)}</div></td>`; 
                         }); 
                         tableBodyHtmlString += '</tr>';
                     });
@@ -2171,12 +2198,12 @@
             }
             
             appDataRows = []; 
-            appRowColors = [];
+            appCellColors = [];
             for(let idx = 0; idx < 3; idx++) { 
                 const emptyRowTemplate = Array(appColumns.length).fill(""); 
                 emptyRowTemplate[0] = idx + 1; 
                 appDataRows.push(emptyRowTemplate); 
-                appRowColors.push("");
+                appCellColors.push(Array(appColumns.length).fill(""));
             }
             
             saveCurrentStateToHistory(); 
