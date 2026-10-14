@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رَقِيم Pro - منصة الأرشفة المباشرة</title>
+    
+    <!-- مكتبة قراءة ملفات الإكسل (Feature 4) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- مجموعة الخطوط العربية الاحترافية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700&family=Amiri:wght@400;700&family=Readex+Pro:wght@400;600;700&family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style id="printStyle">
+        @media print { 
+            @page { size: A4 portrait; margin: 0; } 
+        }
+    </style>
+
+    <style>
+        /* ================= المتغيرات الأساسية ================= */
+        :root {
+            --app-bg: #f1f5f9;
+            --app-surface: #ffffff;
+            --app-primary: #4f46e5;
+            --app-primary-light: #e0e7ff;
+            --app-border: #cbd5e1;
+            --app-text: #1e293b;
+            --app-text-muted: #64748b;
+            --preview-bg: #e2e8f0;
+
+            --tbl-row-height: 12mm;
+            --tbl-padding: 8px;
+            
+            --tbl-flex-align: center;
+            --tbl-align: center;
+            
+            --tbl-border-w: 1px;
+            --tbl-border-c: #000000;
+            --a4-margin: 15mm;
+
+            --th-font: 'Cairo', sans-serif;
+            --th-size: 14pt;
+            --th-weight: 700;
+            --th-color: #ffffff;
+            --th-bg: linear-gradient(135deg, #4f46e5, #312e81);
+            
+            --td-font: 'Tajawal', sans-serif;
+            --td-size: 12pt;
+            --td-weight: 500;
+            --td-color: #0f172a;
+            --td-bg: #ffffff;
+            --td-alt-bg: #f8fafc;
+            --idx-bg: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+        }
+
+        body.dark-mode {
+            --app-bg: #020617;
+            --app-surface: #0f172a;
+            --app-primary: #6366f1;
+            --app-primary-light: #1e3a8a;
+            --app-border: #1e293b;
+            --app-text: #f8fafc;
+            --app-text-muted: #94a3b8;
+            --preview-bg: #020617;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        body, html { 
+            height: 100%; 
+            background: var(--app-bg); 
+            color: var(--app-text); 
+            font-family: 'Cairo', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            transition: background 0.3s, color 0.3s; 
+        }
+
+        input, button, select, textarea {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        body.dark-mode ::-webkit-scrollbar-thumb { background: #334155; }
+
+        /* ================= الشريط العلوي ================= */
+        .header-bar { 
+            background: var(--app-surface); 
+            padding: 10px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--app-border); 
+            flex-shrink: 0; 
+            z-index: 100; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+        
+        .logo-area { 
+            font-family: 'Reem Kufi', sans-serif; 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: var(--app-primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+        }
+        
+        .pro-badge { 
+            font-size: 0.75rem; 
+            background: var(--app-primary); 
+            color: #fff; 
+            padding: 2px 8px; 
+            border-radius: 12px; 
+            font-family: 'Cairo', sans-serif; 
+            font-weight: bold;
+        }
+
+        .search-box { 
+            position: relative; 
+            flex: 1; 
+            max-width: 400px; 
+            min-width: 200px; 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .search-input { 
+            width: 100%; 
+            padding: 8px 40px 8px 15px; 
+            border-radius: 20px; 
+            border: 1px solid var(--app-border); 
+            font-size: 0.95rem; 
+            outline: none; 
+            background: var(--app-bg); 
+            color: var(--app-text); 
+            transition: 0.3s; 
+        }
+        
+        .search-input:focus { 
+            border-color: var(--app-primary); 
+            box-shadow: 0 0 0 3px var(--app-primary-light); 
+            background: var(--app-surface); 
+        }
+        
+        .search-icon { 
+            position: absolute; 
+            right: 12px; 
+            color: var(--app-text-muted); 
+            width: 18px; 
+            height: 18px; 
+            pointer-events: none;
+        }
+
+        .header-actions { 
+            display: flex; 
+            gap: 6px; 
+            align-items: center; 
+            flex-wrap: wrap;
+        }
+        
+        .icon-btn { 
+            background: var(--app-surface); 
+            color: var(--app-text-muted); 
+            border: 1px solid var(--app-border); 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: 0.2s ease; 
+            outline: none; 
+        }
+        
+        .icon-btn svg { width: 20px; height: 20px; stroke-width: 2.2; }
+        
+        .icon-btn:hover { 
+            background: var(--app-primary-light); 
+            color: var(--app-primary); 
+            border-color: var(--app-primary); 
+            transform: translateY(-2px); 
+        }
+        
+        .icon-btn.lock-active { 
+            background: #fee2e2 !important; 
+            color: #e11d48 !important; 
+            border-color: #e11d48 !important; 
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+        
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            left: 0; 
+            top: 48px; 
+            background-color: var(--app-surface); 
+            min-width: 180px; 
+            padding: 6px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            border-radius: 12px; 
+            border: 1px solid var(--app-border); 
+            z-index: 1000; 
+        }
+        
+        body.dark-mode .dropdown-content { box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dropdown-content.show { display: block; animation: slideDown 0.2s ease; }
+        
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .drop-item { 
+            color: var(--app-text); 
+            padding: 10px 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            border: none; 
+            border-radius: 8px; 
+            background: none; 
+            width: 100%; 
+            text-align: right; 
+            margin-bottom: 2px;
+        }
+        
+        .drop-item:last-child { margin-bottom: 0; }
+        .drop-item:hover { background-color: var(--app-primary-light); color: var(--app-primary); }
+        .drop-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* ================= مساحة العمل ================= */
+        .workspace { 
+            display: flex; 
+            flex-direction: column; 
+            flex: 1; 
+            overflow: hidden; 
+            background: var(--preview-bg); 
+        }
+        
+        .preview-area { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 40px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            scroll-behavior: smooth;
+        }
+        
+        .control-panel { 
+            height: 380px; 
+            background: var(--app-surface); 
+            border-top: 1px solid var(--app-border); 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0; 
+            z-index: 10; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            transition: opacity 0.3s;
+        }
+        
+        .tabs-nav { 
+            display: flex; 
+            gap: 8px; 
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--app-border); 
+            background: var(--app-bg); 
+            overflow-x: auto; 
+            scrollbar-width: none; 
+        }
+        
+        .tabs-nav::-webkit-scrollbar { display: none; }
+        
+        .tab-btn { 
+            background: var(--app-surface); 
+            border: 1px solid var(--app-border); 
+            padding: 8px 20px; 
+            border-radius: 20px; 
+            font-size: 0.95rem; 
+            font-weight: 700; 
+            color: var(--app-text-muted); 
+            cursor: pointer; 
+            white-space: nowrap; 
+            transition: 0.2s; 
+        }
+        
+        .tab-btn:hover {
+            background: var(--app-bg);
+            color: var(--app-text);
+        }
+        
+        .tab-btn.active { 
+            background: var(--app-primary-light); 
+            color: var(--app-primary); 
+            border-color: var(--app-primary); 
+        }
+
+        .tab-content { 
+            display: none; 
+            padding: 20px 25px; 
+            overflow-y: auto; 
+            flex: 1; 
+        }
+        
+        .tab-content.active { 
+            display: block; 
+        }
+
+        /* ================= الورق والمحرر المباشر ================= */
+        .paper { 
+            background: #ffffff; 
+            padding: var(--a4-margin); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0; 
+            margin-bottom: 30px; 
+            position: relative; 
+            overflow: hidden; 
+            color: #000000; 
+            border-radius: 4px; 
+            page-break-after: always; 
+        }
+        
+        .watermark { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 70%; 
+            height: 70%; 
+            background-size: contain; 
+            background-repeat: no-repeat; 
+            background-position: center; 
+            opacity: 0.08; 
+            pointer-events: none; 
+        }
+        
+        .size-a4.portrait { width: 210mm; min-height: 297mm; } 
+        .size-a4.landscape { width: 297mm; min-height: 210mm; }
+        .size-a3.portrait { width: 297mm; min-height: 420mm; } 
+        .size-a3.landscape { width: 420mm; min-height: 297mm; }
+        
+        .paper-wrap { 
+            flex: 1 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            z-index: 1; 
+        }
+        
+        .p-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 3px solid var(--app-primary); 
+            padding-bottom: 15px; 
+            margin-bottom: 20px; 
+            min-height: 100px; 
+        }
+        
+        .ph-right { width: 30%; text-align: right; font-family: var(--td-font);}
+        .ph-right h3 { font-size: 14pt; margin: 0 0 5px; font-weight: 500; } 
+        .ph-right h2 { font-size: 16pt; margin: 0; font-weight: 800; }
+        
+        .ph-center { width: 40%; text-align: center; } 
+        .ph-center h1 { font-family: 'Reem Kufi', sans-serif; font-size: 24pt; color: var(--app-primary); margin: 0; line-height: 1.2; }
+        
+        .ph-left { width: 30%; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+        .ph-meta { text-align: right; font-size: 11pt; font-weight: bold; line-height: 1.6; font-family: var(--td-font);}
+        .ph-left img { max-width: 80px; max-height: 80px; object-fit: contain; }
+
+        /* ================= الجداول ================= */
+        .t-print { 
+            width: 100%; 
+            border-collapse: collapse; 
+            position: relative; 
+            z-index: 1; 
+            table-layout: fixed;
+        }
+        
+        .t-print th, .t-print td { 
+            padding: 0 !important; 
+            border: var(--tbl-border-w) solid var(--tbl-border-c) !important; 
+            vertical-align: middle; 
+        }
+        
+        /* الخلايا القابلة للتعديل (السنترة العمودية والأفقية الدقيقة) */
+        .e-cell { 
+            width: 100%; 
+            min-height: var(--tbl-row-height); 
+            border: none; 
+            background: transparent; 
+            font-family: inherit; 
+            font-size: inherit; 
+            font-weight: inherit; 
+            color: inherit; 
+            padding: var(--tbl-padding) !important; 
+            outline: none; 
+            box-sizing: border-box; 
+            white-space: pre-wrap; 
+            word-break: break-word; 
+            cursor: text;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: var(--tbl-flex-align);
+            text-align: var(--tbl-align);
+        }
+        
+        .e-cell:focus { 
+            background: rgba(99, 102, 241, 0.08) !important; 
+            outline: 2px solid var(--app-primary); 
+            outline-offset: -2px; 
+        }
+
+        .t-print th .e-cell, .t-print th { 
+            font-family: var(--th-font) !important; 
+            font-size: var(--th-size) !important; 
+            font-weight: var(--th-weight) !important; 
+            color: var(--th-color) !important; 
+            background: var(--th-bg) !important; 
+            justify-content: center !important;
+            text-align: center !important;
+        }
+        
+        .t-print td .e-cell { 
+            font-family: var(--td-font) !important; 
+            font-size: var(--td-size) !important; 
+            font-weight: var(--td-weight) !important; 
+            color: var(--td-color) !important; 
+        }
+        
+        /* جعل الألوان المخصصة للصفوف (Feature 5) تطغى على باقي الألوان */
+        .t-print td {
+            background: var(--td-bg) !important;
+        }
+
+        .t-print td:first-child .e-cell { 
+            font-weight: bold; 
+            justify-content: center !important;
+            text-align: center !important;
+        }
+        
+        .t-print.striped tbody tr:nth-child(even) td { 
+            background: var(--td-alt-bg) !important; 
+        }
+        
+        /* التنسيق الشرطي */
+        .t-print td .e-cell.cond-fail, 
+        .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-fail {
+            color: #dc2626 !important; 
+            font-weight: 900 !important; 
+            background-color: #fee2e2 !important;
+        }
+
+        .t-print td .e-cell.cond-warn, 
+        .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-warn {
+            color: #b45309 !important; 
+            font-weight: 900 !important; 
+            background-color: #fef08a !important;
+        }
+
+        .p-sigs { 
+            display: flex; 
+            justify-content: space-around; 
+            flex-shrink: 0; 
+            margin-top: auto; 
+            padding-top: 25px; 
+            z-index: 1;
+        }
+        
+        .sig-box { 
+            text-align: center; 
+            width: 28%; 
+            font-family: var(--td-font);
+        }
+        
+        .sig-box h4 { 
+            font-weight: 800; 
+            margin-bottom: 40px; 
+            font-size: 14pt; 
+        }
+        
+        .sig-box p { 
+            font-weight: 700; 
+            font-size: 13pt; 
+            border-top: 1px dashed #000; 
+            padding-top: 8px; 
+        }
+        
+        .page-num { 
+            text-align: center; 
+            font-family: 'Tajawal', sans-serif; 
+            font-weight: 700; 
+            color: #64748b; 
+            font-size: 11pt; 
+            padding-top: 15px; 
+            margin-top: 15px; 
+        }
+
+        /* ================= مكونات لوحة التحكم ================= */
+        .stepper { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: var(--app-bg); padding: 8px 15px; border-radius: 10px; 
+            border: 1px solid var(--app-border); margin-bottom: 12px; 
+        }
+        .step-label { font-weight: 700; font-size: 0.95rem; color: var(--app-text); }
+        .step-actions { display: flex; align-items: center; gap: 15px; }
+        .step-val { font-weight: bold; color: var(--app-primary); min-width: 45px; text-align: left; font-size: 1.05rem; direction: ltr;}
+        .step-btn-group { display: flex; flex-direction: column; gap: 4px; }
+        
+        .step-btn { 
+            background: var(--app-surface); border: 1px solid var(--app-border); 
+            color: var(--app-text-muted); border-radius: 6px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; 
+            width: 30px; height: 20px; font-size: 10px; outline: none;
+        }
+        .step-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); }
+
+        .icon-toolbar { background: var(--app-surface); border: 1px solid var(--app-border); padding: 15px; border-radius: 12px; margin-bottom: 20px;}
+        .toolbar-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+        
+        .tool-btn { 
+            background: var(--app-bg); border: 1px solid var(--app-border); 
+            padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; 
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; gap: 6px; color: var(--app-text); transition: 0.2s; flex: 1; min-width: 120px;
+        }
+        .tool-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); }
+
+        .section-title { font-family: 'Reem Kufi', sans-serif; font-size: 1.15rem; color: var(--app-primary); margin: 20px 0 15px; border-bottom: 1px dashed var(--app-border); padding-bottom: 8px; }
+        .section-title:first-child { margin-top: 0; }
+        
+        .form-row { margin-bottom: 15px; }
+        .form-row label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; color: var(--app-text); }
+        
+        .control { 
+            width: 100%; padding: 10px; border: 1px solid var(--app-border); 
+            border-radius: 8px; font-size: 0.95rem; background: var(--app-bg); 
+            color: var(--app-text); outline:none; transition:0.3s;
+        }
+        .control:focus { border-color: var(--app-primary); box-shadow: 0 0 0 3px var(--app-primary-light); background:var(--app-surface);}
+        input[type="color"].control { height: 40px; padding: 2px; cursor: pointer; }
+        
+        .flex-box { display: flex; gap: 15px; align-items: center; } 
+        .flex-box > * { flex: 1; }
+        
+        .check-box { 
+            display: flex; align-items: center; gap: 10px; padding: 12px; 
+            border: 1px solid var(--app-border); border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 0.95rem; background: var(--app-bg); color: var(--app-text);
+        }
+        
+        .themes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .theme-card { 
+            height: 45px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold; 
+            color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-size: 0.85rem; 
+        }
+        .theme-card.active { border-color: #000; transform: scale(0.95); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        body.dark-mode .theme-card.active { border-color: #fff; }
+
+        .tpl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .tpl-card { 
+            border: 1px solid var(--app-border); padding: 15px 10px; border-radius: 12px; 
+            text-align: center; cursor: pointer; background: var(--app-surface); transition: 0.2s; 
+        }
+        .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-3px);}
+
+        /* ================= شريط الموبايل السفلي ================= */
+        .mobile-nav { 
+            display: none; background: var(--app-surface); border-top: 1px solid var(--app-border); 
+            padding: 10px 0; justify-content: space-around; z-index: 50; 
+            padding-bottom: calc(10px + env(safe-area-inset-bottom)); box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .m-nav-btn { 
+            display: flex; flex-direction: column; align-items: center; gap: 4px; 
+            font-weight: 700; font-size: 0.85rem; color: var(--app-text-muted); 
+            cursor: pointer; border: none; background: none; transition: 0.2s;
+        }
+        .m-nav-btn.active { color: var(--app-primary); transform: translateY(-2px); }
+        
+        /* ================= توافقية الموبايل ================= */
+        @media (max-width: 900px) {
+            .header-bar { padding: 10px 15px; }
+            .search-box { max-width: 100%; width: 100%; order: 3; margin-top: 10px; }
+            .header-actions { flex: 1; justify-content: flex-end; }
+            .logo-area { flex: 1; }
+            
+            .workspace { display: block; overflow-y: hidden; }
+            .control-panel { height: 100%; width: 100%; border: none; overflow-y: auto; padding-bottom: 80px;}
+            .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto;}
+            .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
+            
+            /* نظام الشاشتين في الموبايل */
+            body.show-controls .preview-area { display: none !important; }
+            body.show-controls .control-panel { display: flex !important; }
+            
+            body:not(.show-controls) .control-panel { display: none !important; }
+            body:not(.show-controls) .preview-area { display: flex !important; }
+            
+            .paper { transform-origin: top center; transform: scale(0.42); margin-bottom: -150%; }
+            .paper.size-a4.landscape { transform: scale(0.30); margin-bottom: -220%; }
+            .paper.size-a3.portrait { transform: scale(0.30); margin-bottom: -220%; }
+            .paper.size-a3.landscape { transform: scale(0.21); margin-bottom: -360%; }
+        }
+
+        /* ================= الطباعة وحفظ الـ PDF (إصلاح شامل للألوان والعيوب) ================= */
+        @media print {
+            /* إجبار المتصفح على طباعة الألوان والخلفيات */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            body { background: none !important; }
+            .header-bar, .control-panel, .mobile-nav, .icon-toolbar, .search-box { display: none !important; }
+            
+            .workspace { 
+                display: block !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+            }
+            
+            .preview-area { 
+                display: block !important; 
+                position: static !important; 
+                width: 100% !important; 
+                padding: 0 !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+            }
+            
+            .paper { 
+                margin: 0 !important; 
+                box-shadow: none !important; 
+                page-break-after: always !important; 
+                page-break-inside: avoid !important;
+                transform: none !important; 
+                border-radius: 0 !important; 
+                padding: var(--a4-margin) !important; 
+                width: 100% !important; 
+                height: auto !important; 
+                background-color: #ffffff !important;
+            }
+            
+            .paper:last-child { 
+                page-break-after: auto !important; 
+            }
+            
+            .t-print {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            .t-print th, .t-print td {
+                border: var(--tbl-border-w) solid var(--tbl-border-c) !important;
+            }
+
+            .e-cell { 
+                border: none !important; 
+            }
+            
+            tr {
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط العلوي -->
+    <header class="header-bar">
+        <div class="logo-area">رَقِيم <span class="pro-badge">Pro ✨</span></div>
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="ابحث في الأسماء والبيانات..." onkeyup="executeSearch()">
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" id="btnTheme" onclick="toggleDarkMode()" title="تغيير المظهر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+            <button class="icon-btn" id="btnLock" onclick="toggleDataLock()" title="قفل السجل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></button>
+            <div class="dropdown">
+                <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="خيارات التصدير"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg></button>
+                <div class="dropdown-content" id="exportDropdown">
+                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير Excel</button>
+                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير Word</button>
+                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
+                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة (Backup)</button>
+                    <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
+                    <input type="file" id="uploadBackupInput" style="display:none;" accept=".json" onchange="processUploadedBackup(event)">
+                </div>
+            </div>
+            <button class="icon-btn lock-hide" onclick="clearAllSystemData()" title="تصفير السجل ومسح البيانات"><svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+            <button class="icon-btn" onclick="executePrint()" title="طباعة الأوراق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
+        </div>
+    </header>
+
+    <!-- منطقة العمل (شاشة مقسومة) -->
+    <div class="workspace">
+        
+        <!-- منطقة الأوراق والمحرر المباشر -->
+        <main class="preview-area" id="previewAreaContainer">
+            <div style="color:var(--app-text-muted); font-weight:bold; font-size:1.1rem; padding: 20px;">
+                جاري تهيئة الأوراق...
+            </div>
+        </main>
+
+        <!-- لوحة التحكم السفلية -->
+        <aside class="control-panel" id="controlPanelArea">
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchControlTab('tab1', this)">📝 البيانات السريعة</button>
+                <button class="tab-btn" onclick="switchControlTab('tab3', this)">🎨 تنسيق الجدول</button>
+                <button class="tab-btn" onclick="switchControlTab('tab2', this)">📄 الترويسة والتواقيع</button>
+                <button class="tab-btn" onclick="switchControlTab('tab4', this)">⚙️ أبعاد الورقة</button>
+                <button class="tab-btn" onclick="switchControlTab('tab5', this)">📂 قوالب جاهزة</button>
+            </div>
+
+            <!-- Tab 1: التحكم بالبيانات -->
+            <div id="tab1" class="tab-content active">
+                
+                <div class="icon-toolbar lock-hide">
+                    <div class="toolbar-grid">
+                        <button class="tool-btn" onclick="performUndo()">↩️ تراجع</button>
+                        <button class="tool-btn" onclick="performRedo()">↪️ تقدم</button>
+                        <button class="tool-btn" onclick="moveActiveRowBy(-1)">🔼 صعد الصف</button>
+                        <button class="tool-btn" onclick="moveActiveRowBy(1)">🔽 نزل الصف</button>
+                        <button class="tool-btn" onclick="addNewColumnToTable()">➕ عمود جديد</button>
+                        <button class="tool-btn" onclick="deleteActiveColumn()">➖ حذف عمود</button>
+                        <button class="tool-btn" onclick="addNewRowToTable()">➕ صف جديد</button>
+                        <button class="tool-btn" onclick="deleteActiveRow()">➖ حذف صف</button>
+                    </div>
+                    
+                    <!-- أزرار الإكسل والمجموع -->
+                    <div class="flex-box" style="margin-top:15px;">
+                        <input type="file" id="excelImportInput" accept=".xlsx, .xls" style="display:none" onchange="processExcelImport(event)">
+                        <button class="tool-btn" onclick="document.getElementById('excelImportInput').click()" style="background:var(--app-primary-light); color:var(--app-primary); border-color:var(--app-primary);">📥 استيراد ملف إكسل (.xlsx)</button>
+                        <button class="tool-btn" onclick="pasteDataFromExcel()">📋 لصق من الإكسل</button>
+                        <button class="tool-btn" onclick="calculateAutomaticSum()" style="background:#dcfce7; color:#059669; border-color:#10b981;">🧮 استخراج المجموع</button>
+                    </div>
+                </div>
+
+                <!-- ميزة تمييز وتلوين الصفوف (Feature 5) -->
+                <div class="lock-hide" style="margin-top: 15px; border-top: 1px dashed var(--app-border); padding-top: 15px;">
+                    <h4 style="font-size: 0.95rem; margin-bottom: 8px; color: var(--app-text);">🎨 تمييز الصف المحدد (اختر اسماً من الورقة ثم لونه)</h4>
+                    <div class="flex-box">
+                        <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveRow('#dcfce7')">أخضر (إيجابي)</button>
+                        <button class="tool-btn" style="background:#fee2e2; color:#e11d48; border-color:#f43f5e;" onclick="setHighlightColorForActiveRow('#fee2e2')">أحمر (تنبيه)</button>
+                        <button class="tool-btn" style="background:#fef9c3; color:#ca8a04; border-color:#facc15;" onclick="setHighlightColorForActiveRow('#fef9c3')">أصفر (ملاحظة)</button>
+                        <button class="tool-btn" onclick="setHighlightColorForActiveRow('')">⚪ مسح اللون</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: الجدول والتنسيق -->
+            <div id="tab3" class="tab-content">
+                <h3 class="section-title">عرض الأعمدة اليدوي (مفتوح)</h3>
+                <div id="columnSlidersContainer"></div>
+                
+                <label class="check-box" style="margin-bottom: 20px;">
+                    <input type="checkbox" id="checkConditionalFormat" onchange="renderPaperPages()"> 
+                    <span>تلوين درجات الرسوب (أحمر) والغياب (أصفر) تلقائياً</span>
+                </label>
+
+                <h3 class="section-title">الأبعاد والمحاذاة</h3>
+                <div class="stepper">
+                    <span class="step-label">المسافة الداخلية للخلايا</span>
+                    <div class="step-actions">
+                        <span id="labelPadding" class="step-val">8px</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('pad', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('pad', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="stepper">
+                    <span class="step-label">ارتفاع الصفوف</span>
+                    <div class="step-actions">
+                        <span id="labelRowHeight" class="step-val">12mm</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('row', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('row', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-box" style="margin-bottom: 15px;">
+                    <button class="tool-btn" id="btnAlignRight" onclick="setTableAlignment('right')">يمين ➡️</button>
+                    <button class="tool-btn active" id="btnAlignCenter" onclick="setTableAlignment('center')">وسط ↔️</button>
+                    <button class="tool-btn" id="btnAlignLeft" onclick="setTableAlignment('left')">يسار ⬅️</button>
+                </div>
+                <div class="flex-box" style="margin-bottom: 20px;">
+                    <input type="color" class="control" id="inputBorderColor" value="#000000" onchange="setGlobalCssVariable('--tbl-border-c', this.value); renderPaperPages();">
+                    <select class="control" id="inputBorderWidth" onchange="setGlobalCssVariable('--tbl-border-w', this.value); renderPaperPages();">
+                        <option value="0px">بدون إطار</option>
+                        <option value="1px" selected>إطار رفيع</option>
+                        <option value="2px">إطار متوسط</option>
+                        <option value="3px">إطار سميك</option>
+                    </select>
+                </div>
+                
+                <h3 class="section-title">الخطوط والألوان</h3>
+                <div class="flex-box" style="margin-bottom:15px;">
+                    <select class="control" id="inputThFontFamily" onchange="setGlobalCssVariable('--th-font', `'${this.value}', sans-serif`); renderPaperPages();">
+                        <option value="Cairo">عناوين: كايرو</option>
+                        <option value="Tajawal">عناوين: تجوال</option>
+                        <option value="Almarai">عناوين: المراعي</option>
+                        <option value="Changa">عناوين: تشانجا</option>
+                        <option value="Amiri">عناوين: أميري</option>
+                        <option value="Readex Pro">عناوين: ريدكس</option>
+                        <option value="Rubik">عناوين: روبيك</option>
+                    </select>
+                    <select class="control" id="inputTdFontFamily" onchange="setGlobalCssVariable('--td-font', `'${this.value}', sans-serif`); renderPaperPages();">
+                        <option value="Tajawal" selected>نصوص: تجوال</option>
+                        <option value="Cairo">نصوص: كايرو</option>
+                        <option value="Almarai">نصوص: المراعي</option>
+                        <option value="Changa">نصوص: تشانجا</option>
+                        <option value="Amiri">نصوص: أميري</option>
+                        <option value="Readex Pro">نصوص: ريدكس</option>
+                        <option value="Rubik">نصوص: روبيك</option>
+                    </select>
+                </div>
+                <div class="flex-box" style="margin-bottom:20px;">
+                    <select class="control" id="inputThFontSize" onchange="setGlobalCssVariable('--th-size', this.value+'pt'); renderPaperPages();">
+                        <option value="12">عناوين 12</option>
+                        <option value="14" selected>عناوين 14</option>
+                        <option value="16">عناوين 16</option>
+                    </select>
+                    <select class="control" id="inputTdFontSize" onchange="setGlobalCssVariable('--td-size', this.value+'pt'); renderPaperPages();">
+                        <option value="10">نصوص 10</option>
+                        <option value="12" selected>نصوص 12</option>
+                        <option value="14">نصوص 14</option>
+                    </select>
+                </div>
+                
+                <h3 class="section-title">قوالب الألوان الاحترافية</h3>
+                <div class="themes-grid" id="themesContainerDiv"></div>
+                <label class="check-box"><input type="checkbox" id="checkStripedRows" checked onchange="renderPaperPages()"> تفعيل التظليل المتناوب للصفوف</label>
+            </div>
+
+            <!-- Tab 2: الترويسة -->
+            <div id="tab2" class="tab-content">
+                <h3 class="section-title">الترويسة العلوية</h3>
+                <div class="form-row">
+                    <input type="text" class="control" id="inputMainTitle" value="سجل بيانات الموظفين" placeholder="العنوان الرئيسي" oninput="updateMemoryValue('title')">
+                </div>
+                <div class="flex-box" style="margin-bottom:15px;">
+                    <input type="text" class="control" id="inputDirectorate" value="تربية الرصافة الثالثة" placeholder="المديرية" oninput="updateMemoryValue('dir')">
+                    <input type="text" class="control" id="inputSchoolName" value="مدرسة النور" placeholder="المدرسة" oninput="updateMemoryValue('school')">
+                </div>
+                <div class="flex-box" style="margin-bottom:20px;">
+                    <input type="text" class="control" id="inputDocumentNumber" placeholder="العدد" oninput="updateMemoryValue('num')">
+                    <input type="text" class="control" id="inputDocumentDate" placeholder="التاريخ" oninput="updateMemoryValue('date')">
+                </div>
+                <div class="form-row">
+                    <label>شعار المدرسة</label>
+                    <input type="file" class="control" id="inputLogoUpload" accept="image/*">
+                    <label class="check-box" style="margin-top:10px;"><input type="checkbox" id="checkShowWatermark" onchange="renderPaperPages()"> الشعار كعلامة مائية</label>
+                </div>
+                
+                <h3 class="section-title">التواقيع السفلية</h3>
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature1" onchange="renderPaperPages()"> الأول</label>
+                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle1" value="أعده" oninput="updateMemoryValue('s1')"><input type="text" class="control" id="inputSigName1" value="المنظم" oninput="updateMemoryValue('s1n')"></div>
+                </div>
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature2" onchange="renderPaperPages()"> الثاني</label>
+                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle2" value="راجعه" oninput="updateMemoryValue('s2')"><input type="text" class="control" id="inputSigName2" value="المدقق" oninput="updateMemoryValue('s2n')"></div>
+                </div>
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature3" onchange="renderPaperPages()"> الثالث</label>
+                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle3" value="اعتمده" oninput="updateMemoryValue('s3')"><input type="text" class="control" id="inputSigName3" value="المدير" oninput="updateMemoryValue('s3n')"></div>
+                </div>
+            </div>
+
+            <!-- Tab 4: الورقة -->
+            <div id="tab4" class="tab-content">
+                <h3 class="section-title">إعدادات الورقة</h3>
+                <div class="flex-box" style="margin-bottom: 15px;">
+                    <select class="control" id="inputPaperSize" onchange="updatePaperPrintSettings()">
+                        <option value="a4">حجم A4</option>
+                        <option value="a3">حجم A3</option>
+                    </select>
+                    <select class="control" id="inputPaperOrientation" onchange="updatePaperPrintSettings()">
+                        <option value="portrait">طولية</option>
+                        <option value="landscape">عرضية</option>
+                    </select>
+                </div>
+                
+                <div class="stepper">
+                    <span class="step-label">الهوامش الخارجية</span>
+                    <div class="step-actions">
+                        <span id="labelMarginValue" class="step-val">15mm</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('marg', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('marg', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stepper" style="background: var(--app-primary-light); border-color: var(--app-primary);">
+                    <span class="step-label" style="color: var(--app-primary);">تعبئة الفراغ (إضافة صفوف)</span>
+                    <div class="step-actions">
+                        <span id="labelRowAdjustment" class="step-val">تلقائي</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="changeNumberSetting('adj', 1)">▲</button>
+                            <button class="step-btn" onclick="changeNumberSetting('adj', -1)">▼</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <label>اللون الفاصل في الترويسة</label>
+                    <input type="color" class="control" style="height:40px; padding:2px;" value="#4f46e5" onchange="setGlobalCssVariable('--app-primary', this.value); renderPaperPages();">
+                </div>
+                
+                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
+                    <label class="check-box" style="border:none; padding:0; margin-bottom:10px;"><input type="checkbox" id="checkShowPageNumber" checked onchange="renderPaperPages()"> إظهار الترقيم أسفل الورقة</label>
+                    <select class="control" id="inputPageNumberLanguage" onchange="renderPaperPages()">
+                        <option value="ar">ترقيم بالعربية (١، ٢، ٣)</option>
+                        <option value="en">ترقيم بالإنجليزية (1, 2, 3)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab 5: القوالب الـ 12 -->
+            <div id="tab5" class="tab-content">
+                <h3 class="section-title">قوالب الجداول الجاهزة</h3>
+                <div class="tpl-grid">
+                    <div class="tpl-card" onclick="loadReadyTemplate('attendance')"><div style="font-size:30px; margin-bottom:8px;">📅</div><b>سجل حضور</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('grades')"><div style="font-size:30px; margin-bottom:8px;">🎓</div><b>سجل درجات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('employees')"><div style="font-size:30px; margin-bottom:8px;">👥</div><b>سجل موظفين</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('inventory')"><div style="font-size:30px; margin-bottom:8px;">📦</div><b>سجل مخزن</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('daily')"><div style="font-size:30px; margin-bottom:8px;">✍️</div><b>يومية</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('expenses')"><div style="font-size:30px; margin-bottom:8px;">💸</div><b>مصروفات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('library')"><div style="font-size:30px; margin-bottom:8px;">📚</div><b>إعارة كتب</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('visits')"><div style="font-size:30px; margin-bottom:8px;">🤝</div><b>زيارات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('tasks')"><div style="font-size:30px; margin-bottom:8px;">✅</div><b>مهام</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('clinic')"><div style="font-size:30px; margin-bottom:8px;">🩺</div><b>مراجعات</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('maintenance')"><div style="font-size:30px; margin-bottom:8px;">🛠️</div><b>صيانة</b></div>
+                    <div class="tpl-card" onclick="loadReadyTemplate('empty')"><div style="font-size:30px; margin-bottom:8px;">⬜</div><b>فارغ</b></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- شريط الموبايل السفلي -->
+    <nav class="mobile-nav">
+        <button class="m-nav-btn" id="btnMobilePreview" onclick="toggleMobileInterface('preview')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:24px; height:24px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+            <span>الورقة والتعديل</span>
+        </button>
+        <button class="m-nav-btn active" id="btnMobileEdit" onclick="toggleMobileInterface('controls')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:24px; height:24px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>لوحة الإعدادات</span>
+        </button>
+    </nav>
+
+    <!-- ================= الأكواد البرمجية (كاملة وبدون ضغط) ================= -->
+    <script>
+        // ================= كود حماية الموقع (منع السرقة والاختصارات) =================
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+            if(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) { e.preventDefault(); return false; }
+            if(e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) { e.preventDefault(); return false; }
+            if(e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) { e.preventDefault(); return false; }
+            if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
+        });
+
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v3_ultimate'; 
+        const MAXIMUM_ALLOWED_ROWS = 250; 
+        
+        let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
+        let appColumnWidths = [50, 180, 120, 120]; 
+        let appDataRows = [
+            ["1", "أحمد محمد", "مبرمج", "IT"], 
+            ["2", "سارة خالد", "إدارة", "HR"], 
+            ["3", "علي حسين", "محاسب", "المالية"]
+        ];
+        
+        // مصفوفة لتخزين ألوان الصفوف المميزة (Feature 5) بشكل موازي للبيانات
+        let appRowColors = ["", "", ""]; 
+        
+        let appHistoryStates = []; 
+        let currentHistoryIndex = -1; 
+        let activeFocusRow = -1; 
+        let activeFocusCol = -1;
+        let globalLogoImageBase64 = ''; 
+        let globalPaperSizeMode = 'a4'; 
+        let globalPaperOrientationMode = 'portrait';
+        let isEditingLocked = false; 
+        let activeSortColumnIndex = -1; 
+        let isSortOrderAscending = true;
+        
+        let settingPadding = 8;
+        let settingRowHeight = 12;
+        let settingMargin = 15;
+        let settingRowAdjust = 0;
+
+        function escapeDangerousHtml(text) { 
+            return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); 
+        }
+
+        function setGlobalCssVariable(name, value) { 
+            document.documentElement.style.setProperty(name, value); 
+        }
+
+        function updateCellFocusPosition(rowIndex, colIndex) { 
+            activeFocusRow = rowIndex; 
+            activeFocusCol = colIndex; 
+        }
+
+        function toggleExportMenu() { 
+            let dropdownElement = document.getElementById("exportDropdown");
+            if(dropdownElement) dropdownElement.classList.toggle("show"); 
+        }
+
+        window.onclick = function(event) { 
+            if (!event.target.closest('.dropdown')) { 
+                document.querySelectorAll(".dropdown-content").forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                }); 
+            } 
+        };
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode'); 
+            let isDarkModeActive = document.body.classList.contains('dark-mode'); 
+            localStorage.setItem('sajil_dark_mode_preference', isDarkModeActive);
+            
+            let themeButton = document.getElementById('btnTheme');
+            if(isDarkModeActive) {
+                themeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line></svg>`;
+            } else {
+                themeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+            }
+        }
+
+        function toggleDataLock() {
+            isEditingLocked = !isEditingLocked; 
+            let lockButton = document.getElementById('btnLock');
+            if(isEditingLocked) { 
+                lockButton.classList.add('lock-active'); 
+                document.body.classList.add('locked-mode'); 
+                
+                document.querySelectorAll('.control-panel input, .control-panel select, .control-panel button').forEach(el => {
+                    if(!el.classList.contains('tab-btn')) {
+                        el.disabled = true;
+                        el.style.opacity = '0.5';
+                        el.style.pointerEvents = 'none';
+                    }
+                });
+                
+                alert("تم قفل السجل بالكامل. لا يمكن تعديل البيانات أو الإعدادات."); 
+            } else { 
+                lockButton.classList.remove('lock-active'); 
+                document.body.classList.remove('locked-mode'); 
+                
+                document.querySelectorAll('.control-panel input, .control-panel select, .control-panel button').forEach(el => {
+                    el.disabled = false;
+                    el.style.opacity = '1';
+                    el.style.pointerEvents = 'auto';
+                });
+                
+                alert("تم فك القفل. يمكنك الآن التعديل بحرية."); 
+            }
+            renderPaperPages();
+        }
+
+        let searchDebounceTimeout;
+        function executeSearch() {
+            clearTimeout(searchDebounceTimeout);
+            searchDebounceTimeout = setTimeout(() => {
+                let searchInputElement = document.getElementById('searchInput');
+                if(!searchInputElement) return;
+                
+                let searchValue = searchInputElement.value.toLowerCase();
+                document.querySelectorAll('.t-print tbody').forEach(tbodyElement => {
+                    let tableRows = tbodyElement.rows;
+                    for(let i = 0; i < tableRows.length; i++) {
+                        let rowTextContent = tableRows[i].innerText.toLowerCase();
+                        tableRows[i].style.display = rowTextContent.includes(searchValue) ? '' : 'none';
+                    }
+                });
+            }, 150);
+        }
+
+        function sortDataByColumn(columnIndex) {
+            if(isEditingLocked) return; 
+            if(activeSortColumnIndex === columnIndex) {
+                isSortOrderAscending = !isSortOrderAscending; 
+            } else { 
+                activeSortColumnIndex = columnIndex; 
+                isSortOrderAscending = true; 
+            }
+            
+            // دمج البيانات مع الألوان حتى لا نفقد التلوين عند الفرز
+            let zippedArray = appDataRows.map((row, idx) => ({ row: row, color: appRowColors[idx] }));
+
+            zippedArray.sort((a, b) => {
+                let valueA = a.row[columnIndex], valueB = b.row[columnIndex]; 
+                if(valueA === 'المجموع الكلي:' || valueB === 'المجموع الكلي:') return 1; 
+                
+                let numberA = parseFloat(valueA), numberB = parseFloat(valueB);
+                if (!isNaN(numberA) && !isNaN(numberB)) {
+                    return isSortOrderAscending ? numberA - numberB : numberB - numberA;
+                }
+                return isSortOrderAscending ? String(valueA).localeCompare(String(valueB),'ar') : String(valueB).localeCompare(String(valueA),'ar');
+            });
+            
+            appDataRows = zippedArray.map(item => item.row);
+            appRowColors = zippedArray.map(item => item.color);
+
+            recalculateRowNumbers(); 
+            saveCurrentStateToHistory(); 
+            renderPaperPages();
+        }
+
+        function switchControlTab(tabId, buttonElement) { 
+            document.querySelectorAll('.tab-content, .tab-btn').forEach(element => {
+                element.classList.remove('active');
+            }); 
+            let targetTab = document.getElementById(tabId);
+            if(targetTab) targetTab.classList.add('active'); 
+            if(buttonElement) buttonElement.classList.add('active'); 
+        }
+
+        function toggleMobileInterface(viewMode) {
+            if(viewMode === 'preview') { 
+                document.body.classList.remove('show-controls'); 
+                let btnPrev = document.getElementById('btnMobilePreview');
+                let btnEdit = document.getElementById('btnMobileEdit');
+                if(btnPrev) btnPrev.classList.add('active'); 
+                if(btnEdit) btnEdit.classList.remove('active'); 
+            } else { 
+                document.body.classList.add('show-controls'); 
+                let btnPrev = document.getElementById('btnMobilePreview');
+                let btnEdit = document.getElementById('btnMobileEdit');
+                if(btnEdit) btnEdit.classList.add('active'); 
+                if(btnPrev) btnPrev.classList.remove('active'); 
+            }
+        }
+
+        function executePrint() { 
+            saveAllDataToLocalStorage(); 
+            setTimeout(() => { window.print(); }, 400); 
+        }
+
+        function changeNumberSetting(settingName, stepValue) {
+            if(settingName === 'pad') { 
+                settingPadding += stepValue; 
+                if(settingPadding < 2) settingPadding = 2; 
+                if(settingPadding > 30) settingPadding = 30; 
+                setGlobalCssVariable('--tbl-padding', settingPadding + 'px'); 
+                let lbl = document.getElementById('labelPadding');
+                if(lbl) lbl.innerText = settingPadding + 'px'; 
+            }
+            if(settingName === 'row') { 
+                settingRowHeight += stepValue; 
+                if(settingRowHeight < 8) settingRowHeight = 8; 
+                if(settingRowHeight > 150) settingRowHeight = 150; 
+                setGlobalCssVariable('--tbl-row-height', settingRowHeight + 'mm'); 
+                let lbl = document.getElementById('labelRowHeight');
+                if(lbl) lbl.innerText = settingRowHeight + 'mm'; 
+            }
+            if(settingName === 'marg') { 
+                settingMargin += stepValue; 
+                if(settingMargin < 0) settingMargin = 0; 
+                if(settingMargin > 50) settingMargin = 50; 
+                setGlobalCssVariable('--a4-margin', settingMargin + 'mm'); 
+                let lbl = document.getElementById('labelMarginValue');
+                if(lbl) lbl.innerText = settingMargin + 'mm'; 
+            }
+            if(settingName === 'adj') { 
+                settingRowAdjust += stepValue; 
+                if(settingRowAdjust < -10) settingRowAdjust = -10; 
+                if(settingRowAdjust > 20) settingRowAdjust = 20; 
+                let lbl = document.getElementById('labelRowAdjustment');
+                if(lbl) lbl.innerText = settingRowAdjust === 0 ? 'تلقائي' : (settingRowAdjust > 0 ? '+' + settingRowAdjust : settingRowAdjust); 
+            }
+            renderPaperPages();
+        }
+
+        function setTableAlignment(alignmentValue) { 
+            document.querySelectorAll('#btnAlignRight, #btnAlignCenter, #btnAlignLeft').forEach(element => {
+                element.classList.remove('active');
+            }); 
+            
+            if(alignmentValue === 'right') {
+                setGlobalCssVariable('--tbl-align', 'right');
+                setGlobalCssVariable('--tbl-flex-align', 'flex-start');
+                let btn = document.getElementById('btnAlignRight');
+                if(btn) btn.classList.add('active');
+            }
+            if(alignmentValue === 'center') {
+                setGlobalCssVariable('--tbl-align', 'center');
+                setGlobalCssVariable('--tbl-flex-align', 'center');
+                let btn = document.getElementById('btnAlignCenter');
+                if(btn) btn.classList.add('active');
+            }
+            if(alignmentValue === 'left') {
+                setGlobalCssVariable('--tbl-align', 'left');
+                setGlobalCssVariable('--tbl-flex-align', 'flex-end');
+                let btn = document.getElementById('btnAlignLeft');
+                if(btn) btn.classList.add('active');
+            }
+            renderPaperPages(); 
+        }
+
+        function updatePaperPrintSettings() { 
+            let sizeSelect = document.getElementById('inputPaperSize');
+            let orientationSelect = document.getElementById('inputPaperOrientation');
+            
+            globalPaperSizeMode = sizeSelect ? sizeSelect.value : 'a4'; 
+            globalPaperOrientationMode = orientationSelect ? orientationSelect.value : 'portrait'; 
+            
+            let cssPrintConfiguration = globalPaperSizeMode.toUpperCase() + ' ' + globalPaperOrientationMode;
+            let printStyleElem = document.getElementById('printStyle');
+            if(printStyleElem) {
+                printStyleElem.innerHTML = `@media print { @page { size: ${cssPrintConfiguration}; margin: 0; } }`; 
+            }
+            renderPaperPages(); 
+        }
+
+        let logoUploadInput = document.getElementById('inputLogoUpload');
+        if(logoUploadInput) {
+            logoUploadInput.onchange = function(event) { 
+                if(event.target.files && event.target.files[0]) { 
+                    let fileReader = new FileReader(); 
+                    fileReader.onload = function(readerEvent) { 
+                        globalLogoImageBase64 = readerEvent.target.result; 
+                        renderPaperPages(); 
+                    }; 
+                    fileReader.readAsDataURL(event.target.files[0]); 
+                } 
+            };
+        }
+
+        const systemColorThemes = [
+            { name:"احترافي", thGradient:"linear-gradient(135deg, #4f46e5, #312e81)", idxGradient:"linear-gradient(135deg, #f1f5f9, #e2e8f0)", tdBackground:"#ffffff", tdAltBackground:"#f8fafc", thTextColor:"#ffffff", tdTextColor:"#0f172a" },
+            { name:"بحري", thGradient:"linear-gradient(135deg, #0ea5e9, #0369a1)", idxGradient:"linear-gradient(135deg, #e0f2fe, #bae6fd)", tdBackground:"#ffffff", tdAltBackground:"#f0f9ff", thTextColor:"#ffffff", tdTextColor:"#082f49" },
+            { name:"أخضر كلاسيك", thGradient:"linear-gradient(135deg, #10b981, #047857)", idxGradient:"linear-gradient(135deg, #d1fae5, #a7f3d0)", tdBackground:"#ffffff", tdAltBackground:"#ecfdf5", thTextColor:"#ffffff", tdTextColor:"#022c22" },
+            { name:"ذهبي ملكي", thGradient:"linear-gradient(135deg, #f59e0b, #b45309)", idxGradient:"linear-gradient(135deg, #fef3c7, #fde68a)", tdBackground:"#ffffff", tdAltBackground:"#fffbeb", thTextColor:"#ffffff", tdTextColor:"#451a03" },
+            { name:"رمادي فاخر", thGradient:"linear-gradient(135deg, #475569, #1e293b)", idxGradient:"linear-gradient(135deg, #f1f5f9, #e2e8f0)", tdBackground:"#ffffff", tdAltBackground:"#f8fafc", thTextColor:"#ffffff", tdTextColor:"#0f172a" },
+            { name:"وردي ناعم", thGradient:"linear-gradient(135deg, #ec4899, #be185d)", idxGradient:"linear-gradient(135deg, #fce7f3, #fbcfe8)", tdBackground:"#ffffff", tdAltBackground:"#fdf2f8", thTextColor:"#ffffff", tdTextColor:"#500724" },
+            { name:"غروب", thGradient:"linear-gradient(135deg, #f43f5e, #be123c)", idxGradient:"linear-gradient(135deg, #ffe4e6, #fecdd3)", tdBackground:"#ffffff", tdAltBackground:"#fff1f2", thTextColor:"#ffffff", tdTextColor:"#4c0519" },
+            { name:"ليلي", thGradient:"linear-gradient(135deg, #0f172a, #000000)", idxGradient:"linear-gradient(135deg, #334155, #1e293b)", tdBackground:"#1e293b", tdAltBackground:"#0f172a", thTextColor:"#f8fafc", tdTextColor:"#f1f5f9" },
+            { name:"قهوة", thGradient:"linear-gradient(135deg, #78350f, #451a03)", idxGradient:"linear-gradient(135deg, #fef3c7, #fde68a)", tdBackground:"#ffffff", tdAltBackground:"#fffbeb", thTextColor:"#ffffff", tdTextColor:"#451a03" },
+            { name:"بنفسجي", thGradient:"linear-gradient(135deg, #8b5cf6, #5b21b6)", idxGradient:"linear-gradient(135deg, #ede9fe, #ddd6fe)", tdBackground:"#ffffff", tdAltBackground:"#f5f3ff", thTextColor:"#ffffff", tdTextColor:"#2e1065" },
+            { name:"فيروزي", thGradient:"linear-gradient(135deg, #14b8a6, #0f766e)", idxGradient:"linear-gradient(135deg, #ccfbf1, #99f6e4)", tdBackground:"#ffffff", tdAltBackground:"#f0fdfa", thTextColor:"#ffffff", tdTextColor:"#042f2e" },
+            { name:"ورقة رسمية", thGradient:"#ffffff", idxGradient:"#f8fafc", tdBackground:"#ffffff", tdAltBackground:"#ffffff", thTextColor:"#000000", tdTextColor:"#000000" }
+        ];
+
+        function initializeColorThemesUI() {
+            let themesContainer = document.getElementById('themesContainerDiv'); 
+            if(!themesContainer) return;
+            
+            systemColorThemes.forEach(themeObject => {
+                let themeCardDiv = document.createElement('div'); 
+                themeCardDiv.className = 'theme-card'; 
+                themeCardDiv.style.background = themeObject.thGradient; 
+                themeCardDiv.innerText = themeObject.name;
+                
+                if(themeObject.name === 'ورقة رسمية') { 
+                    themeCardDiv.style.color = '#000'; 
+                    themeCardDiv.style.border = '1px solid var(--app-border)'; 
+                }
+                
+                themeCardDiv.onclick = function() { applyColorTheme(themeObject, themeCardDiv); }; 
+                themesContainer.appendChild(themeCardDiv);
+            });
+        }
+
+        function applyColorTheme(themeObject, clickedElement) {
+            document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('active')); 
+            if(clickedElement) clickedElement.classList.add('active');
+            
+            setGlobalCssVariable('--th-bg', themeObject.thGradient); 
+            setGlobalCssVariable('--idx-bg', themeObject.idxGradient); 
+            setGlobalCssVariable('--td-bg', themeObject.tdBackground); 
+            setGlobalCssVariable('--td-alt-bg', themeObject.tdAltBackground); 
+            setGlobalCssVariable('--th-color', themeObject.thTextColor); 
+            setGlobalCssVariable('--td-color', themeObject.tdTextColor);
+            
+            let thPicker = document.getElementById('inputThColorPicker'); 
+            let tdPicker = document.getElementById('inputTdColorPicker');
+            if(thPicker) thPicker.value = themeObject.thTextColor !== '#ffffff' ? '#000000' : '#ffffff';
+            if(tdPicker) tdPicker.value = themeObject.tdTextColor !== '#ffffff' ? '#ffffff' : '#000000';
+            
+            renderPaperPages();
+        }
+
+        function clearAllSystemData() { 
+            if(confirm("هل أنت متأكد من مسح جميع السجلات والبيانات نهائياً؟")) { 
+                localStorage.removeItem(LOCAL_STORAGE_KEY); 
+                location.reload(); 
+            } 
+        }
+
+        function saveAllDataToLocalStorage() { 
+            try { 
+                const systemStateObject = { 
+                    savedColumns: appColumns, 
+                    savedWidths: appColumnWidths, 
+                    savedData: appDataRows, 
+                    savedRowColors: appRowColors, // حفظ الألوان
+                    savedLogo: globalLogoImageBase64, 
+                    savedTitle: document.getElementById('inputMainTitle') ? document.getElementById('inputMainTitle').value : '', 
+                    savedDirectorate: document.getElementById('inputDirectorate') ? document.getElementById('inputDirectorate').value : '', 
+                    savedSchool: document.getElementById('inputSchoolName') ? document.getElementById('inputSchoolName').value : '', 
+                    savedDocNum: document.getElementById('inputDocumentNumber') ? document.getElementById('inputDocumentNumber').value : '', 
+                    savedDocDate: document.getElementById('inputDocumentDate') ? document.getElementById('inputDocumentDate').value : '', 
+                    savedPaperSize: globalPaperSizeMode, 
+                    savedPaperOri: globalPaperOrientationMode, 
+                    savedPadding: settingPadding, 
+                    savedRowHeight: settingRowHeight, 
+                    savedMargin: settingMargin, 
+                    savedAdjustment: settingRowAdjust,
+                    
+                    savedChecks: {
+                        cond: document.getElementById('checkConditionalFormat')?.checked || false,
+                        strip: document.getElementById('checkStripedRows')?.checked || false,
+                        wm: document.getElementById('checkShowWatermark')?.checked || false,
+                        s1: document.getElementById('checkSignature1')?.checked || false,
+                        s2: document.getElementById('checkSignature2')?.checked || false,
+                        s3: document.getElementById('checkSignature3')?.checked || false,
+                        page: document.getElementById('checkShowPageNumber')?.checked || false
+                    }
+                };
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(systemStateObject)); 
+            } catch(error) {
+                console.error("Save Error:", error);
+            } 
+        }
+
+        function loadAllDataFromLocalStorage() {
+            try {
+                if(localStorage.getItem('sajil_dark_mode_preference') === 'true') { 
+                    document.body.classList.add('dark-mode'); 
+                    let themeBtn = document.getElementById('btnTheme');
+                    if(themeBtn) {
+                        themeBtn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line></svg>`; 
+                    }
+                }
+                
+                let savedDataString = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if(savedDataString) {
+                    let parsedState = JSON.parse(savedDataString); 
+                    
+                    if(parsedState.savedColumns) appColumns = parsedState.savedColumns; 
+                    if(parsedState.savedWidths) appColumnWidths = parsedState.savedWidths; 
+                    if(parsedState.savedData) {
+                        appDataRows = parsedState.savedData; 
+                        if(appDataRows.length > MAXIMUM_ALLOWED_ROWS) {
+                            appDataRows = appDataRows.slice(0, MAXIMUM_ALLOWED_ROWS);
+                        }
+                    }
+                    
+                    // استرجاع ألوان الصفوف أو تعبئتها بفراغات
+                    if(parsedState.savedRowColors) {
+                        appRowColors = parsedState.savedRowColors;
+                    } else {
+                        appRowColors = Array(appDataRows.length).fill("");
+                    }
+                    
+                    if(parsedState.savedLogo) globalLogoImageBase64 = parsedState.savedLogo; 
+                    
+                    let elTitle = document.getElementById('inputMainTitle');
+                    if(parsedState.savedTitle && elTitle) elTitle.value = parsedState.savedTitle; 
+                    
+                    let elDir = document.getElementById('inputDirectorate');
+                    if(parsedState.savedDirectorate && elDir) elDir.value = parsedState.savedDirectorate;
+                    
+                    let elSchool = document.getElementById('inputSchoolName');
+                    if(parsedState.savedSchool && elSchool) elSchool.value = parsedState.savedSchool; 
+                    
+                    let elDocNum = document.getElementById('inputDocumentNumber');
+                    if(parsedState.savedDocNum && elDocNum) elDocNum.value = parsedState.savedDocNum; 
+                    
+                    let elDocDate = document.getElementById('inputDocumentDate');
+                    if(parsedState.savedDocDate && elDocDate) elDocDate.value = parsedState.savedDocDate;
+                    
+                    let elPaperSize = document.getElementById('inputPaperSize');
+                    if(parsedState.savedPaperSize && elPaperSize) { 
+                        elPaperSize.value = parsedState.savedPaperSize; 
+                        globalPaperSizeMode = parsedState.savedPaperSize; 
+                    } 
+                    
+                    let elOrientation = document.getElementById('inputPaperOrientation');
+                    if(parsedState.savedPaperOri && elOrientation) { 
+                        elOrientation.value = parsedState.savedPaperOri; 
+                        globalPaperOrientationMode = parsedState.savedPaperOri; 
+                    }
+                    
+                    if(parsedState.savedPadding !== undefined) { 
+                        settingPadding = parsedState.savedPadding; 
+                        setGlobalCssVariable('--tbl-padding', settingPadding + 'px'); 
+                        let lblPad = document.getElementById('labelPadding');
+                        if(lblPad) lblPad.innerText = settingPadding + 'px'; 
+                    } 
+                    
+                    if(parsedState.savedRowHeight !== undefined) { 
+                        settingRowHeight = parsedState.savedRowHeight; 
+                        setGlobalCssVariable('--tbl-row-height', settingRowHeight + 'mm'); 
+                        let lblRow = document.getElementById('labelRowHeight');
+                        if(lblRow) lblRow.innerText = settingRowHeight + 'mm'; 
+                    }
+                    
+                    if(parsedState.savedMargin !== undefined) { 
+                        settingMargin = parsedState.savedMargin; 
+                        setGlobalCssVariable('--a4-margin', settingMargin + 'mm'); 
+                        let lblMarg = document.getElementById('labelMarginValue');
+                        if(lblMarg) lblMarg.innerText = settingMargin + 'mm'; 
+                    } 
+                    
+                    if(parsedState.savedAdjustment !== undefined) { 
+                        settingRowAdjust = parsedState.savedAdjustment; 
+                        let lblAdj = document.getElementById('labelRowAdjustment');
+                        if(lblAdj) {
+                            lblAdj.innerText = settingRowAdjust === 0 ? 'تلقائي' : (settingRowAdjust > 0 ? '+' + settingRowAdjust : settingRowAdjust); 
+                        }
+                    }
+
+                    if(parsedState.savedChecks) {
+                        let cCond = document.getElementById('checkConditionalFormat'); if(cCond) cCond.checked = parsedState.savedChecks.cond;
+                        let cStrp = document.getElementById('checkStripedRows'); if(cStrp) cStrp.checked = parsedState.savedChecks.strip;
+                        let cWm = document.getElementById('checkShowWatermark'); if(cWm) cWm.checked = parsedState.savedChecks.wm;
+                        let cS1 = document.getElementById('checkSignature1'); if(cS1) cS1.checked = parsedState.savedChecks.s1;
+                        let cS2 = document.getElementById('checkSignature2'); if(cS2) cS2.checked = parsedState.savedChecks.s2;
+                        let cS3 = document.getElementById('checkSignature3'); if(cS3) cS3.checked = parsedState.savedChecks.s3;
+                        let cPage = document.getElementById('checkShowPageNumber'); if(cPage) cPage.checked = parsedState.savedChecks.page;
+                    }
+                }
+            } catch(error) {
+                console.error("Load Error:", error);
+            } 
+            
+            setTableAlignment('center');
+            updatePaperPrintSettings();
+        }
+
+        function exportToExcelFile() {
+            let htmlTableString = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' dir='rtl'><head><meta charset='utf-8'><style>th,td{border:1px solid #000; text-align:center;}</style></head><body><table><thead><tr>"; 
+            appColumns.forEach(col => {
+                htmlTableString += `<th>${escapeDangerousHtml(col)}</th>`;
+            }); 
+            htmlTableString += "</tr></thead><tbody>"; 
+            appDataRows.forEach(row => { 
+                htmlTableString += "<tr>"; 
+                row.forEach(cell => {
+                    htmlTableString += `<td>${escapeDangerousHtml(cell)}</td>`;
+                }); 
+                htmlTableString += "</tr>"; 
+            }); 
+            htmlTableString += "</tbody></table></body></html>"; 
+            
+            let blobObject = new Blob(['\ufeff', htmlTableString], { type: 'application/vnd.ms-excel' }); 
+            let downloadLink = URL.createObjectURL(blobObject); 
+            let anchorElement = document.createElement('a'); 
+            anchorElement.href = downloadLink; 
+            anchorElement.download = 'رقيـم_بيانات.xls'; 
+            document.body.appendChild(anchorElement); 
+            anchorElement.click(); 
+            document.body.removeChild(anchorElement); 
+            URL.revokeObjectURL(downloadLink); 
+        }
+
+        function exportToWordFile() {
+            let titleElement = document.getElementById('inputMainTitle');
+            let documentTitle = titleElement ? titleElement.value : 'السجل';
+            let htmlDocString = "<html xmlns:w='urn:schemas-microsoft-com:office:word' dir='rtl'><head><meta charset='utf-8'></head><body><h2 style='text-align:center; font-family:Arial;'>"+escapeDangerousHtml(documentTitle)+"</h2><table border='1' style='border-collapse:collapse; width:100%; text-align:center;'><thead><tr>"; 
+            appColumns.forEach(col => {
+                htmlDocString += `<th style="background:#e0e7ff; padding:8px;">${escapeDangerousHtml(col)}</th>`;
+            }); 
+            htmlDocString += "</tr></thead><tbody>"; 
+            appDataRows.forEach(row => { 
+                htmlDocString += "<tr>"; 
+                row.forEach(cell => {
+                    htmlDocString += `<td style="padding:8px;">${escapeDangerousHtml(cell)}</td>`;
+                }); 
+                htmlDocString += "</tr>"; 
+            }); 
+            htmlDocString += "</tbody></table></body></html>"; 
+            
+            let blobObject = new Blob(['\ufeff', htmlDocString], { type: 'application/msword' }); 
+            let downloadLink = URL.createObjectURL(blobObject); 
+            let anchorElement = document.createElement('a'); 
+            anchorElement.href = downloadLink; 
+            anchorElement.download = 'رقيـم_بيانات.doc'; 
+            document.body.appendChild(anchorElement); 
+            anchorElement.click(); 
+            document.body.removeChild(anchorElement); 
+            URL.revokeObjectURL(downloadLink); 
+        }
+
+        function downloadJsonBackup() { 
+            saveAllDataToLocalStorage(); 
+            let savedStr = localStorage.getItem(LOCAL_STORAGE_KEY);
+            let fileBlob = new Blob([savedStr], {type: "application/json"}); 
+            let downloadUrl = URL.createObjectURL(fileBlob); 
+            let anchorTag = document.createElement('a'); 
+            anchorTag.href = downloadUrl; 
+            anchorTag.download = "backup_raqeem.json"; 
+            document.body.appendChild(anchorTag); 
+            anchorTag.click(); 
+            document.body.removeChild(anchorTag); 
+            URL.revokeObjectURL(downloadUrl); 
+        }
+
+        function processUploadedBackup(event) { 
+            let uploadedFile = event.target.files[0]; 
+            if(!uploadedFile) return; 
+            let fileReader = new FileReader(); 
+            fileReader.onload = function(e) { 
+                try { 
+                    let parsedJson = JSON.parse(e.target.result); 
+                    if(parsedJson.savedColumns && parsedJson.savedData) { 
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsedJson)); 
+                        alert("تم رفع النسخة واسترجاع البيانات بنجاح!"); 
+                        location.reload(); 
+                    } else { 
+                        alert("عذراً، هذا الملف غير متوافق مع النظام!"); 
+                    } 
+                } catch(err) { 
+                    alert("حدث خطأ أثناء قراءة الملف."); 
+                } 
+            }; 
+            fileReader.readAsText(uploadedFile); 
+        }
+
+        // ================= استيراد ملفات الإكسل (Feature 4) =================
+        function processExcelImport(event) {
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            let file = event.target.files[0];
+            if(!file) return;
+            
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let data = new Uint8Array(e.target.result);
+                    let workbook = XLSX.read(data, {type: 'array'});
+                    let firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    let excelRows = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                    
+                    if(excelRows.length > 0) {
+                        excelRows.forEach(rowArray => {
+                            if(rowArray.length === 0) return;
+                            if(appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return;
+                            
+                            const newRowInsertion = Array(appColumns.length).fill("");
+                            for(let i=0; i<appColumns.length; i++) {
+                                // الإكسل قد لا يحتوي على ترقيم، نبدأ الإضافة من العمود الثاني
+                                if(i > 0) {
+                                    newRowInsertion[i] = rowArray[i-1] ? String(rowArray[i-1]) : "";
+                                }
+                            }
+                            appDataRows.push(newRowInsertion);
+                            appRowColors.push(""); // حفظ مكان فارغ للون
+                        });
+                        
+                        recalculateRowNumbers();
+                        saveCurrentStateToHistory();
+                        renderPaperPages();
+                    }
+                } catch(err) {
+                    alert("حدث خطأ أثناء قراءة ملف الإكسل. يرجى التأكد من أن الملف سليم.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = null; // إعادة تعيين الحقل
+        }
+
+        // ================= تلوين الصف المحدد (Feature 5) =================
+        function setHighlightColorForActiveRow(hexColor) {
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            if(activeFocusRow < 0 || activeFocusRow >= appDataRows.length) {
+                alert("يرجى النقر على أي كلمة في الصف الذي تريد تلوينه أولاً!");
+                return;
+            }
+            // لا يجوز تلوين المجموع الكلي
+            if(appDataRows[activeFocusRow][1] === 'المجموع الكلي:') return;
+            
+            appRowColors[activeFocusRow] = hexColor;
+            saveCurrentStateToHistory();
+            renderPaperPages();
+        }
+
+        function updateMemoryValue(updateType, rowIndex, colIndex, newValue) {
+            if(['title', 'dir', 'school', 'num', 'date', 's1', 's1n', 's2', 's2n', 's3', 's3n'].includes(updateType)) {
+                let printElement = document.getElementById(`print_${updateType}`);
+                if(printElement) {
+                    if(updateType === 'title') {
+                        let el = document.getElementById('inputMainTitle');
+                        printElement.innerText = el ? el.value : '';
+                    }
+                    if(updateType === 'dir') {
+                        let el = document.getElementById('inputDirectorate');
+                        printElement.innerText = el ? el.value : '';
+                    }
+                    if(updateType === 'school') {
+                        let el = document.getElementById('inputSchoolName');
+                        printElement.innerText = el ? el.value : '';
+                    }
+                    if(updateType === 'num') {
+                        let el = document.getElementById('inputDocumentNumber');
+                        printElement.innerText = (el && el.value) ? 'العدد: ' + el.value : '';
+                    }
+                    if(updateType === 'date') {
+                        let el = document.getElementById('inputDocumentDate');
+                        printElement.innerText = (el && el.value) ? 'التاريخ: ' + el.value : '';
+                    }
+                    
+                    if(updateType === 's1') { let el = document.getElementById('inputSigTitle1'); printElement.innerText = el ? el.value : ''; }
+                    if(updateType === 's1n') { let el = document.getElementById('inputSigName1'); printElement.innerText = el ? el.value : ''; }
+                    if(updateType === 's2') { let el = document.getElementById('inputSigTitle2'); printElement.innerText = el ? el.value : ''; }
+                    if(updateType === 's2n') { let el = document.getElementById('inputSigName2'); printElement.innerText = el ? el.value : ''; }
+                    if(updateType === 's3') { let el = document.getElementById('inputSigTitle3'); printElement.innerText = el ? el.value : ''; }
+                    if(updateType === 's3n') { let el = document.getElementById('inputSigName3'); printElement.innerText = el ? el.value : ''; }
+                }
+                saveAllDataToLocalStorage();
+                return;
+            }
+
+            if(updateType === 'header') {
+                if(appColumns[colIndex] !== newValue.trim()) {
+                    appColumns[colIndex] = newValue.trim();
+                    saveCurrentStateToHistory();
+                    saveAllDataToLocalStorage();
+                }
+                return;
+            }
+
+            if(updateType === 'cell') {
+                let formattedValue = newValue.trim();
+                if(appDataRows[rowIndex] && appDataRows[rowIndex][colIndex] !== formattedValue) { 
+                    appDataRows[rowIndex][colIndex] = formattedValue; 
+                    saveCurrentStateToHistory(); 
+                    saveAllDataToLocalStorage(); 
+                    
+                    let cellElementId = `cell_${rowIndex}_${colIndex}`;
+                    let cellElement = document.getElementById(cellElementId); 
+                    
+                    if(cellElement) {
+                        cellElement.classList.remove('cond-fail', 'cond-warn');
+                        
+                        let checkConditional = document.getElementById('checkConditionalFormat');
+                        if (checkConditional && checkConditional.checked && colIndex > 1 && appDataRows[rowIndex][1] !== 'المجموع الكلي:') { 
+                            let parsedNumber = parseFloat(formattedValue); 
+                            if(!isNaN(parsedNumber) && parsedNumber < 50 && formattedValue !== "") {
+                                cellElement.classList.add('cond-fail'); 
+                            } else if(formattedValue.includes("غائب") || formattedValue.includes("اجازة") || formattedValue.includes("إجازة")) {
+                                cellElement.classList.add('cond-warn'); 
+                            }
+                        }
+                    }
+                } 
+            }
+        }
+
+        document.addEventListener('paste', function(event) { 
+            if(event.target.classList.contains('e-cell')) { 
+                event.preventDefault(); 
+                let clipboardData = (event.originalEvent || event).clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, clipboardData.trim()); 
+            } 
+        });
+
+        function renderColumnWidthSliders() {
+            while(appColumnWidths.length < appColumns.length) {
+                appColumnWidths.push(100);
+            }
+            if(appColumnWidths.length > appColumns.length) {
+                appColumnWidths = appColumnWidths.slice(0, appColumns.length);
+            }
+
+            let containerWrap = document.getElementById('columnSlidersContainer'); 
+            if(!containerWrap) return; 
+            
+            let slidersHtmlString = '';
+            appColumns.forEach((colName, index) => { 
+                slidersHtmlString += `
+                <div class="stepper">
+                    <span class="step-label" title="${escapeDangerousHtml(colName)}">${escapeDangerousHtml(colName) || 'عمود'}</span>
+                    <div class="step-actions">
+                        <span id="labelWidth${index}" class="step-val">${appColumnWidths[index]}px</span>
+                        <div class="step-btn-group">
+                            <button class="step-btn" onclick="updateColWidthViaStepper(${index}, 1)">▲</button>
+                            <button class="step-btn" onclick="updateColWidthViaStepper(${index}, -1)">▼</button>
+                        </div>
+                    </div>
+                </div>`; 
+            });
+            containerWrap.innerHTML = slidersHtmlString;
+        }
+
+        function updateColWidthViaStepper(colIndex, changeAmount) { 
+            let newWidthValue = appColumnWidths[colIndex] + changeAmount; 
+            
+            if(newWidthValue < 10) {
+                newWidthValue = 10; 
+            }
+            
+            if(newWidthValue > 600) newWidthValue = 600; 
+            
+            appColumnWidths[colIndex] = newWidthValue; 
+            
+            let labelElement = document.getElementById(`labelWidth${colIndex}`);
+            if(labelElement) {
+                labelElement.innerText = newWidthValue + 'px'; 
+            }
+            
+            document.querySelectorAll(`.header-col-${colIndex}`).forEach(thElement => { 
+                thElement.style.width = newWidthValue + 'px'; 
+                thElement.style.minWidth = newWidthValue + 'px'; 
+                thElement.style.maxWidth = newWidthValue + 'px'; 
+            }); 
+            saveAllDataToLocalStorage(); 
+        }
+
+        function saveCurrentStateToHistory() { 
+            if (currentHistoryIndex < appHistoryStates.length - 1) {
+                appHistoryStates = appHistoryStates.slice(0, currentHistoryIndex + 1);
+            }
+            
+            // التأكد من استقرار طول المصفوفات
+            while(appRowColors.length < appDataRows.length) appRowColors.push("");
+            if(appRowColors.length > appDataRows.length) appRowColors = appRowColors.slice(0, appDataRows.length);
+
+            appHistoryStates.push({ 
+                cols: [...appColumns], 
+                colWidths: [...appColumnWidths], 
+                data: JSON.parse(JSON.stringify(appDataRows)),
+                colors: [...appRowColors]
+            }); 
+            if(appHistoryStates.length > 30) {
+                appHistoryStates.shift(); 
+            } else {
+                currentHistoryIndex++; 
+            }
+            saveAllDataToLocalStorage(); 
+        }
+
+        function performUndo() { 
+            if(currentHistoryIndex > 0) { 
+                currentHistoryIndex--; 
+                let restoredState = appHistoryStates[currentHistoryIndex]; 
+                appColumns = [...restoredState.cols]; 
+                appColumnWidths = [...restoredState.colWidths]; 
+                appDataRows = JSON.parse(JSON.stringify(restoredState.data)); 
+                if(restoredState.colors) appRowColors = [...restoredState.colors];
+                renderColumnWidthSliders(); 
+                renderPaperPages(); 
+            } 
+        }
+
+        function performRedo() { 
+            if(currentHistoryIndex < appHistoryStates.length - 1) { 
+                currentHistoryIndex++; 
+                let restoredState = appHistoryStates[currentHistoryIndex]; 
+                appColumns = [...restoredState.cols]; 
+                appColumnWidths = [...restoredState.colWidths]; 
+                appDataRows = JSON.parse(JSON.stringify(restoredState.data)); 
+                if(restoredState.colors) appRowColors = [...restoredState.colors];
+                renderColumnWidthSliders(); 
+                renderPaperPages(); 
+            } 
+        }
+
+        function recalculateRowNumbers() { 
+            let rowIndexCounter = 1; 
+            appDataRows.forEach(rowArr => { 
+                if(rowArr[1] !== 'المجموع الكلي:') { 
+                    rowArr[0] = rowIndexCounter.toString(); 
+                    rowIndexCounter++; 
+                } else { 
+                    rowArr[0] = ''; 
+                } 
+            }); 
+        }
+
+        function addNewRowToTable() { 
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            if(appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return; 
+            
+            const newEmptyRow = Array(appColumns.length).fill(""); 
+            if(activeFocusRow > -1 && activeFocusRow < appDataRows.length) { 
+                appDataRows.splice(activeFocusRow + 1, 0, newEmptyRow); 
+                appRowColors.splice(activeFocusRow + 1, 0, ""); // موازنة الألوان
+                activeFocusRow++; 
+            } else { 
+                appDataRows.push(newEmptyRow); 
+                appRowColors.push("");
+            } 
+            recalculateRowNumbers(); 
+            saveCurrentStateToHistory(); 
+            renderPaperPages(); 
+        }
+
+        function addNewColumnToTable() { 
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            let targetInsertIndex = (activeFocusCol > -1) ? activeFocusCol + 1 : appColumns.length; 
+            appColumns.splice(targetInsertIndex, 0, "عمود جديد"); 
+            appColumnWidths.splice(targetInsertIndex, 0, 100); 
+            appDataRows.forEach(rowArr => rowArr.splice(targetInsertIndex, 0, "")); 
+            if(activeFocusCol > -1) activeFocusCol++; 
+            saveCurrentStateToHistory(); 
+            renderColumnWidthSliders(); 
+            renderPaperPages(); 
+        }
+
+        function deleteActiveRow() { 
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            if(appDataRows.length === 0) return; 
+            if(activeFocusRow > -1 && activeFocusRow < appDataRows.length) { 
+                appDataRows.splice(activeFocusRow, 1); 
+                appRowColors.splice(activeFocusRow, 1); // موازنة الألوان
+                activeFocusRow = -1; 
+            } else { 
+                appDataRows.pop(); 
+                appRowColors.pop();
+            } 
+            recalculateRowNumbers(); 
+            saveCurrentStateToHistory(); 
+            renderPaperPages(); 
+        }
+
+        function deleteActiveColumn() { 
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            if(appColumns.length <= 1) return; 
+            let targetDeleteIndex = (activeFocusCol > -1 && activeFocusCol < appColumns.length) ? activeFocusCol : appColumns.length - 1; 
+            if(targetDeleteIndex === 0) { alert("لا يمكن حذف التسلسل"); return; }
+            
+            appColumns.splice(targetDeleteIndex, 1); 
+            appColumnWidths.splice(targetDeleteIndex, 1); 
+            appDataRows.forEach(rowArr => rowArr.splice(targetDeleteIndex, 1)); 
+            activeFocusCol = -1; 
+            saveCurrentStateToHistory(); 
+            renderColumnWidthSliders(); 
+            renderPaperPages(); 
+        }
+
+        function moveActiveRowBy(directionStep) { 
+            if(isEditingLocked) return;
+            if(activeFocusRow < 0 || activeFocusRow >= appDataRows.length) return; 
+            let targetSwapIndex = activeFocusRow + directionStep; 
+            if(targetSwapIndex < 0 || targetSwapIndex >= appDataRows.length) return; 
+            
+            let tempRowData = appDataRows[activeFocusRow]; 
+            appDataRows[activeFocusRow] = appDataRows[targetSwapIndex]; 
+            appDataRows[targetSwapIndex] = tempRowData; 
+            
+            let tempColor = appRowColors[activeFocusRow];
+            appRowColors[activeFocusRow] = appRowColors[targetSwapIndex];
+            appRowColors[targetSwapIndex] = tempColor;
+
+            activeFocusRow = targetSwapIndex; 
+            
+            recalculateRowNumbers(); 
+            saveCurrentStateToHistory(); 
+            renderPaperPages(); 
+        }
+
+        function calculateAutomaticSum() {
+            if(appDataRows.length === 0 || appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return; 
+            let sumRowData = Array(appColumns.length).fill(""); 
+            sumRowData[0] = ""; 
+            sumRowData[1] = "المجموع الكلي:"; 
+            let hasValidNumbers = false;
+            
+            for(let colIdx = 2; colIdx < appColumns.length; colIdx++) { 
+                let columnSumValue = 0; 
+                let columnHasData = false; 
+                for(let rowIdx = 0; rowIdx < appDataRows.length; rowIdx++) { 
+                    if(appDataRows[rowIdx][1] === 'المجموع الكلي:') continue; 
+                    let parsedCellValue = parseFloat(appDataRows[rowIdx][colIdx]); 
+                    if(!isNaN(parsedCellValue)) { 
+                        columnSumValue += parsedCellValue; 
+                        columnHasData = true; 
+                        hasValidNumbers = true; 
+                    } 
+                } 
+                if(columnHasData) {
+                    sumRowData[colIdx] = columnSumValue.toString(); 
+                }
+            }
+            if(!hasValidNumbers) { alert("لم يتم العثور على أرقام لجمعها!"); return; }
+            appDataRows.push(sumRowData); 
+            appRowColors.push(""); // موازنة الألوان
+            saveCurrentStateToHistory(); 
+            renderPaperPages(); 
+        }
+
+        async function pasteDataFromExcel() {
+            if(isEditingLocked) { alert("تم قفل السجل."); return; }
+            try {
+                if (!navigator.clipboard || !navigator.clipboard.readText) { 
+                    alert('متصفحك يمنع اللصق المباشر. قم بلصق البيانات يدوياً داخل أي مربع باستخدام لوحة المفاتيح.'); 
+                    return; 
+                }
+                const clipboardContent = await navigator.clipboard.readText(); 
+                if(!clipboardContent.trim()) return;
+                
+                const splitLinesArray = clipboardContent.split(/\r?\n/);
+                splitLinesArray.forEach(lineString => { 
+                    if(!lineString.trim() || appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return; 
+                    const parsedTabularData = lineString.split('\t'); 
+                    const newRowInsertion = Array(appColumns.length).fill(""); 
+                    for(let i=1; i<appColumns.length; i++) { 
+                        newRowInsertion[i] = parsedTabularData[i-1] || ""; 
+                    } 
+                    appDataRows.push(newRowInsertion); 
+                    appRowColors.push("");
+                });
+                
+                recalculateRowNumbers(); 
+                saveCurrentStateToHistory(); 
+                renderPaperPages(); 
+            } catch (error) { 
+                alert('يرجى النقر داخل المربع ولصق البيانات يدوياً (Paste).'); 
+            }
+        }
+
+        function formatPageNumLocal(numberValue, languageType) { 
+            if(languageType === 'en') return String(numberValue); 
+            const arabicNumbersMap = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩']; 
+            return String(numberValue).split('').map(digit => arabicNumbersMap[digit] || digit).join(''); 
+        }
+
+        let renderDelayTimeout;
+        function renderPaperPages() {
+            clearTimeout(renderDelayTimeout);
+            renderDelayTimeout = setTimeout(() => {
+                saveAllDataToLocalStorage(); 
+                const mainContainer = document.getElementById('previewAreaContainer'); 
+                if(!mainContainer) return;
+                
+                let maxPaperHeightMm = 297; 
+                if (globalPaperSizeMode === 'a4' && globalPaperOrientationMode === 'landscape') maxPaperHeightMm = 210; 
+                if (globalPaperSizeMode === 'a3' && globalPaperOrientationMode === 'portrait') maxPaperHeightMm = 420; 
+                if (globalPaperSizeMode === 'a3' && globalPaperOrientationMode === 'landscape') maxPaperHeightMm = 297;
+                
+                let checkPageNumBox = document.getElementById('checkShowPageNumber');
+                let isPageNumActive = (checkPageNumBox && checkPageNumBox.checked);
+                
+                let rowsAllowedPerPage = Math.floor((maxPaperHeightMm - (settingMargin * 2) - 45 - (isPageNumActive ? 10 : 0) - (settingRowHeight + 2)) / settingRowHeight) + settingRowAdjust; 
+                if(isNaN(rowsAllowedPerPage) || rowsAllowedPerPage < 2) rowsAllowedPerPage = 5; 
+                
+                let checkStripedBox = document.getElementById('checkStripedRows');
+                let stripedClassString = (checkStripedBox && checkStripedBox.checked) ? 'striped' : ''; 
+                
+                let sig1Box = document.getElementById('checkSignature1');
+                let sig2Box = document.getElementById('checkSignature2');
+                let sig3Box = document.getElementById('checkSignature3');
+                let displaySig1 = (sig1Box && sig1Box.checked) ? 'block' : 'none'; 
+                let displaySig2 = (sig2Box && sig2Box.checked) ? 'block' : 'none'; 
+                let displaySig3 = (sig3Box && sig3Box.checked) ? 'block' : 'none';
+                
+                let docNumInput = document.getElementById('inputDocumentNumber');
+                let docDateInput = document.getElementById('inputDocumentDate');
+                let metaHeaderHtml = ''; 
+                if((docNumInput && docNumInput.value) || (docDateInput && docDateInput.value)) { 
+                    metaHeaderHtml = `<div class="ph-meta"><span id="print_num">${docNumInput.value ? 'العدد: ' + escapeDangerousHtml(docNumInput.value) + '<br>' : ''}</span><span id="print_date">${docDateInput.value ? 'التاريخ: ' + escapeDangerousHtml(docDateInput.value) : ''}</span></div>`; 
+                }
+                
+                let checkWmBox = document.getElementById('checkShowWatermark');
+                let showWatermarkFlag = (checkWmBox && checkWmBox.checked && globalLogoImageBase64);
+                
+                let checkCondBox = document.getElementById('checkConditionalFormat');
+                let useCondFormatting = (checkCondBox && checkCondBox.checked);
+
+                let docFragmentObj = document.createDocumentFragment(); 
+                let calculatedTotalPages = Math.ceil(appDataRows.length / rowsAllowedPerPage); 
+                if(calculatedTotalPages === 0) calculatedTotalPages = 1;
+
+                let titleMainInput = document.getElementById('inputMainTitle');
+                let dirMainInput = document.getElementById('inputDirectorate');
+                let schoolMainInput = document.getElementById('inputSchoolName');
+                
+                let safeTitle = titleMainInput ? escapeDangerousHtml(titleMainInput.value) : '';
+                let safeDir = dirMainInput ? escapeDangerousHtml(dirMainInput.value) : '';
+                let safeSchool = schoolMainInput ? escapeDangerousHtml(schoolMainInput.value) : '';
+
+                for (let pageIdx = 0; pageIdx < calculatedTotalPages; pageIdx++) {
+                    let dataStartIndex = pageIdx * rowsAllowedPerPage; 
+                    let pageDataSliceArray = appDataRows.slice(dataStartIndex, dataStartIndex + rowsAllowedPerPage);
+
+                    let paperDivElement = document.createElement('div'); 
+                    paperDivElement.className = `paper size-${globalPaperSizeMode} ${globalPaperOrientationMode}`;
+
+                    let watermarkHtml = showWatermarkFlag ? `<div class="watermark" style="background-image: url('${globalLogoImageBase64}')"></div>` : '';
+
+                    let headerCompleteHtml = `
+                    <div class="p-header">
+                        <div class="ph-right">
+                            <h3 id="print_dir">${safeDir}</h3>
+                            <h2 id="print_school">${safeSchool}</h2>
+                        </div>
+                        <div class="ph-center">
+                            <h1 id="print_title">${safeTitle}</h1>
+                        </div>
+                        <div class="ph-left">
+                            ${metaHeaderHtml}
+                            <img src="${globalLogoImageBase64}" style="display:${globalLogoImageBase64 ? 'block':'none'};">
+                        </div>
+                    </div>`;
+
+                    let tableHeadHtmlString = '<tr>';
+                    appColumns.forEach((cName, colIndex) => { 
+                        let editableAttribute = isEditingLocked ? 'contenteditable="false"' : 'contenteditable="true"';
+                        tableHeadHtmlString += `<th class="header-col-${colIndex}" style="width:${appColumnWidths[colIndex]}px; min-width:${appColumnWidths[colIndex]}px; max-width:${appColumnWidths[colIndex]}px;">
+                            <div style="display:flex; align-items:center; width:100%; height:100%;">
+                                <div ${editableAttribute} class="e-cell" id="head_${colIndex}" onfocus="updateCellFocusPosition(-1, ${colIndex})" onblur="updateMemoryValue('header', -1, ${colIndex}, this.innerText)">${escapeDangerousHtml(cName)}</div>
+                                <span style="cursor:pointer; opacity:0.5; font-size:1.1rem; user-select:none; flex-shrink: 0; padding-left: 5px;" onclick="sortDataByColumn(${colIndex})" title="فرز عمود">⇅</span>
+                            </div>
+                        </th>`; 
+                    }); 
+                    tableHeadHtmlString += '</tr>';
+
+                    let tableBodyHtmlString = '';
+                    pageDataSliceArray.forEach((rowArray, rowRelativeIndex) => {
+                        let globalRowIndexId = dataStartIndex + rowRelativeIndex; 
+                        let isRowSummary = (rowArray[1] === 'المجموع الكلي:');
+                        
+                        // قراءة لون الصف المخصص من الذاكرة (Feature 5)
+                        let customRowColor = appRowColors[globalRowIndexId] || "";
+                        let rowStyleCss = "";
+                        
+                        if (isRowSummary) {
+                            rowStyleCss = 'font-weight:bold; background:var(--app-primary-light) !important;';
+                        } else if (customRowColor !== "") {
+                            rowStyleCss = `background-color: ${customRowColor} !important;`;
+                        }
+                        
+                        tableBodyHtmlString += `<tr style="${rowStyleCss}">`;
+                        
+                        rowArray.forEach((cellStringValue, cellColIndex) => { 
+                            let editableAttributeRow = (isEditingLocked || isRowSummary) ? 'contenteditable="false"' : 'contenteditable="true"';
+                            let conditionCssClasses = ""; 
+                            if(useCondFormatting && !isRowSummary && cellColIndex > 1) { 
+                                let parsedNumberValue = parseFloat(cellStringValue); 
+                                if (!isNaN(parsedNumberValue) && parsedNumberValue < 50 && cellStringValue !== "") {
+                                    conditionCssClasses = "cond-fail"; 
+                                } else if (cellStringValue.includes("غائب") || cellStringValue.includes("اجازة") || cellStringValue.includes("إجازة")) {
+                                    conditionCssClasses = "cond-warn";
+                                }
+                            }
+                            tableBodyHtmlString += `<td><div ${editableAttributeRow} class="e-cell ${conditionCssClasses}" id="cell_${globalRowIndexId}_${cellColIndex}" onfocus="updateCellFocusPosition(${globalRowIndexId}, ${cellColIndex})" onblur="updateMemoryValue('cell', ${globalRowIndexId}, ${cellColIndex}, this.innerText)">${escapeDangerousHtml(cellStringValue)}</div></td>`; 
+                        }); 
+                        tableBodyHtmlString += '</tr>';
+                    });
+
+                    let paginationHtmlString = '';
+                    if(isPageNumActive) {
+                        let langInput = document.getElementById('inputPageNumberLanguage');
+                        let languageSelection = langInput ? langInput.value : 'ar';
+                        paginationHtmlString = `<div class="page-num">${formatPageNumLocal(pageIdx + 1, languageSelection)}</div>`;
+                    }
+
+                    let sigT1Input = document.getElementById('inputSigTitle1'); let safeSigT1 = sigT1Input ? escapeDangerousHtml(sigT1Input.value) : '';
+                    let sigN1Input = document.getElementById('inputSigName1'); let safeSigN1 = sigN1Input ? escapeDangerousHtml(sigN1Input.value) : '';
+                    let sigT2Input = document.getElementById('inputSigTitle2'); let safeSigT2 = sigT2Input ? escapeDangerousHtml(sigT2Input.value) : '';
+                    let sigN2Input = document.getElementById('inputSigName2'); let safeSigN2 = sigN2Input ? escapeDangerousHtml(sigN2Input.value) : '';
+                    let sigT3Input = document.getElementById('inputSigTitle3'); let safeSigT3 = sigT3Input ? escapeDangerousHtml(sigT3Input.value) : '';
+                    let sigN3Input = document.getElementById('inputSigName3'); let safeSigN3 = sigN3Input ? escapeDangerousHtml(sigN3Input.value) : '';
+
+                    paperDivElement.innerHTML = `
+                        ${watermarkHtml}
+                        <div class="paper-wrap">
+                            ${headerCompleteHtml}
+                            <table class="t-print ${stripedClassString}">
+                                <thead>${tableHeadHtmlString}</thead>
+                                <tbody>${tableBodyHtmlString}</tbody>
+                            </table>
+                        </div>
+                        <div class="p-sigs">
+                            <div class="sig-box" style="display:${displaySig1}"><h4 id="print_s1">${safeSigT1}</h4><p id="print_s1n">${safeSigN1}</p></div>
+                            <div class="sig-box" style="display:${displaySig2}"><h4 id="print_s2">${safeSigT2}</h4><p id="print_s2n">${safeSigN2}</p></div>
+                            <div class="sig-box" style="display:${displaySig3}"><h4 id="print_s3">${safeSigT3}</h4><p id="print_s3n">${safeSigN3}</p></div>
+                        </div>
+                        ${paginationHtmlString}
+                    `;
+                    docFragmentObj.appendChild(paperDivElement);
+                } 
+                
+                mainContainer.innerHTML = ''; 
+                mainContainer.appendChild(docFragmentObj); 
+                executeSearch(); 
+            }, 100);
+        }
+
+        function loadReadyTemplate(templateType) {
+            let titleInput = document.getElementById('inputMainTitle');
+            if(templateType === 'attendance') { 
+                appColumns = ["ت", "الطالب", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"]; 
+                appColumnWidths = [50, 150, 80, 80, 80, 80, 80]; 
+                if(titleInput) { titleInput.value = "سجل غيابات وحضور الطلاب"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'grades') { 
+                appColumns = ["ت", "اسم الطالب", "السعي", "النهائي", "الملاحظات"]; 
+                appColumnWidths = [50, 180, 80, 80, 150]; 
+                if(titleInput) { titleInput.value = "سجل درجات الطلاب"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'employees') { 
+                appColumns = ["ت", "اسم الموظف", "العنوان الوظيفي", "القسم التابع له"]; 
+                appColumnWidths = [50, 180, 120, 120]; 
+                if(titleInput) { titleInput.value = "سجل الملاك والموظفين"; updateMemoryValue('title'); }
+                setTableAlignment('right'); 
+            } else if(templateType === 'inventory') { 
+                appColumns = ["ت", "اسم المادة", "الكمية", "السعر", "ملاحظات وتفاصيل"]; 
+                appColumnWidths = [50, 150, 100, 100, 150]; 
+                if(titleInput) { titleInput.value = "سجل الجرد والمخزون المالي"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'daily') { 
+                appColumns = ["ت", "البيان", "الرقم", "الوصف", "الملاحظات"]; 
+                appColumnWidths = [50, 150, 100, 200, 150]; 
+                if(titleInput) { titleInput.value = "سجل اليومية العامة"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'expenses') { 
+                appColumns = ["ت", "الجهة المستفيدة", "المبلغ", "التاريخ", "التوقيع"]; 
+                appColumnWidths = [50, 180, 100, 100, 120]; 
+                if(titleInput) { titleInput.value = "سجل النفقات والمصروفات"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'library') { 
+                appColumns = ["ت", "اسم الكتاب", "المستعير", "تاريخ الإعارة", "تاريخ الإرجاع"]; 
+                appColumnWidths = [50, 200, 150, 100, 100]; 
+                if(titleInput) { titleInput.value = "سجل إعارة الكتب المدرسية"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'visits') { 
+                appColumns = ["ت", "اسم الزائر", "الجهة", "سبب الزيارة", "الوقت"]; 
+                appColumnWidths = [50, 180, 120, 150, 80]; 
+                if(titleInput) { titleInput.value = "سجل زيارات المدرسة"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'tasks') { 
+                appColumns = ["ت", "المهمة المطلوبة", "المسؤول", "الحالة", "ملاحظات"]; 
+                appColumnWidths = [50, 200, 120, 80, 150]; 
+                if(titleInput) { titleInput.value = "سجل متابعة المهام"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'clinic') { 
+                appColumns = ["ت", "اسم الطالب", "الصف", "الشكوى", "الإجراء المتخذ"]; 
+                appColumnWidths = [50, 150, 80, 150, 200]; 
+                if(titleInput) { titleInput.value = "سجل الإحالات الصحية"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'maintenance') { 
+                appColumns = ["ت", "العطل أو الخلل", "الموقع", "تاريخ التبليغ", "تاريخ الإنجاز"]; 
+                appColumnWidths = [50, 200, 100, 100, 100]; 
+                if(titleInput) { titleInput.value = "سجل الصيانة المدرسية"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            } else if(templateType === 'empty') { 
+                appColumns = ["ت", "العمود الأول", "العمود الثاني", "العمود الثالث"]; 
+                appColumnWidths = [50, 150, 150, 150]; 
+                if(titleInput) { titleInput.value = "سجل فارغ"; updateMemoryValue('title'); }
+                setTableAlignment('center'); 
+            }
+            
+            appDataRows = []; 
+            appRowColors = [];
+            for(let idx = 0; idx < 3; idx++) { 
+                const emptyRowTemplate = Array(appColumns.length).fill(""); 
+                emptyRowTemplate[0] = idx + 1; 
+                appDataRows.push(emptyRowTemplate); 
+                appRowColors.push("");
+            }
+            
+            saveCurrentStateToHistory(); 
+            renderColumnWidthSliders(); 
+            renderPaperPages(); 
+            
+            let btnTab1 = document.querySelector('.tab-btn');
+            if(btnTab1) switchControlTab('tab1', btnTab1);
+            
+            if(window.innerWidth <= 900) {
+                toggleMobileInterface('controls');
+            }
+        }
+
+        window.onload = function() { 
+            initializeColorThemesUI(); 
+            loadAllDataFromLocalStorage(); 
+            renderColumnWidthSliders(); 
+            if(appHistoryStates.length === 0) {
+                saveCurrentStateToHistory(); 
+            }
+            renderPaperPages(); 
+        };
+    </script>
+</body>
+</html>
