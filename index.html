@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>رَقِيم Pro - منصة الأرشفة المباشرة</title>
     
-    <!-- مكتبة قراءة ملفات الإكسل (استيراد مباشر) -->
+    <!-- مكتبة قراءة وتصدير ملفات الإكسل الأصلية -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- مجموعة الخطوط العربية الاحترافية الكاملة -->
@@ -80,7 +80,7 @@
             font-family: 'Cairo', sans-serif; 
             display: flex; 
             flex-direction: column; 
-            overflow: hidden; /* هذا الخيار لترتيب الشاشة فقط، سيتم إلغاؤه في الطباعة */
+            overflow: hidden; 
             transition: background 0.3s, color 0.3s; 
         }
 
@@ -418,7 +418,7 @@
             transition: background-color 0.2s ease;
         }
 
-        /* لمسة احترافية: تظليل السطر عند مرور الماوس (يختفي بالطباعة) */
+        /* تظليل السطر عند مرور الماوس */
         .t-print tbody tr:hover td {
             background-color: rgba(79, 70, 229, 0.04) !important;
         }
@@ -638,7 +638,6 @@
             .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto;}
             .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
             
-            /* نظام الشاشتين في الموبايل */
             body.show-controls .preview-area { display: none !important; }
             body.show-controls .control-panel { display: flex !important; }
             
@@ -653,14 +652,13 @@
 
         /* ================= الطباعة وحفظ الـ PDF (الحل الجذري للمشكلة) ================= */
         @media print {
-            /* إجبار المتصفح على طباعة الألوان والخلفيات */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 color-adjust: exact !important;
             }
             
-            /* هنا الحل السحري لإظهار كل الصفحات ومنع الاختصاص */
+            /* إظهار كل الورق المخفي بملفات الـ PDF */
             html, body { 
                 background: none !important; 
                 height: auto !important; 
@@ -718,7 +716,6 @@
                 border: none !important; 
             }
             
-            /* إزالة تأثير الماوس في الطباعة */
             .t-print tbody tr:hover td {
                 background-color: transparent !important;
             }
@@ -777,8 +774,11 @@
                 <button class="tab-btn" onclick="switchControlTab('tab5', this)">📂 قوالب جاهزة</button>
             </div>
 
-            <!-- Tab 1: التحكم بالبيانات -->
+            <!-- Tab 1: التحكم بالبيانات وتلوين الخلية -->
             <div id="tab1" class="tab-content active">
+                <div style="text-align: center; margin-bottom: 15px; background: var(--app-primary-light); padding: 10px; border-radius: 10px;">
+                    <p style="font-size:0.95rem; font-weight:bold; color:var(--app-primary);">✨ تعديل البيانات يتم مباشرة على الورقة (في الأعلى).</p>
+                </div>
                 
                 <div class="icon-toolbar lock-hide" style="margin-bottom: 15px;">
                     <div class="toolbar-grid" style="margin-bottom: 10px;">
@@ -801,7 +801,7 @@
                 </div>
 
                 <!-- ميزة تمييز وتلوين الخلية -->
-                <div class="lock-hide" style="border-top: 2px dashed var(--app-border); padding-top: 15px;">
+                <div class="lock-hide" style="border-top: 1px dashed var(--app-border); padding-top: 15px;">
                     <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--app-primary); font-family: 'Reem Kufi', sans-serif;">🎨 تمييز الخلية المحددة (انقر على أي مربع في الورقة ولونه)</h4>
                     <div class="flex-box">
                         <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveCell('#dcfce7', '#059669')">🟢 إيجابي (أخضر)</button>
@@ -1016,7 +1016,7 @@
         </button>
     </nav>
 
-    <!-- ================= الأكواد البرمجية ================= -->
+    <!-- ================= الأكواد البرمجية (مرتبة ومفتوحة) ================= -->
     <script>
         // ================= كود حماية الموقع =================
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -1028,7 +1028,7 @@
             if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
         });
 
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v7_final'; 
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v8_export_fixed'; 
         const MAXIMUM_ALLOWED_ROWS = 250; 
         
         let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
@@ -1507,50 +1507,88 @@
             updatePaperPrintSettings();
         }
 
+        // ================= تصدير ملف إكسل أصلي (.xlsx) بدون تلف =================
         function exportToExcelFile() {
-            let htmlTableString = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' dir='rtl'><head><meta charset='utf-8'><style>th,td{border:1px solid #000; text-align:center;}</style></head><body><table><thead><tr>"; 
-            appColumns.forEach(col => {
-                htmlTableString += `<th>${escapeDangerousHtml(col)}</th>`;
-            }); 
-            htmlTableString += "</tr></thead><tbody>"; 
-            appDataRows.forEach(row => { 
-                htmlTableString += "<tr>"; 
-                row.forEach(cell => {
-                    htmlTableString += `<td>${escapeDangerousHtml(cell)}</td>`;
-                }); 
-                htmlTableString += "</tr>"; 
-            }); 
-            htmlTableString += "</tbody></table></body></html>"; 
-            
-            let blobObject = new Blob(['\ufeff', htmlTableString], { type: 'application/vnd.ms-excel' }); 
-            let downloadLink = URL.createObjectURL(blobObject); 
-            let anchorElement = document.createElement('a'); 
-            anchorElement.href = downloadLink; 
-            anchorElement.download = 'رقيـم_بيانات.xls'; 
-            document.body.appendChild(anchorElement); 
-            anchorElement.click(); 
-            document.body.removeChild(anchorElement); 
-            URL.revokeObjectURL(downloadLink); 
+            if (typeof XLSX === 'undefined') {
+                alert('مكتبة الإكسل لم يتم تحميلها بعد، يرجى التأكد من اتصالك بالإنترنت.');
+                return;
+            }
+            try {
+                let excelData = [];
+                
+                let titleElement = document.getElementById('inputMainTitle');
+                let documentTitle = titleElement ? titleElement.value : 'سجل البيانات';
+                
+                // إضافة العنوان في الصف الأول
+                excelData.push([documentTitle]);
+                excelData.push([]); 
+                
+                // إضافة أسماء الأعمدة
+                excelData.push(appColumns);
+                
+                // إضافة البيانات
+                appDataRows.forEach(row => {
+                    excelData.push(row);
+                });
+                
+                let worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                
+                // إجبار الإكسل على الفتح من اليمين لليسار (RTL)
+                if(!worksheet['!views']) worksheet['!views'] = [];
+                worksheet['!views'].push({ rightToLeft: true });
+                
+                // ضبط عرض الأعمدة
+                let wscols = appColumnWidths.map(w => ({ wpx: w }));
+                worksheet['!cols'] = wscols;
+
+                let workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
+                
+                XLSX.writeFile(workbook, 'رقيـم_بيانات.xlsx');
+            } catch(error) {
+                alert('حدث خطأ أثناء تصدير الإكسل: ' + error.message);
+            }
         }
 
+        // ================= تصدير ملف وورد مبني بشكل صحيح =================
         function exportToWordFile() {
             let titleElement = document.getElementById('inputMainTitle');
-            let documentTitle = titleElement ? titleElement.value : 'السجل';
-            let htmlDocString = "<html xmlns:w='urn:schemas-microsoft-com:office:word' dir='rtl'><head><meta charset='utf-8'></head><body><h2 style='text-align:center; font-family:Arial;'>"+escapeDangerousHtml(documentTitle)+"</h2><table border='1' style='border-collapse:collapse; width:100%; text-align:center;'><thead><tr>"; 
-            appColumns.forEach(col => {
-                htmlDocString += `<th style="background:#e0e7ff; padding:8px;">${escapeDangerousHtml(col)}</th>`;
-            }); 
-            htmlDocString += "</tr></thead><tbody>"; 
-            appDataRows.forEach(row => { 
-                htmlDocString += "<tr>"; 
-                row.forEach(cell => {
-                    htmlDocString += `<td style="padding:8px;">${escapeDangerousHtml(cell)}</td>`;
-                }); 
-                htmlDocString += "</tr>"; 
-            }); 
-            htmlDocString += "</tbody></table></body></html>"; 
+            let documentTitle = titleElement ? titleElement.value : 'سجل البيانات';
             
-            let blobObject = new Blob(['\ufeff', htmlDocString], { type: 'application/msword' }); 
+            // هيكلية قياسية لملف الوورد (MS Office Header) تمنع رسائل التلف
+            let htmlContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40' dir='rtl'>
+            <head>
+                <meta charset='utf-8'>
+                <title>${escapeDangerousHtml(documentTitle)}</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; }
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+                    th { background-color: #e0e7ff; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <h2 style='text-align:center;'>${escapeDangerousHtml(documentTitle)}</h2>
+                <table>
+                    <thead><tr>`; 
+            
+            appColumns.forEach(col => {
+                htmlContent += `<th>${escapeDangerousHtml(col)}</th>`;
+            }); 
+            htmlContent += "</tr></thead><tbody>"; 
+            
+            appDataRows.forEach(row => { 
+                htmlContent += "<tr>"; 
+                row.forEach(cell => {
+                    htmlContent += `<td>${escapeDangerousHtml(cell)}</td>`;
+                }); 
+                htmlContent += "</tr>"; 
+            }); 
+            htmlContent += "</tbody></table></body></html>"; 
+            
+            // استخدام BOM (\ufeff) لحماية اللغة العربية، و MIME type مخصص
+            let blobObject = new Blob(['\ufeff', htmlContent], { type: 'application/msword' }); 
             let downloadLink = URL.createObjectURL(blobObject); 
             let anchorElement = document.createElement('a'); 
             anchorElement.href = downloadLink; 
