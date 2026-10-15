@@ -8,7 +8,7 @@
     <!-- مكتبة قراءة وتصدير ملفات الإكسل الأصلية (.xlsx) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <!-- مكتبة بناء ملفات الوورد (.docx) -->
+    <!-- مكتبة بناء وتصدير ملفات الوورد الأصلية (.docx) -->
     <script src="https://unpkg.com/docx@7.3.0/build/index.js"></script>
 
     <!-- مجموعة الخطوط العربية الاحترافية الكاملة -->
@@ -98,7 +98,7 @@
         body.dark-mode ::-webkit-scrollbar-thumb { background: #334155; }
         body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* ================= الشريط العلوي ================= */
+        /* ================= الشريط العلوي (الترتيب الجديد) ================= */
         .header-bar { 
             background: var(--app-surface); 
             padding: 12px 20px; 
@@ -173,33 +173,34 @@
 
         .header-actions { 
             display: flex; 
-            gap: 8px; 
+            gap: 10px; 
             align-items: center; 
             flex-wrap: wrap;
         }
 
-        /* زر التلكرام البارز مع المعرف */
-        .telegram-header-btn {
-            display: flex;
+        /* زر التلكرام المودرن (كبسولة) */
+        .modern-telegram-btn {
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: #0088cc;
+            gap: 8px;
+            background: linear-gradient(135deg, #0088cc, #005580);
             color: #ffffff !important;
-            padding: 8px 14px;
-            border-radius: 12px;
+            padding: 8px 18px;
+            border-radius: 20px;
             text-decoration: none;
             font-weight: 700;
             font-size: 0.95rem;
-            transition: all 0.2s ease;
-            font-family: 'Tajawal', sans-serif;
-            border: 1px solid #0088cc;
-        }
-        .telegram-header-btn:hover {
-            background: #006699;
-            transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            border: none;
         }
-        .telegram-header-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .modern-telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 136, 204, 0.4);
+            background: linear-gradient(135deg, #0099e6, #006699);
+        }
+        .modern-telegram-btn svg { width: 18px; height: 18px; fill: currentColor; }
         
         .icon-btn { 
             background: var(--app-surface); 
@@ -214,6 +215,7 @@
             cursor: pointer; 
             transition: all 0.2s ease; 
             outline: none; 
+            text-decoration: none; 
         }
         
         .icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
@@ -224,13 +226,6 @@
             border-color: var(--app-primary); 
             transform: translateY(-2px); 
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        
-        .icon-btn.lock-active { 
-            background: #fee2e2 !important; 
-            color: #e11d48 !important; 
-            border-color: #e11d48 !important; 
-            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
         }
 
         /* تأثير النبض لزر الطباعة/الـ PDF */
@@ -259,7 +254,7 @@
             left: 0; 
             top: 50px; 
             background-color: var(--app-surface); 
-            min-width: 200px; 
+            min-width: 220px; 
             padding: 8px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
             border-radius: 14px; 
@@ -315,7 +310,7 @@
             flex-direction: column; 
             align-items: center; 
             scroll-behavior: smooth;
-            gap: 40px; /* ضمان المسافة بين الأوراق لمنع التداخل */
+            gap: 40px; 
         }
         
         .control-panel { 
@@ -467,6 +462,7 @@
             background-color: rgba(79, 70, 229, 0.04) !important;
         }
         
+        /* الخلايا القابلة للتعديل */
         .e-cell { 
             width: 100%; 
             min-height: var(--tbl-row-height); 
@@ -624,7 +620,7 @@
         }
         .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05);}
 
-        /* ================= شريط الموبايل السفلي والـ Zoom الذكي لمنع التداخل ================= */
+        /* ================= شريط الموبايل السفلي والـ Zoom الذكي ================= */
         .mobile-nav { 
             display: none; background: var(--app-surface); border-top: 1px solid var(--app-border); 
             padding: 10px 0; justify-content: space-around; z-index: 50; 
@@ -637,7 +633,7 @@
         }
         .m-nav-btn.active { color: var(--app-primary); transform: translateY(-2px); }
         
-        /* تقنية الـ Zoom للتصغير بدون تداخل الصفحات في العرضي والطولي */
+        /* تقنية الـ Zoom للتصغير بدون تداخل الصفحات */
         @media (max-width: 900px) {
             .header-bar { padding: 10px 15px; }
             .search-box { max-width: 100%; width: 100%; order: 3; margin-top: 10px; }
@@ -647,7 +643,6 @@
             .workspace { display: block; overflow-y: hidden; }
             .control-panel { height: 100%; width: 100%; border: none; overflow-y: auto; padding-bottom: 80px;}
             
-            /* إزالة الـ overflow-x لضمان رؤية الورقة العرضية كاملة والتمرير بين الأوراق */
             .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto; overflow-x: auto; gap: 20px;}
             .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
             
@@ -663,7 +658,7 @@
             .paper.size-a3.landscape { zoom: 0.25; }
         }
 
-        /* ================= رسالة الترحيب المنبثقة (Welcome Modal) ================= */
+        /* ================= رسالة الترحيب المنبثقة ================= */
         .welcome-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);
@@ -693,7 +688,7 @@
         .start-btn { background: var(--app-primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit;}
         .start-btn:hover { background: #4338ca; }
 
-        /* ================= الطباعة وحفظ الـ PDF (الحل الجذري النهائي) ================= */
+        /* ================= الطباعة وحفظ الـ PDF ================= */
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -734,7 +729,7 @@
                 page-break-after: always !important; 
                 page-break-inside: avoid !important;
                 transform: none !important; 
-                zoom: 1 !important; /* إرجاع الحجم الطبيعي للطباعة */
+                zoom: 1 !important; 
                 border-radius: 0 !important; 
                 padding: var(--a4-margin) !important; 
                 width: 100% !important; 
@@ -757,7 +752,7 @@
 </head>
 <body>
 
-    <!-- 💬 نافذة الترحيب (تظهر للمستخدم الجديد فقط وتدعم الدعم المادي) -->
+    <!-- نافذة الترحيب -->
     <div class="welcome-modal-overlay" id="welcomeModal">
         <div class="welcome-modal">
             <div class="welcome-icon">👋</div>
@@ -776,7 +771,7 @@
         </div>
     </div>
 
-    <!-- الشريط العلوي -->
+    <!-- الشريط العلوي (تم الترتيب وتوحيد الأزرار) -->
     <header class="header-bar">
         <div class="logo-area">رَقِيم <span class="pro-badge">Pro ✨</span></div>
         <div class="search-box">
@@ -785,34 +780,59 @@
         </div>
         <div class="header-actions">
             
-            <!-- ✈️ زر التلكرام الثابت في الأعلى مع المعرف الخاص بك -->
-            <a href="https://t.me/HJS_98" target="_blank" class="telegram-header-btn" title="التواصل والدعم الفني">
+            <!-- 1. القائمة المنسدلة الجديدة -->
+            <div class="dropdown">
+                <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="القائمة والإعدادات">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div class="dropdown-content" id="exportDropdown">
+                    <!-- خيارات النظام -->
+                    <button class="drop-item" onclick="toggleDarkMode()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> 
+                        تغيير المظهر
+                    </button>
+                    <button class="drop-item" id="dropLockBtn" onclick="toggleDataLock()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> 
+                        قفل السجل
+                    </button>
+                    
+                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
+                    
+                    <!-- خيارات التصدير -->
+                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير إلى Excel (.xlsx)</button>
+                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word (.doc)</button>
+                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة احتياطية</button>
+                    <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
+                    <input type="file" id="uploadBackupInput" style="display:none;" accept=".json" onchange="processUploadedBackup(event)">
+                    
+                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
+                    
+                    <!-- تصفير السجل -->
+                    <button class="drop-item lock-hide" style="color: #e11d48;" onclick="clearAllSystemData()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> 
+                        تصفير ومسح السجل
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. زر الطباعة -->
+            <button class="icon-btn print-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            </button>
+
+            <!-- 3. زر التلكرام المودرن -->
+            <a href="https://t.me/HJS_98" target="_blank" class="modern-telegram-btn" title="التواصل والدعم الفني">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.25-5.58 3.69-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.89.03-.25.38-.51 1.03-.78 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.89.11 0 .37.03.54.17.14.12.18.28.2.42.01.12.02.26.01.31z"/></svg>
                 <span dir="ltr">@HJS_98</span>
             </a>
             
-            <button class="icon-btn" id="btnTheme" onclick="toggleDarkMode()" title="تغيير المظهر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
-            <button class="icon-btn" id="btnLock" onclick="toggleDataLock()" title="قفل السجل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></button>
-            <div class="dropdown">
-                <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="خيارات التصدير"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg></button>
-                <div class="dropdown-content" id="exportDropdown">
-                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير إلى Excel (.xlsx)</button>
-                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word (.docx)</button>
-                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
-                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة احتياطية</button>
-                    <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
-                    <input type="file" id="uploadBackupInput" style="display:none;" accept=".json" onchange="processUploadedBackup(event)">
-                </div>
-            </div>
-            <button class="icon-btn lock-hide" onclick="clearAllSystemData()" title="تصفير السجل ومسح البيانات"><svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-            <button class="icon-btn print-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
         </div>
     </header>
 
     <!-- منطقة العمل -->
     <div class="workspace">
         
-        <!-- منطقة الأوراق والمحرر المباشر -->
+        <!-- منطقة الأوراق -->
         <main class="preview-area" id="previewAreaContainer">
             <div style="color:var(--app-text-muted); font-weight:bold; font-size:1.1rem; padding: 20px;">
                 جاري تهيئة الأوراق...
@@ -1070,7 +1090,7 @@
         </button>
     </nav>
 
-    <!-- ================= الأكواد البرمجية ================= -->
+    <!-- ================= الأكواد البرمجية (بدون تعليق أو تهنيج) ================= -->
     <script>
         // ================= كود حماية الموقع =================
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -1082,7 +1102,7 @@
             if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
         });
 
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v12_final_audit'; 
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v13_design_fixed'; 
         const MAXIMUM_ALLOWED_ROWS = 250; 
         
         let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
@@ -1115,19 +1135,17 @@
         let settingMargin = 15;
         let settingRowAdjust = 0;
 
-        // دالة إغلاق رسالة الترحيب
         function closeWelcomeModal() {
             let modal = document.getElementById('welcomeModal');
             if(modal) {
                 modal.classList.remove('show');
                 setTimeout(() => { modal.style.display = 'none'; }, 300);
             }
-            localStorage.setItem('raqeem_welcome_msg_final', 'true');
+            localStorage.setItem('raqeem_welcome_msg_v13', 'true');
         }
 
-        // عرض رسالة الترحيب لأول مرة فقط
         function checkWelcomeModal() {
-            if(!localStorage.getItem('raqeem_welcome_msg_final')) {
+            if(!localStorage.getItem('raqeem_welcome_msg_v13')) {
                 let modal = document.getElementById('welcomeModal');
                 if(modal) {
                     modal.style.display = 'flex';
@@ -1169,42 +1187,34 @@
             document.body.classList.toggle('dark-mode'); 
             let isDarkModeActive = document.body.classList.contains('dark-mode'); 
             localStorage.setItem('sajil_dark_mode_preference', isDarkModeActive);
-            
-            let themeButton = document.getElementById('btnTheme');
-            if(isDarkModeActive) {
-                themeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line></svg>`;
-            } else {
-                themeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-            }
         }
 
         function toggleDataLock() {
             isEditingLocked = !isEditingLocked; 
-            let lockButton = document.getElementById('btnLock');
+            let lockDropBtn = document.getElementById('dropLockBtn');
+            
             if(isEditingLocked) { 
-                lockButton.classList.add('lock-active'); 
+                if(lockDropBtn) {
+                    lockDropBtn.style.color = '#e11d48';
+                    lockDropBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> فك قفل السجل';
+                }
                 document.body.classList.add('locked-mode'); 
-                
                 document.querySelectorAll('.control-panel input, .control-panel select, .control-panel button').forEach(el => {
                     if(!el.classList.contains('tab-btn')) {
-                        el.disabled = true;
-                        el.style.opacity = '0.5';
-                        el.style.pointerEvents = 'none';
+                        el.disabled = true; el.style.opacity = '0.5'; el.style.pointerEvents = 'none';
                     }
                 });
-                
-                alert("تم قفل السجل بالكامل. لا يمكن تعديل البيانات أو الإعدادات."); 
+                alert("تم قفل السجل بالكامل."); 
             } else { 
-                lockButton.classList.remove('lock-active'); 
+                if(lockDropBtn) {
+                    lockDropBtn.style.color = 'var(--app-text)';
+                    lockDropBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> قفل السجل';
+                }
                 document.body.classList.remove('locked-mode'); 
-                
                 document.querySelectorAll('.control-panel input, .control-panel select, .control-panel button').forEach(el => {
-                    el.disabled = false;
-                    el.style.opacity = '1';
-                    el.style.pointerEvents = 'auto';
+                    el.disabled = false; el.style.opacity = '1'; el.style.pointerEvents = 'auto';
                 });
-                
-                alert("تم فك القفل. يمكنك الآن التعديل بحرية."); 
+                alert("تم فك القفل."); 
             }
             renderPaperPages();
         }
@@ -1351,7 +1361,6 @@
             renderPaperPages(); 
         }
 
-        // ================= تحديث أبعاد الورقة وإجبار الطابعة على العرضي (الـ Landscape المضمون) =================
         function updatePaperPrintSettings() { 
             let sizeSelect = document.getElementById('inputPaperSize');
             let orientationSelect = document.getElementById('inputPaperOrientation');
@@ -1491,10 +1500,6 @@
             try {
                 if(localStorage.getItem('sajil_dark_mode_preference') === 'true') { 
                     document.body.classList.add('dark-mode'); 
-                    let themeBtn = document.getElementById('btnTheme');
-                    if(themeBtn) {
-                        themeBtn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line></svg>`; 
-                    }
                 }
                 
                 let savedDataString = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -1593,7 +1598,7 @@
             updatePaperPrintSettings(); 
         }
 
-        // ================= 1. التصدير للإكسل (الحل الجذري .xlsx أصلي) =================
+        // ================= التصدير للإكسل (الحل الجذري .xlsx أصلي) =================
         function exportToExcelFile() {
             if (typeof XLSX === 'undefined') {
                 alert('مكتبة الإكسل لم يتم تحميلها بعد، يرجى التأكد من اتصالك بالإنترنت.');
@@ -1629,14 +1634,13 @@
             }
         }
 
-        // ================= 2. دالة التصدير الاحتياطية للوورد (Word Fallback) =================
+        // ================= دالة التصدير الاحتياطية للوورد (Word Fallback XML) =================
         function exportToWordFallback(documentTitle) {
             let isLandscapeFallback = (globalPaperOrientationMode === 'landscape');
             let cssPageRule = isLandscapeFallback ? 
                 "@page WordSection1 { size: 841.9pt 595.3pt; mso-page-orientation: landscape; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }" : 
                 "@page WordSection1 { size: 595.3pt 841.9pt; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }";
 
-            // إضافة XML Namespaces الخاصة بمايكروسوفت لمنع التلف
             let htmlDocString = `
             <html xmlns:v="urn:schemas-microsoft-com:vml"
                   xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -1690,7 +1694,7 @@
             URL.revokeObjectURL(downloadLink); 
         }
 
-        // ================= 3. التصدير للوورد (الحل الجذري .docx أصلي) =================
+        // ================= التصدير للوورد (الحل الجذري .docx أصلي مع نظام حماية) =================
         function exportToWordFile() {
             let titleElement = document.getElementById('inputMainTitle');
             let documentTitle = titleElement ? titleElement.value : 'السجل';
@@ -1876,6 +1880,7 @@
             renderPaperPages();
         }
 
+        // حفظ القيمة عند الانتهاء من الكتابة (تحديث سلس لمنع التهنيج)
         function updateMemoryValue(updateType, rowIndex, colIndex, newValue) {
             if(['title', 'dir', 'school', 'num', 'date', 's1', 's1n', 's2', 's2n', 's3', 's3n'].includes(updateType)) {
                 let printElement = document.getElementById(`print_${updateType}`);
@@ -2490,6 +2495,7 @@
         };
     </script>
 
+    <!-- كود إحصائيات Statcounter (بدون أي ضغط أو تغيير) -->
     <!-- Default Statcounter code for موقع ارشفة https://7ussein9819-lang.github.io/Hussein313/ -->
     <script type="text/javascript">
     var sc_project=13359977; 
