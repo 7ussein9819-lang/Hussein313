@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>رَقِيم Pro - منصة الأرشفة المباشرة</title>
     
-    <!-- مكتبة قراءة وتصدير ملفات الإكسل (الأصلية) -->
+    <!-- مكتبة قراءة وتصدير ملفات الإكسل الأصلية (.xlsx) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- مكتبة بناء وتصدير ملفات الوورد الأصلية (.docx) الحل الجذري! -->
+    <script src="https://unpkg.com/docx@7.3.0/build/index.js"></script>
 
     <!-- مجموعة الخطوط العربية الاحترافية الكاملة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700&family=Amiri:wght@400;700&family=Readex+Pro:wght@400;600;700&family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
@@ -88,7 +91,7 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* تصميم شريط التمرير */
+        /* تصميم شريط التمرير (السكرول) بنعومة */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
@@ -205,6 +208,24 @@
             color: #e11d48 !important; 
             border-color: #e11d48 !important; 
             box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
+        }
+
+        /* تأثير النبض لزر الطباعة/الـ PDF (لمسة احترافية) */
+        @keyframes printPulse {
+            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+        
+        .print-btn {
+            animation: printPulse 2.5s infinite;
+            border-color: var(--app-primary) !important;
+            color: var(--app-primary) !important;
+        }
+        .print-btn:hover {
+            background: var(--app-primary) !important;
+            color: #fff !important;
+            animation: none;
         }
 
         .dropdown { position: relative; display: inline-block; }
@@ -418,6 +439,7 @@
             transition: background-color 0.2s ease;
         }
 
+        /* تأثير الماوس على الجداول لتسهيل القراءة */
         .t-print tbody tr:hover td {
             background-color: rgba(79, 70, 229, 0.04) !important;
         }
@@ -649,7 +671,7 @@
             .paper.size-a3.landscape { transform: scale(0.21); margin-bottom: -360%; }
         }
 
-        /* ================= الطباعة وحفظ الـ PDF ================= */
+        /* ================= الطباعة وحفظ الـ PDF (الحل الجذري للمشكلة) ================= */
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -740,7 +762,7 @@
                 <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="خيارات التصدير"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg></button>
                 <div class="dropdown-content" id="exportDropdown">
                     <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير إلى Excel (.xlsx)</button>
-                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word (.doc)</button>
+                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word (.docx)</button>
                     <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
                     <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة احتياطية</button>
                     <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
@@ -748,7 +770,7 @@
                 </div>
             </div>
             <button class="icon-btn lock-hide" onclick="clearAllSystemData()" title="تصفير السجل ومسح البيانات"><svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-            <button class="icon-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
+            <button class="icon-btn print-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
         </div>
     </header>
 
@@ -810,7 +832,7 @@
 
             <!-- Tab 3: الجدول والتنسيق -->
             <div id="tab3" class="tab-content">
-                <h3 class="section-title">عرض الأعمدة اليدوي</h3>
+                <h3 class="section-title">عرض الأعمدة اليدوي (مفتوح)</h3>
                 <div id="columnSlidersContainer"></div>
                 
                 <label class="check-box" style="margin-bottom: 20px;">
@@ -978,7 +1000,7 @@
                 </div>
             </div>
 
-            <!-- Tab 5: القوالب الـ 12 -->
+            <!-- Tab 5: القوالب הـ 12 -->
             <div id="tab5" class="tab-content">
                 <h3 class="section-title">قوالب الجداول الجاهزة</h3>
                 <div class="tpl-grid">
@@ -1023,7 +1045,7 @@
             if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
         });
 
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v8_export_fixed'; 
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v9_full'; 
         const MAXIMUM_ALLOWED_ROWS = 250; 
         
         let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
@@ -1502,7 +1524,7 @@
             updatePaperPrintSettings();
         }
 
-        // ================= التصدير للإكسل (الحل الجذري .xlsx حقيقي) =================
+        // ================= 1. الحل الجذري لتصدير الإكسل (.xlsx أصلي) =================
         function exportToExcelFile() {
             if (typeof XLSX === 'undefined') {
                 alert('مكتبة الإكسل لم يتم تحميلها بعد، يرجى التأكد من اتصالك بالإنترنت.');
@@ -1525,14 +1547,14 @@
                     excelData.push(row);
                 });
                 
-                // تحويل المصفوفة إلى شيت (ورقة عمل)
+                // تحويل المصفوفة إلى ورقة عمل (Sheet)
                 let worksheet = XLSX.utils.aoa_to_sheet(excelData);
                 
-                // إجبار الإكسل على الفتح من اليمين لليسار (RTL)
+                // إجبار الإكسل على الفتح من اليمين لليسار (RTL) بشكل أصلي
                 if(!worksheet['!views']) worksheet['!views'] = [];
                 worksheet['!views'].push({ rightToLeft: true });
                 
-                // ضبط عرض الأعمدة في الإكسل بناءً على عرضها في الموقع
+                // ضبط عرض الأعمدة في الإكسل بناءً على عرضها الحالي في الموقع
                 let wscols = appColumnWidths.map(w => ({ wpx: w }));
                 worksheet['!cols'] = wscols;
 
@@ -1540,65 +1562,121 @@
                 let workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
                 
-                // حفظ الملف بصيغة (xlsx) الأصلية المضغوطة
+                // حفظ الملف بصيغة (xlsx) الأصلية المضغوطة (لا يمكن أن يظهر تالف)
                 XLSX.writeFile(workbook, 'رقيـم_بيانات.xlsx');
             } catch(error) {
                 alert('حدث خطأ أثناء تصدير الإكسل: ' + error.message);
             }
         }
 
-        // ================= التصدير للوورد (الحل الجذري بدون رسالة تلف) =================
+        // ================= 2. الحل الجذري لتصدير الوورد (.docx أصلي) =================
         function exportToWordFile() {
+            // التحقق من وجود مكتبة docx.js، إذا موجودة نولد ملف docx أصلي 100%
+            if (typeof docx !== 'undefined') {
+                try {
+                    let titleElement = document.getElementById('inputMainTitle');
+                    let documentTitle = titleElement ? titleElement.value : 'سجل البيانات';
+
+                    let docRows = [];
+                    
+                    // بناء ترويسة الجدول
+                    let headerCells = appColumns.map(col => {
+                        return new docx.TableCell({
+                            children: [new docx.Paragraph({
+                                children: [new docx.TextRun({ text: String(col), bold: true, rightToLeft: true })],
+                                alignment: docx.AlignmentType.CENTER,
+                                bidirectional: true
+                            })],
+                            shading: { fill: "e0e7ff" },
+                            margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                        });
+                    });
+                    docRows.push(new docx.TableRow({ children: headerCells }));
+
+                    // بناء بيانات الجدول
+                    appDataRows.forEach(row => {
+                        let cells = row.map(cell => {
+                            return new docx.TableCell({
+                                children: [new docx.Paragraph({
+                                    children: [new docx.TextRun({ text: String(cell), rightToLeft: true })],
+                                    alignment: docx.AlignmentType.CENTER,
+                                    bidirectional: true
+                                })],
+                                margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                            });
+                        });
+                        docRows.push(new docx.TableRow({ children: cells }));
+                    });
+
+                    // تجميع الجدول
+                    const table = new docx.Table({
+                        rows: docRows,
+                        width: { size: 100, type: docx.WidthType.PERCENTAGE },
+                    });
+
+                    // تجميع الملف بالكامل
+                    const doc = new docx.Document({
+                        creator: "Raqeem Pro",
+                        title: documentTitle,
+                        sections: [{
+                            properties: {},
+                            children: [
+                                new docx.Paragraph({
+                                    children: [new docx.TextRun({ text: documentTitle, bold: true, size: 32, rightToLeft: true })],
+                                    alignment: docx.AlignmentType.CENTER,
+                                    bidirectional: true,
+                                    spacing: { after: 400 }
+                                }),
+                                table
+                            ],
+                        }],
+                    });
+
+                    // تصدير الملف كـ .docx حقيقي
+                    docx.Packer.toBlob(doc).then(blob => {
+                        let downloadLink = URL.createObjectURL(blob);
+                        let anchorElement = document.createElement('a');
+                        anchorElement.href = downloadLink;
+                        anchorElement.download = 'رقيـم_بيانات.docx';
+                        document.body.appendChild(anchorElement);
+                        anchorElement.click();
+                        document.body.removeChild(anchorElement);
+                        URL.revokeObjectURL(downloadLink);
+                    });
+                    
+                    return; // الخروج من الدالة بنجاح
+                } catch(error) {
+                    console.error("فشل التصدير الأصلي، جاري المحاولة بالطريقة البديلة...", error);
+                    // إذا حدث خطأ، سيكمل الكود للأسفل ويستخدم الطريقة البديلة
+                }
+            }
+
+            // الطريقة البديلة (الاحتياطية) في حال عدم توفر النت لتحميل المكتبة
             let titleElement = document.getElementById('inputMainTitle');
             let documentTitle = titleElement ? titleElement.value : 'السجل';
             
-            // استخدام هيكلية (WordML) الخاصة بمايكروسوفت لمنع التلف، وإجبار الاتجاه لليمين
-            let htmlContent = `
-            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl">
-            <head>
-                <meta charset="utf-8">
-                <title>${escapeDangerousHtml(documentTitle)}</title>
-                <!--[if gte mso 9]>
-                <xml>
-                    <w:WordDocument>
-                        <w:View>Print</w:View>
-                        <w:Zoom>100</w:Zoom>
-                        <w:DoNotOptimizeForBrowser/>
-                    </w:WordDocument>
-                </xml>
-                <![endif]-->
-                <style>
-                    body { font-family: 'Arial', sans-serif; direction: rtl; text-align: right; }
-                    table { border-collapse: collapse; width: 100%; direction: rtl; }
-                    th, td { border: 1px solid #000000; padding: 8px; text-align: center; vertical-align: middle; }
-                    th { background-color: #e0e7ff; font-weight: bold; }
-                </style>
-            </head>
-            <body>
-                <h2 style="text-align:center; margin-bottom:20px;">${escapeDangerousHtml(documentTitle)}</h2>
-                <table>
-                    <thead><tr>`; 
+            // إضافة هيكلية MS Office Header لمنع ظهور رسالة التلف
+            let htmlDocString = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40' dir='rtl'><head><meta charset='utf-8'><title>"+escapeDangerousHtml(documentTitle)+"</title><style>body { font-family: 'Arial', sans-serif; direction: rtl; text-align: right; } table { border-collapse: collapse; width: 100%; direction: rtl; } th, td { border: 1px solid #000000; padding: 8px; text-align: center; vertical-align: middle; } th { background-color: #e0e7ff; font-weight: bold; }</style></head><body><h2 style='text-align:center; margin-bottom:20px;'>"+escapeDangerousHtml(documentTitle)+"</h2><table><thead><tr>"; 
             
             appColumns.forEach(col => {
-                htmlContent += `<th>${escapeDangerousHtml(col)}</th>`;
+                htmlDocString += `<th>${escapeDangerousHtml(col)}</th>`;
             }); 
-            htmlContent += "</tr></thead><tbody>"; 
-            
+            htmlDocString += "</tr></thead><tbody>"; 
             appDataRows.forEach(row => { 
-                htmlContent += "<tr>"; 
+                htmlDocString += "<tr>"; 
                 row.forEach(cell => {
-                    htmlContent += `<td>${escapeDangerousHtml(cell)}</td>`;
+                    htmlDocString += `<td>${escapeDangerousHtml(cell)}</td>`;
                 }); 
-                htmlContent += "</tr>"; 
+                htmlDocString += "</tr>"; 
             }); 
-            htmlContent += "</tbody></table></body></html>"; 
+            htmlDocString += "</tbody></table></body></html>"; 
             
-            // إضافة \ufeff لتأكيد صيغة UTF-8، واستخدام MIME الخاص بالوورد
-            let blobObject = new Blob(['\ufeff', htmlContent], { type: 'application/msword' }); 
+            // استخدام BOM (\ufeff) لحماية اللغة العربية
+            let blobObject = new Blob(['\ufeff', htmlDocString], { type: 'application/msword' }); 
             let downloadLink = URL.createObjectURL(blobObject); 
             let anchorElement = document.createElement('a'); 
             anchorElement.href = downloadLink; 
-            anchorElement.download = 'رقيـم_بيانات.doc'; 
+            anchorElement.download = 'رقيـم_بيانات_بديل.doc'; 
             document.body.appendChild(anchorElement); 
             anchorElement.click(); 
             document.body.removeChild(anchorElement); 
@@ -2144,7 +2222,13 @@
                         let globalRowIndexId = dataStartIndex + rowRelativeIndex; 
                         let isRowSummary = (rowArray[1] === 'المجموع الكلي:');
                         
-                        tableBodyHtmlString += `<tr style="${isRowSummary ? 'font-weight:bold; background:var(--app-primary-light) !important;' : ''}">`;
+                        let customCellColorStr = (appCellColors[globalRowIndexId] && appCellColors[globalRowIndexId][0]) ? appCellColors[globalRowIndexId][0] : "";
+                        let rowStyleCss = "";
+                        if (isRowSummary) {
+                            rowStyleCss = 'font-weight:bold; background:var(--app-primary-light) !important;';
+                        }
+                        
+                        tableBodyHtmlString += `<tr style="${rowStyleCss}">`;
                         
                         rowArray.forEach((cellStringValue, cellColIndex) => { 
                             let editableAttributeRow = (isEditingLocked || isRowSummary) ? 'contenteditable="false"' : 'contenteditable="true"';
