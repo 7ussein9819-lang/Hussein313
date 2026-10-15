@@ -8,7 +8,7 @@
     <!-- مكتبة قراءة وتصدير ملفات الإكسل الأصلية (.xlsx) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <!-- مكتبة بناء وتصدير ملفات الوورد الأصلية (.docx) -->
+    <!-- مكتبة بناء ملفات الوورد (.docx) -->
     <script src="https://unpkg.com/docx@7.3.0/build/index.js"></script>
 
     <!-- مجموعة الخطوط العربية الاحترافية الكاملة -->
@@ -91,7 +91,7 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* تصميم شريط التمرير (السكرول) بنعومة */
+        /* تصميم شريط التمرير بنعومة */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
@@ -177,6 +177,29 @@
             align-items: center; 
             flex-wrap: wrap;
         }
+
+        /* زر التلكرام البارز مع المعرف */
+        .telegram-header-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #0088cc;
+            color: #ffffff !important;
+            padding: 8px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            font-family: 'Tajawal', sans-serif;
+            border: 1px solid #0088cc;
+        }
+        .telegram-header-btn:hover {
+            background: #006699;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
+        }
+        .telegram-header-btn svg { width: 18px; height: 18px; fill: currentColor; }
         
         .icon-btn { 
             background: var(--app-surface); 
@@ -191,7 +214,6 @@
             cursor: pointer; 
             transition: all 0.2s ease; 
             outline: none; 
-            text-decoration: none; 
         }
         
         .icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
@@ -202,21 +224,6 @@
             border-color: var(--app-primary); 
             transform: translateY(-2px); 
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        /* زر التلكرام المخصص */
-        .telegram-btn {
-            color: #0088cc;
-            border-color: #0088cc;
-            background: rgba(0, 136, 204, 0.05);
-        }
-        .telegram-btn:hover {
-            background: #0088cc !important;
-            color: #ffffff !important;
-            border-color: #0088cc !important;
-        }
-        body.dark-mode .telegram-btn {
-            background: rgba(0, 136, 204, 0.15);
         }
         
         .icon-btn.lock-active { 
@@ -302,7 +309,7 @@
         .preview-area { 
             flex: 1; 
             overflow-y: auto; 
-            overflow-x: auto; /* السماح بالتمرير الأفقي إذا لزم الأمر */
+            overflow-x: auto; 
             padding: 40px 20px; 
             display: flex; 
             flex-direction: column; 
@@ -460,7 +467,6 @@
             background-color: rgba(79, 70, 229, 0.04) !important;
         }
         
-        /* الخلايا القابلة للتعديل */
         .e-cell { 
             width: 100%; 
             min-height: var(--tbl-row-height); 
@@ -507,9 +513,7 @@
             color: var(--td-color) !important; 
         }
         
-        .t-print td {
-            background: var(--td-bg) !important;
-        }
+        .t-print td { background: var(--td-bg) !important; }
 
         .t-print td:first-child .e-cell { 
             font-weight: bold; 
@@ -522,56 +526,26 @@
         }
         
         /* التنسيق الشرطي */
-        .t-print td .e-cell.cond-fail, 
-        .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-fail {
-            color: #dc2626 !important; 
-            font-weight: 900 !important; 
-            background-color: #fee2e2 !important;
+        .t-print td .e-cell.cond-fail, .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-fail {
+            color: #dc2626 !important; font-weight: 900 !important; background-color: #fee2e2 !important;
         }
 
-        .t-print td .e-cell.cond-warn, 
-        .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-warn {
-            color: #b45309 !important; 
-            font-weight: 900 !important; 
-            background-color: #fef08a !important;
+        .t-print td .e-cell.cond-warn, .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-warn {
+            color: #b45309 !important; font-weight: 900 !important; background-color: #fef08a !important;
         }
 
         .p-sigs { 
-            display: flex; 
-            justify-content: space-around; 
-            flex-shrink: 0; 
-            margin-top: auto; 
-            padding-top: 25px; 
-            z-index: 1;
+            display: flex; justify-content: space-around; flex-shrink: 0; 
+            margin-top: auto; padding-top: 25px; z-index: 1;
         }
         
-        .sig-box { 
-            text-align: center; 
-            width: 28%; 
-            font-family: var(--td-font);
-        }
-        
-        .sig-box h4 { 
-            font-weight: 800; 
-            margin-bottom: 40px; 
-            font-size: 14pt; 
-        }
-        
-        .sig-box p { 
-            font-weight: 700; 
-            font-size: 13pt; 
-            border-top: 1px dashed #000; 
-            padding-top: 8px; 
-        }
+        .sig-box { text-align: center; width: 28%; font-family: var(--td-font); }
+        .sig-box h4 { font-weight: 800; margin-bottom: 40px; font-size: 14pt; }
+        .sig-box p { font-weight: 700; font-size: 13pt; border-top: 1px dashed #000; padding-top: 8px; }
         
         .page-num { 
-            text-align: center; 
-            font-family: 'Tajawal', sans-serif; 
-            font-weight: 700; 
-            color: #64748b; 
-            font-size: 11pt; 
-            padding-top: 15px; 
-            margin-top: 15px; 
+            text-align: center; font-family: 'Tajawal', sans-serif; font-weight: 700; 
+            color: #64748b; font-size: 11pt; padding-top: 15px; margin-top: 15px; 
         }
 
         /* ================= مكونات لوحة التحكم ================= */
@@ -650,7 +624,7 @@
         }
         .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05);}
 
-        /* ================= شريط الموبايل السفلي والـ Zoom الذكي ================= */
+        /* ================= شريط الموبايل السفلي والـ Zoom الذكي لمنع التداخل ================= */
         .mobile-nav { 
             display: none; background: var(--app-surface); border-top: 1px solid var(--app-border); 
             padding: 10px 0; justify-content: space-around; z-index: 50; 
@@ -663,7 +637,7 @@
         }
         .m-nav-btn.active { color: var(--app-primary); transform: translateY(-2px); }
         
-        /* التصغير في الموبايل والتابلت باستخدام تقنية Zoom لمنع التداخل */
+        /* تقنية الـ Zoom للتصغير بدون تداخل الصفحات في العرضي والطولي */
         @media (max-width: 900px) {
             .header-bar { padding: 10px 15px; }
             .search-box { max-width: 100%; width: 100%; order: 3; margin-top: 10px; }
@@ -673,7 +647,7 @@
             .workspace { display: block; overflow-y: hidden; }
             .control-panel { height: 100%; width: 100%; border: none; overflow-y: auto; padding-bottom: 80px;}
             
-            /* إزالة الـ overflow-x: hidden لضمان إمكانية رؤية الورقة العرضية كاملة إذا تطلب الأمر */
+            /* إزالة الـ overflow-x لضمان رؤية الورقة العرضية كاملة والتمرير بين الأوراق */
             .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto; overflow-x: auto; gap: 20px;}
             .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
             
@@ -719,7 +693,7 @@
         .start-btn { background: var(--app-primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit;}
         .start-btn:hover { background: #4338ca; }
 
-        /* ================= الطباعة وحفظ الـ PDF (الحل الجذري المفتوح) ================= */
+        /* ================= الطباعة وحفظ الـ PDF (الحل الجذري النهائي) ================= */
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -783,7 +757,7 @@
 </head>
 <body>
 
-    <!-- نافذة الترحيب (تظهر للمستخدم الجديد فقط) -->
+    <!-- 💬 نافذة الترحيب (تظهر للمستخدم الجديد فقط وتدعم الدعم المادي) -->
     <div class="welcome-modal-overlay" id="welcomeModal">
         <div class="welcome-modal">
             <div class="welcome-icon">👋</div>
@@ -810,9 +784,11 @@
             <input type="text" id="searchInput" class="search-input" placeholder="ابحث في الأسماء والبيانات..." onkeyup="executeSearch()">
         </div>
         <div class="header-actions">
-            <!-- زر التلكرام المباشر الجديد -->
-            <a href="https://t.me/HJS_98" target="_blank" class="icon-btn telegram-btn" title="التواصل والدعم (@HJS_98)">
+            
+            <!-- ✈️ زر التلكرام الثابت في الأعلى مع المعرف الخاص بك -->
+            <a href="https://t.me/HJS_98" target="_blank" class="telegram-header-btn" title="التواصل والدعم الفني">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.25-5.58 3.69-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.89.03-.25.38-.51 1.03-.78 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.89.11 0 .37.03.54.17.14.12.18.28.2.42.01.12.02.26.01.31z"/></svg>
+                <span dir="ltr">@HJS_98</span>
             </a>
             
             <button class="icon-btn" id="btnTheme" onclick="toggleDarkMode()" title="تغيير المظهر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
@@ -853,7 +829,7 @@
                 <button class="tab-btn" onclick="switchControlTab('tab5', this)">📂 قوالب جاهزة</button>
             </div>
 
-            <!-- Tab 1: التحكم بالبيانات وتلوين الخلية -->
+            <!-- Tab 1: التحكم بالبيانات -->
             <div id="tab1" class="tab-content active">
                 <div style="text-align: center; margin-bottom: 15px; background: var(--app-primary-light); padding: 10px; border-radius: 10px;">
                     <p style="font-size:0.95rem; font-weight:bold; color:var(--app-primary);">✨ تعديل البيانات يتم مباشرة على الورقة (في الأعلى).</p>
@@ -1094,7 +1070,7 @@
         </button>
     </nav>
 
-    <!-- ================= الأكواد البرمجية (مرتبة ومفتوحة بالكامل) ================= -->
+    <!-- ================= الأكواد البرمجية ================= -->
     <script>
         // ================= كود حماية الموقع =================
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -1106,7 +1082,7 @@
             if(e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
         });
 
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v11_statcounter'; 
+        const LOCAL_STORAGE_KEY = 'raqeem_pro_v12_final_audit'; 
         const MAXIMUM_ALLOWED_ROWS = 250; 
         
         let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"]; 
@@ -1146,12 +1122,12 @@
                 modal.classList.remove('show');
                 setTimeout(() => { modal.style.display = 'none'; }, 300);
             }
-            localStorage.setItem('raqeem_welcome_seen', 'true');
+            localStorage.setItem('raqeem_welcome_msg_final', 'true');
         }
 
         // عرض رسالة الترحيب لأول مرة فقط
         function checkWelcomeModal() {
-            if(!localStorage.getItem('raqeem_welcome_seen')) {
+            if(!localStorage.getItem('raqeem_welcome_msg_final')) {
                 let modal = document.getElementById('welcomeModal');
                 if(modal) {
                     modal.style.display = 'flex';
@@ -1385,7 +1361,6 @@
             
             let printStyleElem = document.getElementById('printStyle');
             if(printStyleElem) {
-                // استخدام المقاسات بالمليمتر لإجبار المتصفح على الطباعة بالعرض أو الطول
                 if (globalPaperSizeMode === 'a4' && globalPaperOrientationMode === 'portrait') {
                     printStyleElem.innerHTML = `@media print { @page { size: 210mm 297mm; margin: 0; } }`;
                 } else if (globalPaperSizeMode === 'a4' && globalPaperOrientationMode === 'landscape') {
@@ -1615,7 +1590,7 @@
             } 
             
             setTableAlignment('center');
-            updatePaperPrintSettings(); // يستدعي رسم الورق مع إعدادات الطباعة
+            updatePaperPrintSettings(); 
         }
 
         // ================= 1. التصدير للإكسل (الحل الجذري .xlsx أصلي) =================
@@ -1629,49 +1604,45 @@
                 let titleElement = document.getElementById('inputMainTitle');
                 let documentTitle = titleElement ? titleElement.value : 'سجل البيانات';
                 
-                // إضافة العنوان في الصف الأول ثم صف فارغ
                 excelData.push([documentTitle]);
                 excelData.push([]); 
-                
-                // إضافة أسماء الأعمدة (الترويسة)
                 excelData.push(appColumns);
                 
-                // إضافة بيانات الجدول
                 appDataRows.forEach(row => {
                     excelData.push(row);
                 });
                 
-                // تحويل المصفوفة إلى ورقة عمل (Sheet)
                 let worksheet = XLSX.utils.aoa_to_sheet(excelData);
                 
-                // إجبار الإكسل على الفتح من اليمين لليسار (RTL) بشكل أصلي
                 if(!worksheet['!views']) worksheet['!views'] = [];
                 worksheet['!views'].push({ rightToLeft: true });
                 
-                // ضبط عرض الأعمدة في الإكسل بناءً على عرضها الحالي في الموقع
                 let wscols = appColumnWidths.map(w => ({ wpx: w }));
                 worksheet['!cols'] = wscols;
 
-                // إنشاء ملف إكسل ووضع الشيت بداخله
                 let workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
                 
-                // حفظ الملف بصيغة (xlsx) الأصلية المضغوطة (لا يمكن أن يظهر تالف)
                 XLSX.writeFile(workbook, 'رقيـم_بيانات.xlsx');
             } catch(error) {
                 alert('حدث خطأ أثناء تصدير الإكسل: ' + error.message);
             }
         }
 
-        // ================= 2. دالة التصدير الاحتياطية للوورد (في حال فشل المكتبة الأصلية) =================
+        // ================= 2. دالة التصدير الاحتياطية للوورد (Word Fallback) =================
         function exportToWordFallback(documentTitle) {
             let isLandscapeFallback = (globalPaperOrientationMode === 'landscape');
             let cssPageRule = isLandscapeFallback ? 
                 "@page WordSection1 { size: 841.9pt 595.3pt; mso-page-orientation: landscape; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }" : 
                 "@page WordSection1 { size: 595.3pt 841.9pt; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }";
 
+            // إضافة XML Namespaces الخاصة بمايكروسوفت لمنع التلف
             let htmlDocString = `
-            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40" dir="rtl">
+            <html xmlns:v="urn:schemas-microsoft-com:vml"
+                  xmlns:o="urn:schemas-microsoft-com:office:office"
+                  xmlns:w="urn:schemas-microsoft-com:office:word"
+                  xmlns:m="http://schemas-microsoft.com/office/2004/12/omml"
+                  xmlns="http://www.w3.org/TR/REC-html40" dir="rtl">
             <head>
                 <meta charset="utf-8">
                 <title>${escapeDangerousHtml(documentTitle)}</title>
@@ -1724,12 +1695,10 @@
             let titleElement = document.getElementById('inputMainTitle');
             let documentTitle = titleElement ? titleElement.value : 'السجل';
             
-            // التحقق من مكتبة docx لبناء ملف وورد حديث وأصلي 100%
             if (typeof docx !== 'undefined') {
                 try {
                     let docRows = [];
                     
-                    // بناء ترويسة الجدول
                     let headerCells = appColumns.map(col => {
                         let textValue = col ? String(col) : "-";
                         return new docx.TableCell({
@@ -1743,10 +1712,9 @@
                     });
                     docRows.push(new docx.TableRow({ children: headerCells, tableHeader: true }));
 
-                    // بناء بيانات الجدول
                     appDataRows.forEach(row => {
                         let cells = row.map(cell => {
-                            let textValue = cell ? String(cell) : " "; // لتجنب الأخطاء إذا كانت الخلية فارغة
+                            let textValue = cell ? String(cell) : " "; 
                             return new docx.TableCell({
                                 children: [new docx.Paragraph({
                                     children: [new docx.TextRun({ text: textValue, rightToLeft: true, font: "Arial" })],
@@ -1764,7 +1732,6 @@
                         width: { size: 100, type: docx.WidthType.PERCENTAGE },
                     });
 
-                    // احترام إعدادات (الورقة العرضية والطولية) في الوورد
                     let isLandscape = (globalPaperOrientationMode === 'landscape');
 
                     const doc = new docx.Document({
@@ -1791,7 +1758,6 @@
                         }],
                     });
 
-                    // تصدير الملف الحقيقي
                     docx.Packer.toBlob(doc).then(blob => {
                         let downloadLink = URL.createObjectURL(blob);
                         let anchorElement = document.createElement('a');
@@ -1809,10 +1775,10 @@
                     return; 
                 } catch(error) {
                     console.error("Native docx Error:", error);
-                    exportToWordFallback(documentTitle); // الاستعانة بالطريقة الاحتياطية
+                    exportToWordFallback(documentTitle);
                 }
             } else {
-                exportToWordFallback(documentTitle); // الاستعانة بالطريقة الاحتياطية إذا لم تحمل المكتبة
+                exportToWordFallback(documentTitle);
             }
         }
 
@@ -1910,7 +1876,6 @@
             renderPaperPages();
         }
 
-        // ================= منع التهنيج أثناء التعديل المباشر (التحديث بدون إعادة رسم الصفحة كاملة) =================
         function updateMemoryValue(updateType, rowIndex, colIndex, newValue) {
             if(['title', 'dir', 'school', 'num', 'date', 's1', 's1n', 's2', 's2n', 's3', 's3n'].includes(updateType)) {
                 let printElement = document.getElementById(`print_${updateType}`);
