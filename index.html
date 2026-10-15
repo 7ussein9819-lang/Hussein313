@@ -1,2336 +1,808 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>رَقِيم Pro - منصة الأرشفة المباشرة</title>
-
-    <!-- مكتبة قراءة وتصدير ملفات الإكسل الأصلية (.xlsx) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-    <!-- مكتبة بناء وتصدير ملفات الوورد الأصلية (.docx) -->
-    <script src="https://unpkg.com/docx@7.3.0/build/index.js"></script>
-
-    <!-- مجموعة الخطوط العربية الاحترافية -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;700&family=Almarai:wght@400;700;800&family=Changa:wght@400;600;700&family=Amiri:wght@400;700&family=Readex+Pro:wght@400;600;700&family=Rubik:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <style id="printStyle">
-        @media print {
-            @page { size: A4 portrait; margin: 0; }
-        }
-    </style>
-
-    <style>
-        :root {
-            --app-bg: #f1f5f9;
-            --app-surface: #ffffff;
-            --app-primary: #4f46e5;
-            --app-primary-light: #e0e7ff;
-            --app-border: #cbd5e1;
-            --app-text: #1e293b;
-            --app-text-muted: #64748b;
-            --preview-bg: #e2e8f0;
-            --tbl-row-height: 12mm;
-            --tbl-padding: 8px;
-            --tbl-flex-align: center;
-            --tbl-align: center;
-            --tbl-border-w: 1px;
-            --tbl-border-c: #000000;
-            --a4-margin: 15mm;
-            --th-font: 'Cairo', sans-serif;
-            --th-size: 14pt;
-            --th-weight: 700;
-            --th-color: #ffffff;
-            --th-bg: linear-gradient(135deg, #4f46e5, #312e81);
-            --td-font: 'Tajawal', sans-serif;
-            --td-size: 12pt;
-            --td-weight: 500;
-            --td-color: #0f172a;
-            --td-bg: #ffffff;
-            --td-alt-bg: #f8fafc;
-            --idx-bg: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-        }
-
-        body.dark-mode {
-            --app-bg: #020617;
-            --app-surface: #0f172a;
-            --app-primary: #6366f1;
-            --app-primary-light: #1e3a8a;
-            --app-border: #1e293b;
-            --app-text: #f8fafc;
-            --app-text-muted: #94a3b8;
-            --preview-bg: #020617;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-        body, html {
-            height: 100%;
-            background: var(--app-bg);
-            color: var(--app-text);
-            font-family: 'Cairo', sans-serif;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        input, button, select, textarea { font-family: 'Cairo', sans-serif; }
-
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        body.dark-mode ::-webkit-scrollbar-thumb { background: #334155; }
-        body.dark-mode ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        .header-bar {
-            background: var(--app-surface);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--app-border);
-            flex-shrink: 0;
-            z-index: 100;
-            gap: 15px;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        }
-
-        .logo-area {
-            font-family: 'Reem Kufi', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--app-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: -0.5px;
-        }
-
-        .pro-badge {
-            font-size: 0.75rem;
-            background: var(--app-primary);
-            color: #fff;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-family: 'Cairo', sans-serif;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-            min-width: 200px;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 40px 10px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--app-border);
-            font-size: 0.95rem;
-            outline: none;
-            background: var(--app-bg);
-            color: var(--app-text);
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            border-color: var(--app-primary);
-            box-shadow: 0 0 0 3px var(--app-primary-light);
-            background: var(--app-surface);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 14px;
-            color: var(--app-text-muted);
-            width: 18px;
-            height: 18px;
-            pointer-events: none;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .modern-telegram-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #0088cc, #005580);
-            color: #ffffff !important;
-            padding: 8px 18px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
-            transition: all 0.3s ease;
-            font-family: 'Tajawal', sans-serif;
-            border: none;
-        }
-        .modern-telegram-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 136, 204, 0.4);
-            background: linear-gradient(135deg, #0099e6, #006699);
-        }
-        .modern-telegram-btn svg { width: 18px; height: 18px; fill: currentColor; }
-
-        .icon-btn {
-            background: var(--app-surface);
-            color: var(--app-text-muted);
-            border: 1px solid var(--app-border);
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            outline: none;
-            text-decoration: none;
-        }
-
-        .icon-btn svg { width: 22px; height: 22px; stroke-width: 2; }
-
-        .icon-btn:hover {
-            background: var(--app-primary-light);
-            color: var(--app-primary);
-            border-color: var(--app-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        @keyframes printPulse {
-            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
-        }
-
-        .print-btn {
-            animation: printPulse 2.5s infinite;
-            border-color: var(--app-primary) !important;
-            color: var(--app-primary) !important;
-        }
-        .print-btn:hover {
-            background: var(--app-primary) !important;
-            color: #fff !important;
-            animation: none;
-        }
-
-        .dropdown { position: relative; display: inline-block; }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            left: 0;
-            top: 50px;
-            background-color: var(--app-surface);
-            min-width: 220px;
-            padding: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 14px;
-            border: 1px solid var(--app-border);
-            z-index: 1000;
-        }
-
-        body.dark-mode .dropdown-content { box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-        .dropdown-content.show { display: block; animation: slideDown 0.2s ease; }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .drop-item {
-            color: var(--app-text);
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            border: none;
-            border-radius: 8px;
-            background: none;
-            width: 100%;
-            text-align: right;
-            margin-bottom: 2px;
-        }
-
-        .drop-item:last-child { margin-bottom: 0; }
-        .drop-item:hover { background-color: var(--app-primary-light); color: var(--app-primary); transform: translateX(-4px);}
-        .drop-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-        .workspace {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            overflow: hidden;
-            background: var(--preview-bg);
-        }
-
-        .preview-area {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: auto;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            scroll-behavior: smooth;
-            gap: 40px;
-        }
-
-        .control-panel {
-            height: 380px;
-            background: var(--app-surface);
-            border-top: 1px solid var(--app-border);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            z-index: 10;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-            transition: opacity 0.3s;
-        }
-
-        .tabs-nav {
-            display: flex;
-            gap: 8px;
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--app-border);
-            background: var(--app-bg);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .tabs-nav::-webkit-scrollbar { display: none; }
-
-        .tab-btn {
-            background: var(--app-surface);
-            border: 1px solid var(--app-border);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--app-text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn:hover { background: var(--app-bg); color: var(--app-text); }
-
-        .tab-btn.active {
-            background: var(--app-primary-light);
-            color: var(--app-primary);
-            border-color: var(--app-primary);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.1);
-        }
-
-        .tab-content {
-            display: none;
-            padding: 20px 25px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .paper {
-            background: #ffffff;
-            padding: var(--a4-margin);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
-            color: #000000;
-            border-radius: 8px;
-            page-break-after: always;
-        }
-
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            height: 70%;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.08;
-            pointer-events: none;
-        }
-
-        .size-a4.portrait { width: 210mm; min-height: 297mm; }
-        .size-a4.landscape { width: 297mm; min-height: 210mm; }
-        .size-a3.portrait { width: 297mm; min-height: 420mm; }
-        .size-a3.landscape { width: 420mm; min-height: 297mm; }
-
-        .paper-wrap {
-            flex: 1 0 auto;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 1;
-        }
-
-        .p-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--app-primary);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            min-height: 100px;
-        }
-
-        .ph-right { width: 30%; text-align: right; font-family: var(--td-font);}
-        .ph-right h3 { font-size: 14pt; margin: 0 0 5px; font-weight: 500; }
-        .ph-right h2 { font-size: 16pt; margin: 0; font-weight: 800; }
-
-        .ph-center { width: 40%; text-align: center; }
-        .ph-center h1 { font-family: 'Reem Kufi', sans-serif; font-size: 24pt; color: var(--app-primary); margin: 0; line-height: 1.2; }
-
-        .ph-left { width: 30%; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
-        .ph-meta { text-align: right; font-size: 11pt; font-weight: bold; line-height: 1.6; font-family: var(--td-font);}
-        .ph-left img { max-width: 80px; max-height: 80px; object-fit: contain; }
-
-        .t-print {
-            width: 100%;
-            border-collapse: collapse;
-            position: relative;
-            z-index: 1;
-            table-layout: fixed;
-        }
-
-        .t-print th, .t-print td {
-            padding: 0 !important;
-            border: var(--tbl-border-w) solid var(--tbl-border-c) !important;
-            vertical-align: middle;
-            transition: background-color 0.2s ease;
-        }
-
-        .t-print tbody tr:hover td {
-            background-color: rgba(79, 70, 229, 0.04) !important;
-        }
-
-        .e-cell {
-            width: 100%;
-            min-height: var(--tbl-row-height);
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit;
-            color: inherit;
-            padding: var(--tbl-padding) !important;
-            outline: none;
-            box-sizing: border-box;
-            white-space: pre-wrap;
-            word-break: break-word;
-            cursor: text;
-            transition: background-color 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: var(--tbl-flex-align);
-            text-align: var(--tbl-align);
-        }
-
-        .e-cell:focus {
-            background: rgba(99, 102, 241, 0.1) !important;
-            outline: 2px solid var(--app-primary);
-            outline-offset: -2px;
-            border-radius: 2px;
-        }
-
-        .t-print th .e-cell, .t-print th {
-            font-family: var(--th-font) !important;
-            font-size: var(--th-size) !important;
-            font-weight: var(--th-weight) !important;
-            color: var(--th-color) !important;
-            background: var(--th-bg) !important;
-            justify-content: center !important;
-            text-align: center !important;
-        }
-
-        .t-print td .e-cell {
-            font-family: var(--td-font) !important;
-            font-size: var(--td-size) !important;
-            font-weight: var(--td-weight) !important;
-            color: var(--td-color) !important;
-        }
-
-        .t-print td { background: var(--td-bg) !important; }
-
-        .t-print td:first-child .e-cell {
-            font-weight: bold;
-            justify-content: center !important;
-            text-align: center !important;
-        }
-
-        .t-print.striped tbody tr:nth-child(even) td {
-            background: var(--td-alt-bg) !important;
-        }
-
-        .t-print td .e-cell.cond-fail, .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-fail {
-            color: #dc2626 !important; font-weight: 900 !important; background-color: #fee2e2 !important;
-        }
-
-        .t-print td .e-cell.cond-warn, .t-print.striped tbody tr:nth-child(even) td .e-cell.cond-warn {
-            color: #b45309 !important; font-weight: 900 !important; background-color: #fef08a !important;
-        }
-
-        .p-sigs {
-            display: flex; justify-content: space-around; flex-shrink: 0;
-            margin-top: auto; padding-top: 25px; z-index: 1;
-        }
-
-        .sig-box { text-align: center; width: 28%; font-family: var(--td-font); }
-        .sig-box h4 { font-weight: 800; margin-bottom: 40px; font-size: 14pt; }
-        .sig-box p { font-weight: 700; font-size: 13pt; border-top: 1px dashed #000; padding-top: 8px; }
-
-        .page-num {
-            text-align: center; font-family: 'Tajawal', sans-serif; font-weight: 700;
-            color: #64748b; font-size: 11pt; padding-top: 15px; margin-top: 15px;
-        }
-
-        .stepper {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--app-bg); padding: 10px 15px; border-radius: 10px;
-            border: 1px solid var(--app-border); margin-bottom: 12px;
-            transition: all 0.2s ease;
-        }
-        .stepper:hover { border-color: var(--app-primary-light); background: var(--app-surface); }
-        .step-label { font-weight: 700; font-size: 0.95rem; color: var(--app-text); }
-        .step-actions { display: flex; align-items: center; gap: 15px; }
-        .step-val { font-weight: bold; color: var(--app-primary); min-width: 45px; text-align: left; font-size: 1.05rem; direction: ltr;}
-        .step-btn-group { display: flex; flex-direction: column; gap: 4px; }
-
-        .step-btn {
-            background: var(--app-surface); border: 1px solid var(--app-border);
-            color: var(--app-text-muted); border-radius: 6px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            width: 32px; height: 22px; font-size: 12px; outline: none;
-            transition: all 0.2s ease;
-        }
-        .step-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); }
-
-        .icon-toolbar { background: var(--app-surface); border: 1px solid var(--app-border); padding: 15px; border-radius: 12px; margin-bottom: 20px;}
-        .toolbar-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-
-        .tool-btn {
-            background: var(--app-bg); border: 1px solid var(--app-border);
-            padding: 10px 15px; border-radius: 8px; font-size: 0.9rem;
-            font-weight: 700; cursor: pointer; display: flex; align-items: center;
-            justify-content: center; gap: 6px; color: var(--app-text); transition: all 0.2s ease; flex: 1; min-width: 120px;
-        }
-        .tool-btn:hover { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); transform: translateY(-1px); }
-        .tool-btn.active { background: var(--app-primary-light); color: var(--app-primary); border-color: var(--app-primary); }
-
-        .section-title { font-family: 'Reem Kufi', sans-serif; font-size: 1.2rem; color: var(--app-primary); margin: 20px 0 15px; border-bottom: 2px dashed var(--app-border); padding-bottom: 8px; }
-        .section-title:first-child { margin-top: 0; }
-
-        .form-row { margin-bottom: 15px; }
-        .form-row label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; color: var(--app-text); }
-
-        .control {
-            width: 100%; padding: 12px; border: 1px solid var(--app-border);
-            border-radius: 10px; font-size: 0.95rem; background: var(--app-bg);
-            color: var(--app-text); outline:none; transition: all 0.3s ease;
-        }
-        .control:focus { border-color: var(--app-primary); box-shadow: 0 0 0 3px var(--app-primary-light); background:var(--app-surface);}
-        input[type="color"].control { height: 45px; padding: 2px; cursor: pointer; }
-
-        .flex-box { display: flex; gap: 15px; align-items: center; }
-        .flex-box > * { flex: 1; }
-
-        .check-box {
-            display: flex; align-items: center; gap: 10px; padding: 12px 15px;
-            border: 1px solid var(--app-border); border-radius: 10px; cursor: pointer;
-            font-weight: 700; font-size: 0.95rem; background: var(--app-bg); color: var(--app-text);
-            transition: all 0.2s ease;
-        }
-        .check-box:hover { border-color: var(--app-primary); background: var(--app-surface); }
-
-        .themes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-        .theme-card {
-            height: 50px; border-radius: 10px; cursor: pointer; border: 2px solid transparent;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-            color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-        .theme-card:hover { transform: scale(1.03); }
-        .theme-card.active { border-color: #000; transform: scale(0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
-        body.dark-mode .theme-card.active { border-color: #fff; }
-
-        .tpl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-        .tpl-card {
-            border: 1px solid var(--app-border); padding: 20px 10px; border-radius: 14px;
-            text-align: center; cursor: pointer; background: var(--app-surface); transition: all 0.2s ease;
-        }
-        .tpl-card:hover { border-color: var(--app-primary); background: var(--app-primary-light); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05);}
-
-        .mobile-nav {
-            display: none; background: var(--app-surface); border-top: 1px solid var(--app-border);
-            padding: 10px 0; justify-content: space-around; z-index: 50;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom)); box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-        }
-        .m-nav-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            font-weight: 700; font-size: 0.85rem; color: var(--app-text-muted);
-            cursor: pointer; border: none; background: none; transition: 0.2s;
-        }
-        .m-nav-btn.active { color: var(--app-primary); transform: translateY(-2px); }
-
-        @media (max-width: 900px) {
-            .header-bar { padding: 10px 15px; }
-            .search-box { max-width: 100%; width: 100%; order: 3; margin-top: 10px; }
-            .header-actions { flex: 1; justify-content: flex-end; }
-            .logo-area { flex: 1; }
-
-            .workspace { display: block; overflow-y: hidden; }
-            .control-panel { height: 100%; width: 100%; border: none; overflow-y: auto; padding-bottom: 80px;}
-
-            .preview-area { height: 100%; padding: 15px 5px 80px 5px; overflow-y: auto; overflow-x: auto; gap: 20px;}
-            .mobile-nav { display: flex; position: absolute; bottom: 0; width: 100%; }
-
-            body.show-controls .preview-area { display: none !important; }
-            body.show-controls .control-panel { display: flex !important; }
-
-            body:not(.show-controls) .control-panel { display: none !important; }
-            body:not(.show-controls) .preview-area { display: flex !important; }
-
-            .paper { zoom: 0.45; margin-bottom: 20px !important; }
-            .paper.size-a4.landscape { zoom: 0.35; }
-            .paper.size-a3.portrait { zoom: 0.35; }
-            .paper.size-a3.landscape { zoom: 0.25; }
-        }
-
-        .welcome-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
-        }
-        .welcome-modal-overlay.show { opacity: 1; visibility: visible; }
-
-        .welcome-modal {
-            background: var(--app-surface); width: 90%; max-width: 500px;
-            border-radius: 20px; padding: 30px; text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            transform: translateY(20px) scale(0.95); transition: all 0.3s ease;
-            border: 1px solid var(--app-border); position: relative;
-        }
-        .welcome-modal-overlay.show .welcome-modal { transform: translateY(0) scale(1); }
-
-        .welcome-icon { font-size: 50px; margin-bottom: 15px; }
-        .welcome-title { font-family: 'Reem Kufi', sans-serif; font-size: 1.8rem; color: var(--app-primary); margin-bottom: 10px; }
-        .welcome-text { font-size: 1.1rem; color: var(--app-text); line-height: 1.6; margin-bottom: 25px; }
-
-        .support-box { background: var(--app-bg); border-radius: 12px; padding: 15px; margin-bottom: 25px; border: 1px dashed var(--app-primary); }
-        .support-box p { margin: 0 0 10px 0; font-weight: bold; color: var(--app-text); }
-        .telegram-link { display: inline-flex; align-items: center; gap: 8px; background: #0088cc; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.2s; }
-        .telegram-link:hover { background: #006699; transform: translateY(-2px); }
-
-        .start-btn { background: var(--app-primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit;}
-        .start-btn:hover { background: #4338ca; }
-
-        @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-
-            html, body {
-                background: none !important;
-                height: auto !important;
-                overflow: visible !important;
-                display: block !important;
-            }
-
-            .header-bar, .control-panel, .mobile-nav, .icon-toolbar, .search-box, .lock-hide, .welcome-modal-overlay {
-                display: none !important;
-            }
-
-            .workspace {
-                display: block !important;
-                height: auto !important;
-                overflow: visible !important;
-            }
-
-            .preview-area {
-                display: block !important;
-                position: static !important;
-                width: 100% !important;
-                padding: 0 !important;
-                height: auto !important;
-                overflow: visible !important;
-                gap: 0 !important;
-            }
-
-            .paper {
-                margin: 0 !important;
-                box-shadow: none !important;
-                page-break-after: always !important;
-                page-break-inside: avoid !important;
-                transform: none !important;
-                zoom: 1 !important;
-                border-radius: 0 !important;
-                padding: var(--a4-margin) !important;
-                width: 100% !important;
-                height: auto !important;
-                background-color: #ffffff !important;
-                position: relative !important;
-            }
-
-            .paper:last-child {
-                page-break-after: auto !important;
-            }
-
-            .t-print { width: 100% !important; border-collapse: collapse !important; }
-            .t-print th, .t-print td { border: var(--tbl-border-w) solid var(--tbl-border-c) !important; }
-            .e-cell { border: none !important; }
-            .t-print tbody tr:hover td { background-color: transparent !important; }
-            tr { page-break-inside: avoid !important; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رَقِيم Pro - منصة الأرشفة الذكية | ديمو</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg:#0a0e1a;
+    --bg2:#111827;
+    --card:#1a2235;
+    --card2:#232d45;
+    --border:#2a3550;
+    --text:#f1f5f9;
+    --muted:#94a3b8;
+    --primary:#6366f1;
+    --primary2:#8b5cf6;
+    --accent:#06b6d4;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --gradient:linear-gradient(135deg,#6366f1,#8b5cf6,#06b6d4);
+    --gradient2:linear-gradient(135deg,#6366f1,#8b5cf6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Cairo',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.7;
+    overflow-x:hidden;
+}
+
+/* ==== خلفية ديناميكية ==== */
+.bg-fx{
+    position:fixed;inset:0;z-index:-1;overflow:hidden;
+}
+.bg-fx::before{
+    content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;
+    background:radial-gradient(circle,rgba(99,102,241,0.25),transparent 70%);
+    border-radius:50%;filter:blur(60px);animation:float 20s ease-in-out infinite;
+}
+.bg-fx::after{
+    content:'';position:absolute;bottom:-200px;left:-200px;width:600px;height:600px;
+    background:radial-gradient(circle,rgba(6,182,212,0.2),transparent 70%);
+    border-radius:50%;filter:blur(60px);animation:float 25s ease-in-out infinite reverse;
+}
+@keyframes float{
+    0%,100%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(80px,-80px) scale(1.1)}
+}
+
+/* ==== الشبكة الخلفية ==== */
+.grid-bg{
+    position:fixed;inset:0;z-index:-1;
+    background-image:
+        linear-gradient(rgba(99,102,241,0.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(99,102,241,0.06) 1px,transparent 1px);
+    background-size:50px 50px;
+    mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+}
+
+/* ==== الشريط العلوي ==== */
+.nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    padding:15px 40px;
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(10,14,26,0.75);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid var(--border);
+    transition:all .3s;
+}
+.nav.scrolled{padding:10px 40px;background:rgba(10,14,26,0.95)}
+.nav-logo{
+    font-family:'Reem Kufi',sans-serif;font-size:1.6rem;font-weight:700;
+    background:var(--gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    display:flex;align-items:center;gap:10px;
+}
+.nav-logo .badge{
+    font-size:.7rem;background:var(--gradient2);color:#fff;
+    -webkit-text-fill-color:#fff;
+    padding:3px 10px;border-radius:20px;font-family:'Cairo',sans-serif;font-weight:700;
+}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{
+    color:var(--muted);text-decoration:none;font-weight:600;font-size:.95rem;
+    transition:color .3s;position:relative;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a::after{
+    content:'';position:absolute;bottom:-8px;right:0;left:0;height:2px;
+    background:var(--gradient);transform:scaleX(0);transition:transform .3s;
+}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-cta{
+    background:var(--gradient2);color:#fff;padding:10px 22px;border-radius:12px;
+    text-decoration:none;font-weight:700;font-size:.9rem;
+    box-shadow:0 4px 15px rgba(99,102,241,0.4);
+    transition:all .3s;
+}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(99,102,241,0.6)}
+
+/* ==== Hero ==== */
+.hero{
+    min-height:100vh;padding:120px 40px 80px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+}
+.hero-inner{
+    max-width:1300px;width:100%;
+    display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+}
+.hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(99,102,241,0.15);
+    border:1px solid rgba(99,102,241,0.3);
+    padding:8px 18px;border-radius:30px;
+    font-size:.85rem;font-weight:700;color:var(--primary2);
+    margin-bottom:25px;
+    animation:slideUp .6s ease both;
+}
+.hero-badge .dot{
+    width:8px;height:8px;background:var(--success);border-radius:50%;
+    animation:pulse 2s infinite;
+}
+@keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.7)}
+    50%{box-shadow:0 0 0 10px rgba(16,185,129,0)}
+}
+.hero h1{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:clamp(2.2rem,5vw,4rem);
+    line-height:1.2;font-weight:700;margin-bottom:25px;
+    animation:slideUp .6s ease .1s both;
+}
+.hero h1 .grad{
+    background:var(--gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.hero p{
+    font-size:1.15rem;color:var(--muted);margin-bottom:35px;max-width:550px;
+    animation:slideUp .6s ease .2s both;
+}
+.hero-actions{
+    display:flex;gap:15px;flex-wrap:wrap;
+    animation:slideUp .6s ease .3s both;
+}
+.btn{
+    padding:15px 32px;border-radius:14px;text-decoration:none;
+    font-weight:700;font-size:1rem;display:inline-flex;align-items:center;gap:10px;
+    transition:all .3s;border:none;cursor:pointer;font-family:inherit;
+}
+.btn-primary{
+    background:var(--gradient2);color:#fff;
+    box-shadow:0 8px 25px rgba(99,102,241,0.4);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(99,102,241,0.6)}
+.btn-outline{
+    background:transparent;color:var(--text);
+    border:2px solid var(--border);
+}
+.btn-outline:hover{border-color:var(--primary);background:rgba(99,102,241,0.1)}
+.btn svg{width:20px;height:20px}
+
+.hero-stats{
+    display:flex;gap:40px;margin-top:50px;
+    animation:slideUp .6s ease .4s both;
+}
+.stat-num{
+    font-size:2rem;font-weight:900;
+    background:var(--gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-family:'Tajawal',sans-serif;
+}
+.stat-label{font-size:.85rem;color:var(--muted);font-weight:600}
+
+/* ==== معاينة الورقة في Hero ==== */
+.hero-preview{
+    position:relative;
+    animation:slideUp .8s ease .3s both;
+}
+.preview-frame{
+    background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(6,182,212,0.1));
+    border:1px solid rgba(99,102,241,0.3);
+    border-radius:24px;padding:15px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.5);
+    transform:perspective(1200px) rotateY(-8deg) rotateX(3deg);
+    transition:transform .5s;
+}
+.preview-frame:hover{transform:perspective(1200px) rotateY(0) rotateX(0)}
+.preview-doc{
+    background:#fff;border-radius:12px;padding:25px;
+    color:#000;min-height:500px;
+}
+.doc-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:15px;border-bottom:3px solid var(--primary);margin-bottom:15px;
+}
+.doc-header .right{font-size:.75rem;font-weight:600}
+.doc-header .right strong{display:block;font-size:1rem;color:var(--primary);margin-top:3px}
+.doc-header .center{font-family:'Reem Kufi',sans-serif;font-size:1.3rem;font-weight:700;color:var(--primary)}
+.doc-header .left{width:50px;height:50px;background:var(--gradient2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.2rem}
+.doc-table{width:100%;border-collapse:collapse;font-size:.75rem}
+.doc-table th{
+    background:var(--gradient2);color:#fff;padding:10px;font-weight:700;
+    border:1px solid #000;font-family:'Cairo',sans-serif;
+}
+.doc-table td{
+    padding:10px;border:1px solid #000;text-align:center;
+}
+.doc-table tr:nth-child(even) td{background:#f8fafc}
+
+/* شارة عائمة */
+.floating-badge{
+    position:absolute;background:var(--card);border:1px solid var(--border);
+    padding:12px 18px;border-radius:14px;font-weight:700;font-size:.85rem;
+    box-shadow:0 15px 40px rgba(0,0,0,0.4);
+    display:flex;align-items:center;gap:10px;
+    animation:floatBadge 4s ease-in-out infinite;
+}
+.floating-badge.b1{top:20px;left:-20px;animation-delay:0s}
+.floating-badge.b2{bottom:40px;right:-30px;animation-delay:2s}
+@keyframes floatBadge{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-15px)}
+}
+.fb-icon{
+    width:32px;height:32px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.fb-icon.green{background:rgba(16,185,129,0.2);color:var(--success)}
+.fb-icon.blue{background:rgba(6,182,212,0.2);color:var(--accent)}
+.fb-icon.purple{background:rgba(139,92,246,0.2);color:var(--primary2)}
+
+@keyframes slideUp{
+    from{opacity:0;transform:translateY(30px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+/* ==== الأقسام العامة ==== */
+section{padding:100px 40px}
+.section-inner{max-width:1300px;margin:0 auto}
+.section-tag{
+    display:inline-block;background:rgba(99,102,241,0.15);
+    border:1px solid rgba(99,102,241,0.3);
+    padding:6px 16px;border-radius:20px;
+    font-size:.8rem;font-weight:700;color:var(--primary2);
+    margin-bottom:20px;
+}
+.section-title{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:clamp(1.8rem,3.5vw,2.8rem);
+    font-weight:700;line-height:1.3;margin-bottom:20px;
+}
+.section-title .grad{
+    background:var(--gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.section-desc{
+    color:var(--muted);font-size:1.05rem;max-width:700px;margin-bottom:60px;
+}
+.section-head{text-align:center;margin-bottom:60px}
+.section-head .section-desc{margin-left:auto;margin-right:auto}
+
+/* ==== المميزات ==== */
+.features-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+.feature-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:30px;
+    transition:all .4s;position:relative;overflow:hidden;
+}
+.feature-card::before{
+    content:'';position:absolute;top:0;right:0;width:100px;height:100px;
+    background:radial-gradient(circle,rgba(99,102,241,0.15),transparent 70%);
+    transition:all .4s;
+}
+.feature-card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(99,102,241,0.5);
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+}
+.feature-icon{
+    width:60px;height:60px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.7rem;margin-bottom:20px;
+    background:rgba(99,102,241,0.15);
+    border:1px solid rgba(99,102,241,0.3);
+}
+.feature-card h3{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:1.25rem;font-weight:700;margin-bottom:10px;
+}
+.feature-card p{color:var(--muted);font-size:.95rem}
+
+/* ==== القوالب ==== */
+.templates-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+}
+.tpl{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:16px;padding:25px 15px;text-align:center;
+    transition:all .3s;cursor:pointer;
+}
+.tpl:hover{
+    transform:translateY(-6px) scale(1.02);
+    border-color:var(--primary);
+    background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(139,92,246,0.1));
+}
+.tpl-icon{
+    font-size:2rem;margin-bottom:12px;display:block;
+}
+.tpl h4{font-size:.95rem;font-weight:700;color:var(--text)}
+
+/* ==== خطوات الاستخدام ==== */
+.steps{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;position:relative;
+}
+.step{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:35px 25px;text-align:center;
+    position:relative;transition:all .3s;
+}
+.step:hover{
+    transform:translateY(-6px);
+    border-color:rgba(139,92,246,0.5);
+}
+.step-num{
+    width:70px;height:70px;border-radius:20px;
+    background:var(--gradient2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.8rem;font-weight:900;color:#fff;
+    margin:0 auto 20px;
+    box-shadow:0 10px 25px rgba(99,102,241,0.4);
+    font-family:'Tajawal',sans-serif;
+}
+.step h3{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:1.2rem;margin-bottom:12px;font-weight:700;
+}
+.step p{color:var(--muted);font-size:.95rem}
+
+/* ==== التصدير ==== */
+.export-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;margin-top:50px;
+}
+.export-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:35px 25px;text-align:center;
+    transition:all .3s;position:relative;overflow:hidden;
+}
+.export-card::after{
+    content:'';position:absolute;bottom:-50px;left:-50px;width:150px;height:150px;
+    border-radius:50%;opacity:0.15;transition:all .4s;
+}
+.export-card.excel::after{background:var(--success)}
+.export-card.word::after{background:#3b82f6}
+.export-card.pdf::after{background:var(--danger)}
+.export-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+.export-card:hover::after{transform:scale(1.5)}
+.export-icon{
+    width:70px;height:70px;border-radius:20px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:2rem;margin:0 auto 20px;position:relative;z-index:1;
+}
+.export-icon.excel{background:rgba(16,185,129,0.15);border:2px solid var(--success);color:var(--success)}
+.export-icon.word{background:rgba(59,130,246,0.15);border:2px solid #3b82f6;color:#3b82f6}
+.export-icon.pdf{background:rgba(239,68,68,0.15);border:2px solid var(--danger);color:var(--danger)}
+.export-card h3{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:1.3rem;margin-bottom:10px;font-weight:700;position:relative;z-index:1;
+}
+.export-card p{color:var(--muted);font-size:.9rem;position:relative;z-index:1}
+
+/* ==== CTA النهائي ==== */
+.cta-final{
+    padding:80px 40px;
+}
+.cta-box{
+    max-width:1000px;margin:0 auto;
+    background:var(--gradient2);
+    border-radius:30px;padding:70px 40px;text-align:center;
+    position:relative;overflow:hidden;
+    box-shadow:0 30px 80px rgba(99,102,241,0.4);
+}
+.cta-box::before{
+    content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;
+    background:rgba(255,255,255,0.1);border-radius:50%;
+}
+.cta-box::after{
+    content:'';position:absolute;bottom:-100px;left:-100px;width:300px;height:300px;
+    background:rgba(255,255,255,0.08);border-radius:50%;
+}
+.cta-box h2{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:clamp(1.8rem,3.5vw,2.5rem);
+    font-weight:700;margin-bottom:15px;position:relative;z-index:1;color:#fff;
+}
+.cta-box p{
+    font-size:1.1rem;margin-bottom:30px;position:relative;z-index:1;
+    color:rgba(255,255,255,0.9);
+}
+.cta-box .btn-primary{
+    background:#fff;color:var(--primary);
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.cta-box .btn-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+
+/* ==== Footer ==== */
+footer{
+    background:var(--bg2);border-top:1px solid var(--border);
+    padding:60px 40px 30px;
+}
+.footer-inner{
+    max-width:1300px;margin:0 auto;
+    display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:50px;
+    margin-bottom:40px;
+}
+.footer-brand p{color:var(--muted);font-size:.95rem;margin-top:15px;max-width:350px}
+.footer-col h4{
+    font-family:'Reem Kufi',sans-serif;
+    font-size:1.05rem;margin-bottom:20px;font-weight:700;
+}
+.footer-col a{
+    display:block;color:var(--muted);text-decoration:none;
+    margin-bottom:12px;font-size:.9rem;transition:color .3s;
+}
+.footer-col a:hover{color:var(--primary2)}
+.footer-bottom{
+    max-width:1300px;margin:0 auto;
+    padding-top:25px;border-top:1px solid var(--border);
+    text-align:center;color:var(--muted);font-size:.85rem;
+}
+
+/* ==== استجابة الموبايل ==== */
+@media (max-width:900px){
+    .nav{padding:12px 20px}
+    .nav-links{display:none}
+    .hero{padding:100px 20px 60px}
+    .hero-inner{grid-template-columns:1fr;gap:40px}
+    .hero-stats{gap:25px;flex-wrap:wrap}
+    .preview-frame{transform:none}
+    .preview-frame:hover{transform:none}
+    .floating-badge{display:none}
+    section{padding:70px 20px}
+    .cta-box{padding:50px 25px}
+    .footer-inner{grid-template-columns:1fr;gap:30px}
+    .nav-cta{padding:8px 16px;font-size:.85rem}
+}
+
+/* ==== أنيميشن عند التمرير ==== */
+.reveal{opacity:0;transform:translateY(40px);transition:all .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
 </head>
 <body>
 
-    <div class="welcome-modal-overlay" id="welcomeModal">
-        <div class="welcome-modal">
-            <div class="welcome-icon">👋</div>
-            <h2 class="welcome-title">أهلاً بك في رَقِيم Pro</h2>
-            <p class="welcome-text">المنصة الأسرع والأسهل لأرشفة البيانات، إنشاء السجلات الاحترافية، وتصديرها بضغطة زر واحدة مجاناً (إلى PDF، Word، و Excel) دون الحاجة لإنترنت أو تسجيل دخول.</p>
+<div class="bg-fx"></div>
+<div class="grid-bg"></div>
 
-            <div class="support-box">
-                <p>للمقترحات، الدعم الفني، أو الدعم المادي لديمومة المنصة:</p>
-                <a href="https://t.me/HJS_98" target="_blank" rel="noopener" class="telegram-link">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.25-5.58 3.69-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.89.03-.25.38-.51 1.03-.78 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.89.11 0 .37.03.54.17.14.12.18.28.2.42.01.12.02.26.01.31z"/></svg>
-                    تواصل معي @HJS_98
+<!-- ===== الشريط العلوي ===== -->
+<nav class="nav" id="nav">
+    <div class="nav-logo">
+        رَقِيم <span class="badge">Pro ✨</span>
+    </div>
+    <div class="nav-links">
+        <a href="#features">المميزات</a>
+        <a href="#templates">القوالب</a>
+        <a href="#howto">كيف يعمل</a>
+        <a href="#export">التصدير</a>
+    </div>
+    <a href="index.html" class="nav-cta">جرّب الآن 🚀</a>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                الإصدار الجديد 14.0 متاح الآن
+            </div>
+            <h1>
+                أنشئ سجلات <span class="grad">احترافية</span><br>
+                وصدّرها <span class="grad">بضغطة زر</span>
+            </h1>
+            <p>
+                منصة أرشفة عربية كاملة تعمل مباشرة من المتصفح. أنشئ جداول، عبّئ البيانات، صمّم السجل، وصدّره إلى Excel و Word و PDF — كل هذا بدون تسجيل دخول وبدون إنترنت.
+            </p>
+            <div class="hero-actions">
+                <a href="index.html" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    ابدأ الآن مجاناً
+                </a>
+                <a href="#features" class="btn btn-outline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    شاهد المميزات
                 </a>
             </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="stat-num">12+</div>
+                    <div class="stat-label">قالب جاهز</div>
+                </div>
+                <div>
+                    <div class="stat-num">250</div>
+                    <div class="stat-label">صف كحد أقصى</div>
+                </div>
+                <div>
+                    <div class="stat-num">100%</div>
+                    <div class="stat-label">يعمل بدون إنترنت</div>
+                </div>
+            </div>
+        </div>
 
-            <button class="start-btn" onclick="closeWelcomeModal()">ابدأ العمل الآن 🚀</button>
+        <div class="hero-preview">
+            <div class="preview-frame">
+                <div class="preview-doc">
+                    <div class="doc-header">
+                        <div class="right">
+                            تربية الرصافة الثالثة
+                            <strong>مدرسة النور</strong>
+                        </div>
+                        <div class="center">سجل بيانات الموظفين</div>
+                        <div class="left">ر</div>
+                    </div>
+                    <table class="doc-table">
+                        <thead>
+                            <tr>
+                                <th>ت</th>
+                                <th>الاسم</th>
+                                <th>الوظيفة</th>
+                                <th>القسم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>أحمد محمد</td><td>مبرمج</td><td>IT</td></tr>
+                            <tr><td>2</td><td>سارة خالد</td><td>إدارة</td><td>HR</td></tr>
+                            <tr><td>3</td><td>علي حسين</td><td>محاسب</td><td>المالية</td></tr>
+                            <tr><td>4</td><td>فاطمة أحمد</td><td>معلمة</td><td>التعليم</td></tr>
+                            <tr><td>5</td><td>يوسف كريم</td><td>فني</td><td>الصيانة</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="floating-badge b1">
+                <span class="fb-icon green">✓</span>
+                تم التصدير بنجاح
+            </div>
+            <div class="floating-badge b2">
+                <span class="fb-icon purple">⚡</span>
+                سرعة فائقة
+            </div>
         </div>
     </div>
+</section>
 
-    <header class="header-bar">
-        <div class="logo-area">رَقِيم <span class="pro-badge">Pro ✨</span></div>
-        <div class="search-box">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="searchInput" class="search-input" placeholder="ابحث في الأسماء والبيانات..." onkeyup="executeSearch()">
+<!-- ===== المميزات ===== -->
+<section id="features">
+    <div class="section-inner">
+        <div class="section-head reveal">
+            <span class="section-tag">✨ المميزات</span>
+            <h2 class="section-title">
+                كل ما تحتاجه <span class="grad">في مكان واحد</span>
+            </h2>
+            <p class="section-desc">
+                مجموعة شاملة من الأدوات المصممة خصيصاً لتسهيل عملك الإداري والأكاديمي.
+            </p>
         </div>
-        <div class="header-actions">
 
-            <div class="dropdown">
-                <button class="icon-btn menu" onclick="toggleExportMenu()" id="menuBtn" title="القائمة والإعدادات">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
-                <div class="dropdown-content" id="exportDropdown">
-                    <button class="drop-item" onclick="toggleDarkMode()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                        تغيير المظهر
-                    </button>
-                    <button class="drop-item" id="dropLockBtn" onclick="toggleDataLock()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        قفل السجل
-                    </button>
-
-                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
-
-                    <button class="drop-item" onclick="exportToExcelFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> تصدير إلى Excel (.xlsx)</button>
-                    <button class="drop-item" onclick="exportToWordFile()"><svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> تصدير إلى Word (.doc)</button>
-                    <button class="drop-item" onclick="downloadJsonBackup()"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> حفظ نسخة احتياطية</button>
-                    <button class="drop-item" onclick="document.getElementById('uploadBackupInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> رفع نسخة محفوظة</button>
-                    <input type="file" id="uploadBackupInput" style="display:none;" accept=".json" onchange="processUploadedBackup(event)">
-
-                    <div style="border-top:1px solid var(--app-border); margin: 4px 0;"></div>
-
-                    <button class="drop-item lock-hide" style="color: #e11d48;" onclick="clearAllSystemData()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        تصفير ومسح السجل
-                    </button>
-                </div>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feature-icon">📝</div>
+                <h3>تعديل مباشر على الورقة</h3>
+                <p>انقر على أي خلية واكتب مباشرة. لا حاجة لنماذج معقدة — كل شيء يتم أمام عينيك.</p>
             </div>
 
-            <button class="icon-btn print-btn" onclick="executePrint()" title="طباعة أو حفظ كـ PDF">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            </button>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🎨</div>
+                <h3>12 قالب لوني احترافي</h3>
+                <p>اختر من بين قوالب ألوان جاهزة، أو خصّص الألوان والخطوط بنفسك لكل عمود.</p>
+            </div>
 
-            <a href="https://t.me/HJS_98" target="_blank" rel="noopener" class="modern-telegram-btn" title="التواصل والدعم الفني">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.25-5.58 3.69-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.89.03-.25.38-.51 1.03-.78 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.88 5.17-1.89.11 0 .37.03.54.17.14.12.18.28.2.42.01.12.02.26.01.31z"/></svg>
-                <span dir="ltr">@HJS_98</span>
-            </a>
+            <div class="feature-card reveal">
+                <div class="feature-icon">📥</div>
+                <h3>استيراد من Excel</h3>
+                <p>ارفع ملف Excel مباشرة وستنقل بياناته تلقائياً للجدول مع الحفاظ على التنسيق.</p>
+            </div>
 
+            <div class="feature-card reveal">
+                <div class="feature-icon">🧮</div>
+                <h3>حساب المجموع تلقائياً</h3>
+                <p>زر واحد يحسب مجموع كل الأعمدة الرقمية ويضيف صف "المجموع الكلي" في نهاية الجدول.</p>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">↩️</div>
+                <h3>تراجع وتقدّم</h3>
+                <p>30 خطوة تراجع وتقدّم. لا تخف من التجربة — يمكنك دائماً العودة للخلف.</p>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">🖨️</div>
+                <h3>طباعة دقيقة A4/A3</h3>
+                <p>دعم كامل لأحجام الورق مع طولي/عرضي وتحكم بالهوامش والترقيم التلقائي.</p>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">🌙</div>
+                <h3>وضع ليلي مريح</h3>
+                <p>تبديل فوري بين الوضع النهاري والليلي — مريح للعين ويحفظ إعدادك تلقائياً.</p>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon">💾</div>
+                <h3>نسخ احتياطي JSON</h3>
+                <p>احفظ نسخة كاملة من عملك واسترجعها في أي وقت على أي جهاز.</p>
+            </div>
         </div>
-    </header>
-
-    <div class="workspace">
-        <main class="preview-area" id="previewAreaContainer">
-            <div style="color:var(--app-text-muted); font-weight:bold; font-size:1.1rem; padding: 20px;">
-                جاري تهيئة الأوراق...
-            </div>
-        </main>
-
-        <aside class="control-panel" id="controlPanelArea">
-            <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchControlTab('tab1', this)">📝 البيانات السريعة</button>
-                <button class="tab-btn" onclick="switchControlTab('tab3', this)">🎨 تنسيق الجدول</button>
-                <button class="tab-btn" onclick="switchControlTab('tab2', this)">📄 الترويسة والتواقيع</button>
-                <button class="tab-btn" onclick="switchControlTab('tab4', this)">⚙️ أبعاد الورقة</button>
-                <button class="tab-btn" onclick="switchControlTab('tab5', this)">📂 قوالب جاهزة</button>
-            </div>
-
-            <div id="tab1" class="tab-content active">
-                <div style="text-align: center; margin-bottom: 15px; background: var(--app-primary-light); padding: 10px; border-radius: 10px;">
-                    <p style="font-size:0.95rem; font-weight:bold; color:var(--app-primary);">✨ تعديل البيانات يتم مباشرة على الورقة (في الأعلى).</p>
-                </div>
-
-                <div class="icon-toolbar lock-hide" style="margin-bottom: 15px;">
-                    <div class="toolbar-grid" style="margin-bottom: 10px;">
-                        <button class="tool-btn" onclick="performUndo()">↩️ تراجع</button>
-                        <button class="tool-btn" onclick="performRedo()">↪️ تقدم</button>
-                        <button class="tool-btn" onclick="moveActiveRowBy(-1)">🔼 صعد الصف</button>
-                        <button class="tool-btn" onclick="moveActiveRowBy(1)">🔽 نزل الصف</button>
-                        <button class="tool-btn" onclick="addNewColumnToTable()">➕ عمود جديد</button>
-                        <button class="tool-btn" onclick="deleteActiveColumn()">➖ حذف عمود</button>
-                        <button class="tool-btn" onclick="addNewRowToTable()">➕ صف جديد</button>
-                        <button class="tool-btn" onclick="deleteActiveRow()">➖ حذف صف</button>
-                    </div>
-
-                    <div class="flex-box">
-                        <input type="file" id="excelImportInput" accept=".xlsx, .xls" style="display:none" onchange="processExcelImport(event)">
-                        <button class="tool-btn" onclick="document.getElementById('excelImportInput').click()" style="background:var(--app-primary-light); color:var(--app-primary); border-color:var(--app-primary);">📥 استيراد إكسل</button>
-                        <button class="tool-btn" onclick="pasteDataFromExcel()">📋 لصق إكسل</button>
-                        <button class="tool-btn" onclick="calculateAutomaticSum()" style="background:#dcfce7; color:#059669; border-color:#10b981;">🧮 استخراج المجموع</button>
-                    </div>
-                </div>
-
-                <div class="lock-hide" style="border-top: 2px dashed var(--app-border); padding-top: 15px;">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--app-primary); font-family: 'Reem Kufi', sans-serif;">🎨 تمييز الخلية المحددة (انقر على أي مربع في الورقة ولونه)</h4>
-                    <div class="flex-box">
-                        <button class="tool-btn" style="background:#dcfce7; color:#059669; border-color:#10b981;" onclick="setHighlightColorForActiveCell('#dcfce7', '#059669')">🟢 أخضر</button>
-                        <button class="tool-btn" style="background:#fee2e2; color:#e11d48; border-color:#f43f5e;" onclick="setHighlightColorForActiveCell('#fee2e2', '#e11d48')">🔴 أحمر</button>
-                        <button class="tool-btn" style="background:#fef9c3; color:#ca8a04; border-color:#facc15;" onclick="setHighlightColorForActiveCell('#fef9c3', '#ca8a04')">🟡 أصفر</button>
-                        <button class="tool-btn" style="background:#e0f2fe; color:#0369a1; border-color:#38bdf8;" onclick="setHighlightColorForActiveCell('#e0f2fe', '#0369a1')">🔵 أزرق</button>
-                        <button class="tool-btn" onclick="setHighlightColorForActiveCell('', '')">⚪ مسح</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab3" class="tab-content">
-                <h3 class="section-title">عرض الأعمدة اليدوي</h3>
-                <div id="columnSlidersContainer"></div>
-
-                <label class="check-box" style="margin-bottom: 20px;">
-                    <input type="checkbox" id="checkConditionalFormat" onchange="renderPaperPages()">
-                    <span>تلوين درجات الرسوب (أحمر) والغياب (أصفر) تلقائياً</span>
-                </label>
-
-                <h3 class="section-title">الأبعاد والمحاذاة</h3>
-                <div class="stepper">
-                    <span class="step-label">المسافة الداخلية للخلايا</span>
-                    <div class="step-actions">
-                        <span id="labelPadding" class="step-val">8px</span>
-                        <div class="step-btn-group">
-                            <button class="step-btn" onclick="changeNumberSetting('pad', 1)">▲</button>
-                            <button class="step-btn" onclick="changeNumberSetting('pad', -1)">▼</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="stepper">
-                    <span class="step-label">ارتفاع الصفوف</span>
-                    <div class="step-actions">
-                        <span id="labelRowHeight" class="step-val">12mm</span>
-                        <div class="step-btn-group">
-                            <button class="step-btn" onclick="changeNumberSetting('row', 1)">▲</button>
-                            <button class="step-btn" onclick="changeNumberSetting('row', -1)">▼</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-box" style="margin-bottom: 15px;">
-                    <button class="tool-btn" id="btnAlignRight" onclick="setTableAlignment('right')">يمين ➡️</button>
-                    <button class="tool-btn active" id="btnAlignCenter" onclick="setTableAlignment('center')">وسط ↔️</button>
-                    <button class="tool-btn" id="btnAlignLeft" onclick="setTableAlignment('left')">يسار ⬅️</button>
-                </div>
-                <div class="flex-box" style="margin-bottom: 20px;">
-                    <input type="color" class="control" id="inputBorderColor" value="#000000" onchange="setGlobalCssVariable('--tbl-border-c', this.value); renderPaperPages();">
-                    <select class="control" id="inputBorderWidth" onchange="setGlobalCssVariable('--tbl-border-w', this.value); renderPaperPages();">
-                        <option value="0px">بدون إطار</option>
-                        <option value="1px" selected>إطار رفيع</option>
-                        <option value="2px">إطار متوسط</option>
-                        <option value="3px">إطار سميك</option>
-                    </select>
-                </div>
-
-                <h3 class="section-title">الخطوط والألوان</h3>
-                <div class="flex-box" style="margin-bottom:15px;">
-                    <select class="control" id="inputThFontFamily" onchange="setGlobalCssVariable('--th-font', `'${this.value}', sans-serif`); renderPaperPages();">
-                        <option value="Cairo">عناوين: كايرو</option>
-                        <option value="Tajawal">عناوين: تجوال</option>
-                        <option value="Almarai">عناوين: المراعي</option>
-                        <option value="Changa">عناوين: تشانجا</option>
-                        <option value="Amiri">عناوين: أميري</option>
-                        <option value="Readex Pro">عناوين: ريدكس</option>
-                        <option value="Rubik">عناوين: روبيك</option>
-                    </select>
-                    <select class="control" id="inputTdFontFamily" onchange="setGlobalCssVariable('--td-font', `'${this.value}', sans-serif`); renderPaperPages();">
-                        <option value="Tajawal" selected>نصوص: تجوال</option>
-                        <option value="Cairo">نصوص: كايرو</option>
-                        <option value="Almarai">نصوص: المراعي</option>
-                        <option value="Changa">نصوص: تشانجا</option>
-                        <option value="Amiri">نصوص: أميري</option>
-                        <option value="Readex Pro">نصوص: ريدكس</option>
-                        <option value="Rubik">نصوص: روبيك</option>
-                    </select>
-                </div>
-                <div class="flex-box" style="margin-bottom:20px;">
-                    <select class="control" id="inputThFontSize" onchange="setGlobalCssVariable('--th-size', this.value+'pt'); renderPaperPages();">
-                        <option value="12">عناوين 12</option>
-                        <option value="14" selected>عناوين 14</option>
-                        <option value="16">عناوين 16</option>
-                    </select>
-                    <select class="control" id="inputTdFontSize" onchange="setGlobalCssVariable('--td-size', this.value+'pt'); renderPaperPages();">
-                        <option value="10">نصوص 10</option>
-                        <option value="12" selected>نصوص 12</option>
-                        <option value="14">نصوص 14</option>
-                    </select>
-                </div>
-
-                <h3 class="section-title">قوالب الألوان الاحترافية</h3>
-                <div class="themes-grid" id="themesContainerDiv"></div>
-                <label class="check-box"><input type="checkbox" id="checkStripedRows" checked onchange="renderPaperPages()"> تفعيل التظليل المتناوب للصفوف</label>
-            </div>
-
-            <div id="tab2" class="tab-content">
-                <h3 class="section-title">الترويسة العلوية</h3>
-                <div class="form-row">
-                    <input type="text" class="control" id="inputMainTitle" value="سجل بيانات الموظفين" placeholder="العنوان الرئيسي" oninput="updateMemoryValue('title')">
-                </div>
-                <div class="flex-box" style="margin-bottom:15px;">
-                    <input type="text" class="control" id="inputDirectorate" value="تربية الرصافة الثالثة" placeholder="المديرية" oninput="updateMemoryValue('dir')">
-                    <input type="text" class="control" id="inputSchoolName" value="مدرسة النور" placeholder="المدرسة" oninput="updateMemoryValue('school')">
-                </div>
-                <div class="flex-box" style="margin-bottom:20px;">
-                    <input type="text" class="control" id="inputDocumentNumber" placeholder="العدد" oninput="updateMemoryValue('num')">
-                    <input type="text" class="control" id="inputDocumentDate" placeholder="التاريخ" oninput="updateMemoryValue('date')">
-                </div>
-                <div class="form-row">
-                    <label>شعار المدرسة</label>
-                    <input type="file" class="control" id="inputLogoUpload" accept="image/*">
-                    <label class="check-box" style="margin-top:10px;"><input type="checkbox" id="checkShowWatermark" onchange="renderPaperPages()"> الشعار كعلامة مائية</label>
-                </div>
-
-                <h3 class="section-title">التواقيع السفلية</h3>
-                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
-                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature1" onchange="renderPaperPages()"> الأول</label>
-                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle1" value="أعده" oninput="updateMemoryValue('s1')"><input type="text" class="control" id="inputSigName1" value="المنظم" oninput="updateMemoryValue('s1n')"></div>
-                </div>
-                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
-                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature2" onchange="renderPaperPages()"> الثاني</label>
-                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle2" value="راجعه" oninput="updateMemoryValue('s2')"><input type="text" class="control" id="inputSigName2" value="المدقق" oninput="updateMemoryValue('s2n')"></div>
-                </div>
-                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
-                    <label class="check-box" style="border:none; padding:0; margin-bottom:5px;"><input type="checkbox" id="checkSignature3" onchange="renderPaperPages()"> الثالث</label>
-                    <div class="flex-box"><input type="text" class="control" id="inputSigTitle3" value="اعتمده" oninput="updateMemoryValue('s3')"><input type="text" class="control" id="inputSigName3" value="المدير" oninput="updateMemoryValue('s3n')"></div>
-                </div>
-            </div>
-
-            <div id="tab4" class="tab-content">
-                <h3 class="section-title">إعدادات الورقة</h3>
-                <div class="flex-box" style="margin-bottom: 15px;">
-                    <select class="control" id="inputPaperSize" onchange="updatePaperPrintSettings()">
-                        <option value="a4">حجم A4</option>
-                        <option value="a3">حجم A3</option>
-                    </select>
-                    <select class="control" id="inputPaperOrientation" onchange="updatePaperPrintSettings()">
-                        <option value="portrait">طولية</option>
-                        <option value="landscape">عرضية</option>
-                    </select>
-                </div>
-
-                <div class="stepper">
-                    <span class="step-label">الهوامش الخارجية</span>
-                    <div class="step-actions">
-                        <span id="labelMarginValue" class="step-val">15mm</span>
-                        <div class="step-btn-group">
-                            <button class="step-btn" onclick="changeNumberSetting('marg', 1)">▲</button>
-                            <button class="step-btn" onclick="changeNumberSetting('marg', -1)">▼</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stepper" style="background: var(--app-primary-light); border-color: var(--app-primary);">
-                    <span class="step-label" style="color: var(--app-primary);">تعبئة الفراغ (إضافة صفوف)</span>
-                    <div class="step-actions">
-                        <span id="labelRowAdjustment" class="step-val">تلقائي</span>
-                        <div class="step-btn-group">
-                            <button class="step-btn" onclick="changeNumberSetting('adj', 1)">▲</button>
-                            <button class="step-btn" onclick="changeNumberSetting('adj', -1)">▼</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <label>اللون الفاصل في الترويسة</label>
-                    <input type="color" class="control" style="height:40px; padding:2px;" value="#4f46e5" onchange="setGlobalCssVariable('--app-primary', this.value); renderPaperPages();">
-                </div>
-
-                <div class="form-row" style="background:var(--app-bg); padding:10px; border-radius:8px;">
-                    <label class="check-box" style="border:none; padding:0; margin-bottom:10px;"><input type="checkbox" id="checkShowPageNumber" checked onchange="renderPaperPages()"> إظهار الترقيم أسفل الورقة</label>
-                    <select class="control" id="inputPageNumberLanguage" onchange="renderPaperPages()">
-                        <option value="ar">ترقيم بالعربية (١، ٢، ٣)</option>
-                        <option value="en">ترقيم بالإنجليزية (1, 2, 3)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="tab5" class="tab-content">
-                <h3 class="section-title">قوالب الجداول الجاهزة</h3>
-                <div class="tpl-grid">
-                    <div class="tpl-card" onclick="loadReadyTemplate('attendance')"><div style="font-size:30px; margin-bottom:8px;">📅</div><b>سجل حضور</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('grades')"><div style="font-size:30px; margin-bottom:8px;">🎓</div><b>سجل درجات</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('employees')"><div style="font-size:30px; margin-bottom:8px;">👥</div><b>سجل موظفين</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('inventory')"><div style="font-size:30px; margin-bottom:8px;">📦</div><b>سجل مخزن</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('daily')"><div style="font-size:30px; margin-bottom:8px;">✍️</div><b>يومية</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('expenses')"><div style="font-size:30px; margin-bottom:8px;">💸</div><b>مصروفات</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('library')"><div style="font-size:30px; margin-bottom:8px;">📚</div><b>إعارة كتب</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('visits')"><div style="font-size:30px; margin-bottom:8px;">🤝</div><b>زيارات</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('tasks')"><div style="font-size:30px; margin-bottom:8px;">✅</div><b>مهام</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('clinic')"><div style="font-size:30px; margin-bottom:8px;">🩺</div><b>مراجعات</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('maintenance')"><div style="font-size:30px; margin-bottom:8px;">🛠️</div><b>صيانة</b></div>
-                    <div class="tpl-card" onclick="loadReadyTemplate('empty')"><div style="font-size:30px; margin-bottom:8px;">⬜</div><b>فارغ</b></div>
-                </div>
-            </div>
-        </aside>
     </div>
+</section>
 
-    <nav class="mobile-nav">
-        <button class="m-nav-btn" id="btnMobilePreview" onclick="toggleMobileInterface('preview')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:24px; height:24px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
-            <span>الورقة والتعديل</span>
-        </button>
-        <button class="m-nav-btn active" id="btnMobileEdit" onclick="toggleMobileInterface('controls')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:24px; height:24px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            <span>لوحة الإعدادات</span>
-        </button>
-    </nav>
+<!-- ===== القوالب ===== -->
+<section id="templates" style="background:linear-gradient(180deg,transparent,rgba(99,102,241,0.05),transparent)">
+    <div class="section-inner">
+        <div class="section-head reveal">
+            <span class="section-tag">📂 القوالب</span>
+            <h2 class="section-title">
+                12 قالب <span class="grad">جاهز للاستخدام</span>
+            </h2>
+            <p class="section-desc">
+                اختر القالب المناسب وابدأ العمل فوراً — بدلاً من بناء الجدول من الصفر.
+            </p>
+        </div>
 
-    <script>
-        // ============== الإعدادات والحالة العامة ==============
-        const LOCAL_STORAGE_KEY = 'raqeem_pro_v14_fixed';
-        const MAXIMUM_ALLOWED_ROWS = 250;
+        <div class="templates-grid">
+            <div class="tpl reveal"><span class="tpl-icon">📅</span><h4>سجل حضور</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">🎓</span><h4>سجل درجات</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">👥</span><h4>سجل موظفين</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">📦</span><h4>سجل مخزن</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">✍️</span><h4>يومية</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">💸</span><h4>مصروفات</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">📚</span><h4>إعارة كتب</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">🤝</span><h4>زيارات</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">✅</span><h4>مهام</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">🩺</span><h4>مراجعات</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">🛠️</span><h4>صيانة</h4></div>
+            <div class="tpl reveal"><span class="tpl-icon">⬜</span><h4>فارغ</h4></div>
+        </div>
+    </div>
+</section>
 
-        let appColumns = ["ت", "الاسم", "الوظيفة", "القسم"];
-        let appColumnWidths = [50, 180, 120, 120];
-        let appDataRows = [
-            ["1", "أحمد محمد", "مبرمج", "IT"],
-            ["2", "سارة خالد", "إدارة", "HR"],
-            ["3", "علي حسين", "محاسب", "المالية"]
-        ];
+<!-- ===== كيف يعمل ===== -->
+<section id="howto">
+    <div class="section-inner">
+        <div class="section-head reveal">
+            <span class="section-tag">🚀 كيف يعمل</span>
+            <h2 class="section-title">
+                ابدأ في <span class="grad">3 خطوات فقط</span>
+            </h2>
+        </div>
 
-        let appCellColors = [
-            ["", "", "", ""],
-            ["", "", "", ""],
-            ["", "", "", ""]
-        ];
+        <div class="steps">
+            <div class="step reveal">
+                <div class="step-num">1</div>
+                <h3>اختر قالباً أو ابدأ فارغاً</h3>
+                <p>اختر من 12 قالباً جاهزاً لسجلات الحضور، الدرجات، الموظفين وغيرها — أو ابنِ جدولك بنفسك.</p>
+            </div>
 
-        let appHistoryStates = [];
-        let currentHistoryIndex = -1;
-        let activeFocusRow = -1;
-        let activeFocusCol = -1;
-        let globalLogoImageBase64 = '';
-        let globalPaperSizeMode = 'a4';
-        let globalPaperOrientationMode = 'portrait';
-        let isEditingLocked = false;
-        let activeSortColumnIndex = -1;
-        let isSortOrderAscending = true;
+            <div class="step reveal">
+                <div class="step-num">2</div>
+                <h3>عبّئ البيانات وخصّص التصميم</h3>
+                <p>اكتب مباشرة في الجدول، أضف شعار المدرسة، اختر الألوان والخطوط، وأضف التواقيع.</p>
+            </div>
 
-        let settingPadding = 8;
-        let settingRowHeight = 12;
-        let settingMargin = 15;
-        let settingRowAdjust = 0;
+            <div class="step reveal">
+                <div class="step-num">3</div>
+                <h3>صدّر واحفظ عملك</h3>
+                <p>صدّر السجل إلى Excel أو Word أو PDF بضغطة واحدة، أو احفظ نسخة احتياطية JSON.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-        // ============== أدوات مساعدة ==============
-        function escapeDangerousHtml(text) {
-            return String(text)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+<!-- ===== التصدير ===== -->
+<section id="export" style="background:linear-gradient(180deg,transparent,rgba(6,182,212,0.05),transparent)">
+    <div class="section-inner">
+        <div class="section-head reveal">
+            <span class="section-tag">📤 التصدير</span>
+            <h2 class="section-title">
+                صدّر إلى <span class="grad">أي صيغة تريدها</span>
+            </h2>
+            <p class="section-desc">
+                ملفات أصلية حقيقية قابلة للفتح والتعديل في البرامج المكتبية الشهيرة.
+            </p>
+        </div>
+
+        <div class="export-grid">
+            <div class="export-card excel reveal">
+                <div class="export-icon excel">📊</div>
+                <h3>Excel (.xlsx)</h3>
+                <p>ملف Excel أصلي يدعم RTL مع أعمدة بعرضها الصحيح</p>
+            </div>
+
+            <div class="export-card word reveal">
+                <div class="export-icon word">📝</div>
+                <h3>Word (.docx)</h3>
+                <p>ملف Word حقيقي مع جداول منسقة ودعم كامل للعربية</p>
+            </div>
+
+            <div class="export-card pdf reveal">
+                <div class="export-icon pdf">📄</div>
+                <h3>PDF</h3>
+                <p>طباعة مباشرة أو حفظ كـ PDF بدقة A4/A3</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA النهائي ===== -->
+<section class="cta-final">
+    <div class="cta-box reveal">
+        <h2>جاهز لتبدأ الأرشفة الاحترافية؟</h2>
+        <p>لا تحتاج تسجيل دخول. لا تحتاج إنترنت. فقط افتح وجرّب.</p>
+        <a href="index.html" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            ابدأ الآن مجاناً
+        </a>
+    </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="nav-logo">رَقِيم <span class="badge">Pro ✨</span></div>
+            <p>منصة الأرشفة الذكية التي تعمل مباشرة من متصفحك. صُنعت بحب للمستخدم العربي.</p>
+        </div>
+        <div class="footer-col">
+            <h4>روابط سريعة</h4>
+            <a href="#features">المميزات</a>
+            <a href="#templates">القوالب</a>
+            <a href="#howto">كيف يعمل</a>
+            <a href="#export">التصدير</a>
+        </div>
+        <div class="footer-col">
+            <h4>تواصل معنا</h4>
+            <a href="https://t.me/HJS_98" target="_blank" rel="noopener">تليجرام: @HJS_98</a>
+            <a href="index.html">الدخول للتطبيق</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        © 2026 رَقِيم Pro — جميع الحقوق محفوظة | صُنع بـ ❤️ في العراق
+    </div>
+</footer>
+
+<script>
+// ==== تأثير التمرير على الـ Nav ====
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+});
+
+// ==== أنيميشن الظهور عند التمرير ====
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
         }
+    });
+}, observerOptions);
 
-        // ✅ إصلاح أمني: تعقيم قيم الألوان قبل حقنها في CSS
-        function sanitizeColor(color) {
-            if (!color) return '';
-            color = String(color).trim();
-            if (/^#[0-9a-f]{3,8}$/i.test(color)) return color;
-            if (/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(,\s*[\d.]+\s*)?\)$/i.test(color)) return color;
-            if (/^[a-z]{3,20}$/i.test(color)) return color;
-            return '';
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ==== تمرير سلس للروابط الداخلية ====
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+            const offset = 80;
+            const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
         }
-
-        // ✅ إصلاح أداء: حفظ مؤجل (debounced) لتقليل الضغط على localStorage
-        let saveDebounceTimer;
-        function saveAllDataToLocalStorage() {
-            clearTimeout(saveDebounceTimer);
-            saveDebounceTimer = setTimeout(() => {
-                try {
-                    while (appCellColors.length < appDataRows.length) {
-                        appCellColors.push(Array(appColumns.length).fill(""));
-                    }
-
-                    const systemStateObject = {
-                        savedColumns: appColumns,
-                        savedWidths: appColumnWidths,
-                        savedData: appDataRows,
-                        savedCellColors: appCellColors,
-                        savedLogo: globalLogoImageBase64,
-                        savedTitle: document.getElementById('inputMainTitle')?.value || '',
-                        savedDirectorate: document.getElementById('inputDirectorate')?.value || '',
-                        savedSchool: document.getElementById('inputSchoolName')?.value || '',
-                        savedDocNum: document.getElementById('inputDocumentNumber')?.value || '',
-                        savedDocDate: document.getElementById('inputDocumentDate')?.value || '',
-                        savedPaperSize: globalPaperSizeMode,
-                        savedPaperOri: globalPaperOrientationMode,
-                        savedPadding: settingPadding,
-                        savedRowHeight: settingRowHeight,
-                        savedMargin: settingMargin,
-                        savedAdjustment: settingRowAdjust,
-                        savedChecks: {
-                            cond: document.getElementById('checkConditionalFormat')?.checked || false,
-                            strip: document.getElementById('checkStripedRows')?.checked || false,
-                            wm: document.getElementById('checkShowWatermark')?.checked || false,
-                            s1: document.getElementById('checkSignature1')?.checked || false,
-                            s2: document.getElementById('checkSignature2')?.checked || false,
-                            s3: document.getElementById('checkSignature3')?.checked || false,
-                            page: document.getElementById('checkShowPageNumber')?.checked || false
-                        }
-                    };
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(systemStateObject));
-                } catch (error) {
-                    console.error("Save Error:", error);
-                }
-            }, 250);
-        }
-
-        function setGlobalCssVariable(name, value) {
-            document.documentElement.style.setProperty(name, value);
-        }
-
-        function updateCellFocusPosition(rowIndex, colIndex) {
-            activeFocusRow = rowIndex;
-            activeFocusCol = colIndex;
-        }
-
-        // ============== نوافذ وواجهات ==============
-        function closeWelcomeModal() {
-            const modal = document.getElementById('welcomeModal');
-            if (modal) {
-                modal.classList.remove('show');
-                setTimeout(() => { modal.style.display = 'none'; }, 300);
-            }
-            localStorage.setItem('raqeem_welcome_msg_v14', 'true');
-        }
-
-        function checkWelcomeModal() {
-            const modal = document.getElementById('welcomeModal');
-            if (!modal) return;
-            if (!localStorage.getItem('raqeem_welcome_msg_v14')) {
-                modal.style.display = 'flex';
-                setTimeout(() => { modal.classList.add('show'); }, 50);
-            } else {
-                modal.style.display = 'none';
-            }
-        }
-
-        function toggleExportMenu() {
-            const el = document.getElementById("exportDropdown");
-            if (el) el.classList.toggle("show");
-        }
-
-        window.addEventListener('click', function (event) {
-            if (!event.target.closest('.dropdown')) {
-                document.querySelectorAll(".dropdown-content").forEach(dd => dd.classList.remove('show'));
-            }
-        });
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('sajil_dark_mode_preference', isDark);
-        }
-
-        function toggleDataLock() {
-            isEditingLocked = !isEditingLocked;
-            const btn = document.getElementById('dropLockBtn');
-            if (isEditingLocked) {
-                if (btn) {
-                    btn.style.color = '#e11d48';
-                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> فك قفل السجل';
-                }
-                document.body.classList.add('locked-mode');
-                document.querySelectorAll('.control-panel input, .control-panel select, .control-panel button').forEach(el => {
-                    if (!el.classList.contains('tab-btn')) {
-                        el.disabled = true;
-                        el.style.opacity = '0.5';
-                        el.style.pointerEvents = 'none';
-                    }
-                });
-                alert("تم قفل السجل بالكامل.");
-            } else {
-                if (btn) {
-                    btn.style.color = 'var(--app-text)';
-                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> قفل السجل';
-                }
-                document.body.classList.remove('locked-mode');
-                document.querySelectorAll('.control-panel input, .control-panel select, .control-panel button').forEach(el => {
-                    el.disabled = false;
-                    el.style.opacity = '1';
-                    el.style.pointerEvents = 'auto';
-                });
-                alert("تم فك القفل.");
-            }
-            renderPaperPages();
-        }
-
-        // ============== البحث ==============
-        let searchDebounceTimeout;
-        function executeSearch() {
-            clearTimeout(searchDebounceTimeout);
-            searchDebounceTimeout = setTimeout(() => {
-                const input = document.getElementById('searchInput');
-                if (!input) return;
-                const value = input.value.toLowerCase();
-                document.querySelectorAll('.t-print tbody').forEach(tbody => {
-                    const rows = tbody.rows;
-                    for (let i = 0; i < rows.length; i++) {
-                        const txt = rows[i].innerText.toLowerCase();
-                        rows[i].style.display = txt.includes(value) ? '' : 'none';
-                    }
-                });
-            }, 150);
-        }
-
-        // ============== الفرز ==============
-        function sortDataByColumn(columnIndex) {
-            if (isEditingLocked) return;
-            if (activeSortColumnIndex === columnIndex) {
-                isSortOrderAscending = !isSortOrderAscending;
-            } else {
-                activeSortColumnIndex = columnIndex;
-                isSortOrderAscending = true;
-            }
-
-            const zipped = appDataRows.map((row, idx) => ({
-                row: row,
-                colors: appCellColors[idx] || Array(appColumns.length).fill("")
-            }));
-
-            zipped.sort((a, b) => {
-                const va = a.row[columnIndex];
-                const vb = b.row[columnIndex];
-                if (va === 'المجموع الكلي:' || vb === 'المجموع الكلي:') return 1;
-
-                const na = parseFloat(va);
-                const nb = parseFloat(vb);
-                if (!isNaN(na) && !isNaN(nb)) {
-                    return isSortOrderAscending ? na - nb : nb - na;
-                }
-                return isSortOrderAscending
-                    ? String(va).localeCompare(String(vb), 'ar')
-                    : String(vb).localeCompare(String(va), 'ar');
-            });
-
-            appDataRows = zipped.map(i => i.row);
-            appCellColors = zipped.map(i => i.colors);
-
-            recalculateRowNumbers();
-            saveCurrentStateToHistory();
-            renderPaperPages();
-        }
-
-        function switchControlTab(tabId, btn) {
-            document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
-            const tab = document.getElementById(tabId);
-            if (tab) tab.classList.add('active');
-            if (btn) btn.classList.add('active');
-        }
-
-        function toggleMobileInterface(view) {
-            const btnPrev = document.getElementById('btnMobilePreview');
-            const btnEdit = document.getElementById('btnMobileEdit');
-            if (view === 'preview') {
-                document.body.classList.remove('show-controls');
-                if (btnPrev) btnPrev.classList.add('active');
-                if (btnEdit) btnEdit.classList.remove('active');
-            } else {
-                document.body.classList.add('show-controls');
-                if (btnEdit) btnEdit.classList.add('active');
-                if (btnPrev) btnPrev.classList.remove('active');
-            }
-        }
-
-        function executePrint() {
-            saveAllDataToLocalStorage();
-            setTimeout(() => { window.print(); }, 400);
-        }
-
-        // ============== إعدادات الأرقام ==============
-        function changeNumberSetting(name, step) {
-            if (name === 'pad') {
-                settingPadding = Math.min(30, Math.max(2, settingPadding + step));
-                setGlobalCssVariable('--tbl-padding', settingPadding + 'px');
-                document.getElementById('labelPadding').innerText = settingPadding + 'px';
-            }
-            if (name === 'row') {
-                settingRowHeight = Math.min(150, Math.max(8, settingRowHeight + step));
-                setGlobalCssVariable('--tbl-row-height', settingRowHeight + 'mm');
-                document.getElementById('labelRowHeight').innerText = settingRowHeight + 'mm';
-            }
-            if (name === 'marg') {
-                settingMargin = Math.min(50, Math.max(0, settingMargin + step));
-                setGlobalCssVariable('--a4-margin', settingMargin + 'mm');
-                document.getElementById('labelMarginValue').innerText = settingMargin + 'mm';
-            }
-            if (name === 'adj') {
-                settingRowAdjust = Math.min(20, Math.max(-10, settingRowAdjust + step));
-                const lbl = document.getElementById('labelRowAdjustment');
-                lbl.innerText = settingRowAdjust === 0 ? 'تلقائي' : (settingRowAdjust > 0 ? '+' + settingRowAdjust : settingRowAdjust);
-            }
-            renderPaperPages();
-        }
-
-        function setTableAlignment(align) {
-            document.querySelectorAll('#btnAlignRight, #btnAlignCenter, #btnAlignLeft').forEach(el => el.classList.remove('active'));
-            if (align === 'right') {
-                setGlobalCssVariable('--tbl-align', 'right');
-                setGlobalCssVariable('--tbl-flex-align', 'flex-start');
-                document.getElementById('btnAlignRight').classList.add('active');
-            } else if (align === 'center') {
-                setGlobalCssVariable('--tbl-align', 'center');
-                setGlobalCssVariable('--tbl-flex-align', 'center');
-                document.getElementById('btnAlignCenter').classList.add('active');
-            } else {
-                setGlobalCssVariable('--tbl-align', 'left');
-                setGlobalCssVariable('--tbl-flex-align', 'flex-end');
-                document.getElementById('btnAlignLeft').classList.add('active');
-            }
-            renderPaperPages();
-        }
-
-        function updatePaperPrintSettings() {
-            globalPaperSizeMode = document.getElementById('inputPaperSize')?.value || 'a4';
-            globalPaperOrientationMode = document.getElementById('inputPaperOrientation')?.value || 'portrait';
-
-            const ps = document.getElementById('printStyle');
-            if (ps) {
-                let rule = '';
-                if (globalPaperSizeMode === 'a4' && globalPaperOrientationMode === 'portrait') rule = '210mm 297mm';
-                else if (globalPaperSizeMode === 'a4' && globalPaperOrientationMode === 'landscape') rule = '297mm 210mm';
-                else if (globalPaperSizeMode === 'a3' && globalPaperOrientationMode === 'portrait') rule = '297mm 420mm';
-                else if (globalPaperSizeMode === 'a3' && globalPaperOrientationMode === 'landscape') rule = '420mm 297mm';
-                ps.innerHTML = `@media print { @page { size: ${rule}; margin: 0; } }`;
-            }
-            renderPaperPages();
-        }
-
-        // ============== الشعار ==============
-        const logoInput = document.getElementById('inputLogoUpload');
-        if (logoInput) {
-            logoInput.onchange = function (e) {
-                if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = ev => {
-                        globalLogoImageBase64 = ev.target.result;
-                        renderPaperPages();
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                }
-            };
-        }
-
-        // ============== الثيمات ==============
-        const systemColorThemes = [
-            { name: "احترافي", thGradient: "linear-gradient(135deg, #4f46e5, #312e81)", idxGradient: "linear-gradient(135deg, #f1f5f9, #e2e8f0)", tdBackground: "#ffffff", tdAltBackground: "#f8fafc", thTextColor: "#ffffff", tdTextColor: "#0f172a" },
-            { name: "بحري", thGradient: "linear-gradient(135deg, #0ea5e9, #0369a1)", idxGradient: "linear-gradient(135deg, #e0f2fe, #bae6fd)", tdBackground: "#ffffff", tdAltBackground: "#f0f9ff", thTextColor: "#ffffff", tdTextColor: "#082f49" },
-            { name: "أخضر كلاسيك", thGradient: "linear-gradient(135deg, #10b981, #047857)", idxGradient: "linear-gradient(135deg, #d1fae5, #a7f3d0)", tdBackground: "#ffffff", tdAltBackground: "#ecfdf5", thTextColor: "#ffffff", tdTextColor: "#022c22" },
-            { name: "ذهبي ملكي", thGradient: "linear-gradient(135deg, #f59e0b, #b45309)", idxGradient: "linear-gradient(135deg, #fef3c7, #fde68a)", tdBackground: "#ffffff", tdAltBackground: "#fffbeb", thTextColor: "#ffffff", tdTextColor: "#451a03" },
-            { name: "رمادي فاخر", thGradient: "linear-gradient(135deg, #475569, #1e293b)", idxGradient: "linear-gradient(135deg, #f1f5f9, #e2e8f0)", tdBackground: "#ffffff", tdAltBackground: "#f8fafc", thTextColor: "#ffffff", tdTextColor: "#0f172a" },
-            { name: "وردي ناعم", thGradient: "linear-gradient(135deg, #ec4899, #be185d)", idxGradient: "linear-gradient(135deg, #fce7f3, #fbcfe8)", tdBackground: "#ffffff", tdAltBackground: "#fdf2f8", thTextColor: "#ffffff", tdTextColor: "#500724" },
-            { name: "غروب", thGradient: "linear-gradient(135deg, #f43f5e, #be123c)", idxGradient: "linear-gradient(135deg, #ffe4e6, #fecdd3)", tdBackground: "#ffffff", tdAltBackground: "#fff1f2", thTextColor: "#ffffff", tdTextColor: "#4c0519" },
-            { name: "ليلي", thGradient: "linear-gradient(135deg, #0f172a, #000000)", idxGradient: "linear-gradient(135deg, #334155, #1e293b)", tdBackground: "#1e293b", tdAltBackground: "#0f172a", thTextColor: "#f8fafc", tdTextColor: "#f1f5f9" },
-            { name: "قهوة", thGradient: "linear-gradient(135deg, #78350f, #451a03)", idxGradient: "linear-gradient(135deg, #fef3c7, #fde68a)", tdBackground: "#ffffff", tdAltBackground: "#fffbeb", thTextColor: "#ffffff", tdTextColor: "#451a03" },
-            { name: "بنفسجي", thGradient: "linear-gradient(135deg, #8b5cf6, #5b21b6)", idxGradient: "linear-gradient(135deg, #ede9fe, #ddd6fe)", tdBackground: "#ffffff", tdAltBackground: "#f5f3ff", thTextColor: "#ffffff", tdTextColor: "#2e1065" },
-            { name: "فيروزي", thGradient: "linear-gradient(135deg, #14b8a6, #0f766e)", idxGradient: "linear-gradient(135deg, #ccfbf1, #99f6e4)", tdBackground: "#ffffff", tdAltBackground: "#f0fdfa", thTextColor: "#ffffff", tdTextColor: "#042f2e" },
-            { name: "ورقة رسمية", thGradient: "#ffffff", idxGradient: "#f8fafc", tdBackground: "#ffffff", tdAltBackground: "#ffffff", thTextColor: "#000000", tdTextColor: "#000000" }
-        ];
-
-        function initializeColorThemesUI() {
-            const container = document.getElementById('themesContainerDiv');
-            if (!container) return;
-            systemColorThemes.forEach(theme => {
-                const card = document.createElement('div');
-                card.className = 'theme-card';
-                card.style.background = theme.thGradient;
-                card.innerText = theme.name;
-                if (theme.name === 'ورقة رسمية') {
-                    card.style.color = '#000';
-                    card.style.border = '1px solid var(--app-border)';
-                }
-                card.onclick = () => applyColorTheme(theme, card);
-                container.appendChild(card);
-            });
-        }
-
-        function applyColorTheme(theme, clicked) {
-            document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-            if (clicked) clicked.classList.add('active');
-
-            setGlobalCssVariable('--th-bg', theme.thGradient);
-            setGlobalCssVariable('--idx-bg', theme.idxGradient);
-            setGlobalCssVariable('--td-bg', theme.tdBackground);
-            setGlobalCssVariable('--td-alt-bg', theme.tdAltBackground);
-            setGlobalCssVariable('--th-color', theme.thTextColor);
-            setGlobalCssVariable('--td-color', theme.tdTextColor);
-
-            renderPaperPages();
-        }
-
-        // ============== مسح وحفظ ==============
-        function clearAllSystemData() {
-            if (confirm("هل أنت متأكد من مسح جميع السجلات والبيانات نهائياً؟")) {
-                localStorage.removeItem(LOCAL_STORAGE_KEY);
-                location.reload();
-            }
-        }
-
-        function loadAllDataFromLocalStorage() {
-            try {
-                if (localStorage.getItem('sajil_dark_mode_preference') === 'true') {
-                    document.body.classList.add('dark-mode');
-                }
-
-                const savedStr = localStorage.getItem(LOCAL_STORAGE_KEY);
-                if (!savedStr) return;
-
-                const s = JSON.parse(savedStr);
-
-                if (s.savedColumns) appColumns = s.savedColumns;
-                if (s.savedWidths) appColumnWidths = s.savedWidths;
-                if (s.savedData) {
-                    appDataRows = s.savedData;
-                    if (appDataRows.length > MAXIMUM_ALLOWED_ROWS) {
-                        appDataRows = appDataRows.slice(0, MAXIMUM_ALLOWED_ROWS);
-                    }
-                }
-
-                if (s.savedCellColors) {
-                    appCellColors = s.savedCellColors;
-                } else {
-                    appCellColors = [];
-                    for (let r = 0; r < appDataRows.length; r++) appCellColors.push(Array(appColumns.length).fill(""));
-                }
-
-                if (s.savedLogo) globalLogoImageBase64 = s.savedLogo;
-
-                const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
-                setVal('inputMainTitle', s.savedTitle);
-                setVal('inputDirectorate', s.savedDirectorate);
-                setVal('inputSchoolName', s.savedSchool);
-                setVal('inputDocumentNumber', s.savedDocNum);
-                setVal('inputDocumentDate', s.savedDocDate);
-
-                if (s.savedPaperSize) {
-                    document.getElementById('inputPaperSize').value = s.savedPaperSize;
-                    globalPaperSizeMode = s.savedPaperSize;
-                }
-                if (s.savedPaperOri) {
-                    document.getElementById('inputPaperOrientation').value = s.savedPaperOri;
-                    globalPaperOrientationMode = s.savedPaperOri;
-                }
-
-                if (s.savedPadding !== undefined) {
-                    settingPadding = s.savedPadding;
-                    setGlobalCssVariable('--tbl-padding', settingPadding + 'px');
-                    const el = document.getElementById('labelPadding');
-                    if (el) el.innerText = settingPadding + 'px';
-                }
-                if (s.savedRowHeight !== undefined) {
-                    settingRowHeight = s.savedRowHeight;
-                    setGlobalCssVariable('--tbl-row-height', settingRowHeight + 'mm');
-                    const el = document.getElementById('labelRowHeight');
-                    if (el) el.innerText = settingRowHeight + 'mm';
-                }
-                if (s.savedMargin !== undefined) {
-                    settingMargin = s.savedMargin;
-                    setGlobalCssVariable('--a4-margin', settingMargin + 'mm');
-                    const el = document.getElementById('labelMarginValue');
-                    if (el) el.innerText = settingMargin + 'mm';
-                }
-                if (s.savedAdjustment !== undefined) {
-                    settingRowAdjust = s.savedAdjustment;
-                    const el = document.getElementById('labelRowAdjustment');
-                    if (el) el.innerText = settingRowAdjust === 0 ? 'تلقائي' : (settingRowAdjust > 0 ? '+' + settingRowAdjust : settingRowAdjust);
-                }
-
-                if (s.savedChecks) {
-                    const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
-                    setChk('checkConditionalFormat', s.savedChecks.cond);
-                    setChk('checkStripedRows', s.savedChecks.strip);
-                    setChk('checkShowWatermark', s.savedChecks.wm);
-                    setChk('checkSignature1', s.savedChecks.s1);
-                    setChk('checkSignature2', s.savedChecks.s2);
-                    setChk('checkSignature3', s.savedChecks.s3);
-                    setChk('checkShowPageNumber', s.savedChecks.page);
-                }
-            } catch (error) {
-                console.error("Load Error:", error);
-            }
-
-            setTableAlignment('center');
-            updatePaperPrintSettings();
-        }
-
-        // ============== التصدير لإكسل ==============
-        function exportToExcelFile() {
-            if (typeof XLSX === 'undefined') {
-                alert('مكتبة الإكسل لم يتم تحميلها بعد، يرجى التأكد من اتصالك بالإنترنت.');
-                return;
-            }
-            try {
-                const excelData = [];
-                const titleEl = document.getElementById('inputMainTitle');
-                const documentTitle = titleEl ? titleEl.value : 'سجل البيانات';
-
-                excelData.push([documentTitle]);
-                excelData.push([]);
-                excelData.push(appColumns);
-                appDataRows.forEach(row => excelData.push(row));
-
-                const ws = XLSX.utils.aoa_to_sheet(excelData);
-                ws['!views'] = [{ rightToLeft: true }];
-                ws['!cols'] = appColumnWidths.map(w => ({ wpx: w }));
-
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "البيانات");
-                XLSX.writeFile(wb, 'رقيـم_بيانات.xlsx');
-            } catch (error) {
-                alert('حدث خطأ أثناء تصدير الإكسل: ' + error.message);
-            }
-        }
-
-        // ============== التصدير للوورد (Fallback .doc) ==============
-        function exportToWordFallback(documentTitle) {
-            const isLandscape = (globalPaperOrientationMode === 'landscape');
-            const cssPageRule = isLandscape
-                ? "@page WordSection1 { size: 841.9pt 595.3pt; mso-page-orientation: landscape; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }"
-                : "@page WordSection1 { size: 595.3pt 841.9pt; margin: 36.0pt 36.0pt 36.0pt 36.0pt; }";
-
-            let html = `
-            <html xmlns:w="urn:schemas-microsoft-com:office:word" dir="rtl">
-            <head>
-                <meta charset="utf-8">
-                <title>${escapeDangerousHtml(documentTitle)}</title>
-                <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->
-                <style>
-                    ${cssPageRule}
-                    div.WordSection1 { page: WordSection1; }
-                    body { font-family: 'Arial', sans-serif; direction: rtl; text-align: right; }
-                    table { border-collapse: collapse; width: 100%; direction: rtl; }
-                    th, td { border: 1px solid #000000; padding: 8px; text-align: center; }
-                    th { background-color: #e0e7ff; font-weight: bold; }
-                </style>
-            </head>
-            <body><div class="WordSection1">
-                <h2 style="text-align:center; margin-bottom:20px;">${escapeDangerousHtml(documentTitle)}</h2>
-                <table><thead><tr>`;
-
-            appColumns.forEach(col => { html += `<th>${escapeDangerousHtml(col)}</th>`; });
-            html += "</tr></thead><tbody>";
-            appDataRows.forEach(row => {
-                html += "<tr>";
-                row.forEach(cell => { html += `<td>${escapeDangerousHtml(cell)}</td>`; });
-                html += "</tr>";
-            });
-            html += "</tbody></table></div></body></html>";
-
-            const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'رقيـم_بيانات.doc';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // ============== التصدير للوورد (.docx) ==============
-        function exportToWordFile() {
-            const titleEl = document.getElementById('inputMainTitle');
-            const documentTitle = titleEl ? titleEl.value : 'السجل';
-
-            if (typeof docx === 'undefined') {
-                exportToWordFallback(documentTitle);
-                return;
-            }
-
-            try {
-                const rows = [];
-
-                const headerCells = appColumns.map(col => {
-                    const txt = col ? String(col) : "-";
-                    return new docx.TableCell({
-                        children: [new docx.Paragraph({
-                            children: [new docx.TextRun({ text: txt, bold: true, rightToLeft: true, font: "Arial" })],
-                            alignment: docx.AlignmentType.CENTER,
-                            bidirectional: true
-                        })],
-                        margins: { top: 100, bottom: 100, left: 100, right: 100 }
-                    });
-                });
-                rows.push(new docx.TableRow({ children: headerCells, tableHeader: true }));
-
-                appDataRows.forEach(row => {
-                    const cells = row.map(cell => {
-                        const txt = cell ? String(cell) : " ";
-                        return new docx.TableCell({
-                            children: [new docx.Paragraph({
-                                children: [new docx.TextRun({ text: txt, rightToLeft: true, font: "Arial" })],
-                                alignment: docx.AlignmentType.CENTER,
-                                bidirectional: true
-                            })],
-                            margins: { top: 100, bottom: 100, left: 100, right: 100 }
-                        });
-                    });
-                    rows.push(new docx.TableRow({ children: cells }));
-                });
-
-                const table = new docx.Table({ rows, width: { size: 100, type: docx.WidthType.PERCENTAGE } });
-
-                const isLandscape = (globalPaperOrientationMode === 'landscape');
-
-                const doc = new docx.Document({
-                    creator: "Raqeem Pro",
-                    title: documentTitle,
-                    sections: [{
-                        properties: {
-                            page: {
-                                size: { orientation: isLandscape ? docx.PageOrientation.LANDSCAPE : docx.PageOrientation.PORTRAIT },
-                                margin: { top: 720, right: 720, bottom: 720, left: 720 }
-                            }
-                        },
-                        children: [
-                            new docx.Paragraph({
-                                children: [new docx.TextRun({ text: documentTitle, bold: true, size: 32, rightToLeft: true, font: "Arial" })],
-                                alignment: docx.AlignmentType.CENTER,
-                                bidirectional: true,
-                                spacing: { after: 400 }
-                            }),
-                            table
-                        ]
-                    }]
-                });
-
-                docx.Packer.toBlob(doc).then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'رقيـم_بيانات.docx';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }).catch(err => {
-                    console.error("Packer error:", err);
-                    exportToWordFallback(documentTitle);
-                });
-            } catch (error) {
-                console.error("Native docx Error:", error);
-                exportToWordFallback(documentTitle);
-            }
-        }
-
-        // ============== النسخ الاحتياطي ==============
-        function downloadJsonBackup() {
-            saveAllDataToLocalStorage();
-            setTimeout(() => {
-                const str = localStorage.getItem(LOCAL_STORAGE_KEY);
-                const blob = new Blob([str], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = "backup_raqeem.json";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 300);
-        }
-
-        function processUploadedBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed.savedColumns && parsed.savedData) {
-                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
-                        alert("تم رفع النسخة واسترجاع البيانات بنجاح!");
-                        location.reload();
-                    } else {
-                        alert("عذراً، هذا الملف غير متوافق مع النظام!");
-                    }
-                } catch (err) {
-                    alert("حدث خطأ أثناء قراءة الملف.");
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // ============== استيراد الإكسل ==============
-        function processExcelImport(event) {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const wb = XLSX.read(data, { type: 'array' });
-                    const ws = wb.Sheets[wb.SheetNames[0]];
-                    const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
-
-                    if (rows.length > 0) {
-                        rows.forEach(rowArr => {
-                            if (rowArr.length === 0) return;
-                            if (appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return;
-
-                            const newRow = Array(appColumns.length).fill("");
-                            for (let i = 0; i < appColumns.length; i++) {
-                                if (i > 0) newRow[i] = rowArr[i - 1] ? String(rowArr[i - 1]) : "";
-                            }
-                            appDataRows.push(newRow);
-                            appCellColors.push(Array(appColumns.length).fill(""));
-                        });
-
-                        recalculateRowNumbers();
-                        saveCurrentStateToHistory();
-                        renderPaperPages();
-                    }
-                } catch (err) {
-                    alert("حدث خطأ أثناء قراءة ملف الإكسل. يرجى التأكد من أن الملف سليم.");
-                }
-            };
-            reader.readAsArrayBuffer(file);
-            event.target.value = null;
-        }
-
-        // ============== تمييز الخلية ==============
-        function setHighlightColorForActiveCell(bgColor, txtColor) {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            if (activeFocusRow < 0 || activeFocusRow >= appDataRows.length || activeFocusCol < 0 || activeFocusCol >= appColumns.length) {
-                alert("يرجى النقر داخل الخلية (المربع) الذي تريد تلوينه أولاً!");
-                return;
-            }
-            // ✅ إصلاح: فحص طول الصف قبل الوصول للعمود 1
-            const activeRow = appDataRows[activeFocusRow];
-            if (activeRow && activeRow.length > 1 && activeRow[1] === 'المجموع الكلي:') return;
-
-            if (!appCellColors[activeFocusRow]) {
-                appCellColors[activeFocusRow] = Array(appColumns.length).fill("");
-            }
-
-            const combined = bgColor ? `${bgColor}|${txtColor}` : "";
-            appCellColors[activeFocusRow][activeFocusCol] = combined;
-
-            saveCurrentStateToHistory();
-            renderPaperPages();
-        }
-
-        // ============== تحديث الذاكرة عند التعديل ==============
-        function updateMemoryValue(type, rowIndex, colIndex, newValue) {
-            const printMap = { title: 'inputMainTitle', dir: 'inputDirectorate', school: 'inputSchoolName', num: 'inputDocumentNumber', date: 'inputDocumentDate', s1: 'inputSigTitle1', s1n: 'inputSigName1', s2: 'inputSigTitle2', s2n: 'inputSigName2', s3: 'inputSigTitle3', s3n: 'inputSigName3' };
-
-            if (printMap[type]) {
-                const printEl = document.getElementById(`print_${type}`);
-                if (printEl) {
-                    const srcEl = document.getElementById(printMap[type]);
-                    let val = srcEl ? srcEl.value : '';
-                    if (type === 'num' && val) val = 'العدد: ' + val;
-                    if (type === 'date' && val) val = 'التاريخ: ' + val;
-                    printEl.innerText = val;
-                }
-                saveAllDataToLocalStorage();
-                return;
-            }
-
-            if (type === 'header') {
-                if (appColumns[colIndex] !== newValue.trim()) {
-                    appColumns[colIndex] = newValue.trim();
-                    saveCurrentStateToHistory();
-                }
-                return;
-            }
-
-            if (type === 'cell') {
-                const val = newValue.trim();
-                if (appDataRows[rowIndex] && appDataRows[rowIndex][colIndex] !== val) {
-                    appDataRows[rowIndex][colIndex] = val;
-                    saveCurrentStateToHistory();
-
-                    const cellId = `cell_${rowIndex}_${colIndex}`;
-                    const cellEl = document.getElementById(cellId);
-
-                    if (cellEl) {
-                        cellEl.classList.remove('cond-fail', 'cond-warn');
-                        const condBox = document.getElementById('checkConditionalFormat');
-                        if (condBox && condBox.checked && colIndex > 1 && appDataRows[rowIndex][1] !== 'المجموع الكلي:') {
-                            const num = parseFloat(val);
-                            if (!isNaN(num) && num < 50 && val !== "") {
-                                cellEl.classList.add('cond-fail');
-                            } else if (val.includes("غائب") || val.includes("اجازة") || val.includes("إجازة")) {
-                                cellEl.classList.add('cond-warn');
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // ============== لصق يدوي ==============
-        document.addEventListener('paste', function (event) {
-            if (event.target.classList && event.target.classList.contains('e-cell')) {
-                event.preventDefault();
-                const text = (event.clipboardData || window.clipboardData).getData('text/plain');
-                document.execCommand('insertText', false, text.trim());
-            }
-        });
-
-        // ============== شرائط عرض الأعمدة ==============
-        function renderColumnWidthSliders() {
-            while (appColumnWidths.length < appColumns.length) appColumnWidths.push(100);
-            if (appColumnWidths.length > appColumns.length) appColumnWidths = appColumnWidths.slice(0, appColumns.length);
-
-            const container = document.getElementById('columnSlidersContainer');
-            if (!container) return;
-
-            container.innerHTML = appColumns.map((col, i) => `
-                <div class="stepper">
-                    <span class="step-label" title="${escapeDangerousHtml(col)}">${escapeDangerousHtml(col) || 'عمود'}</span>
-                    <div class="step-actions">
-                        <span id="labelWidth${i}" class="step-val">${appColumnWidths[i]}px</span>
-                        <div class="step-btn-group">
-                            <button class="step-btn" onclick="updateColWidthViaStepper(${i}, 1)">▲</button>
-                            <button class="step-btn" onclick="updateColWidthViaStepper(${i}, -1)">▼</button>
-                        </div>
-                    </div>
-                </div>`).join('');
-        }
-
-        function updateColWidthViaStepper(i, change) {
-            let w = appColumnWidths[i] + change;
-            w = Math.max(10, Math.min(600, w));
-            appColumnWidths[i] = w;
-
-            const lbl = document.getElementById(`labelWidth${i}`);
-            if (lbl) lbl.innerText = w + 'px';
-
-            document.querySelectorAll(`.header-col-${i}`).forEach(th => {
-                th.style.width = w + 'px';
-                th.style.minWidth = w + 'px';
-                th.style.maxWidth = w + 'px';
-            });
-            saveAllDataToLocalStorage();
-        }
-
-        // ============== التاريخ (Undo/Redo) ==============
-        function saveCurrentStateToHistory() {
-            if (currentHistoryIndex < appHistoryStates.length - 1) {
-                appHistoryStates = appHistoryStates.slice(0, currentHistoryIndex + 1);
-            }
-
-            while (appCellColors.length < appDataRows.length) appCellColors.push(Array(appColumns.length).fill(""));
-            appCellColors.forEach(r => { while (r.length < appColumns.length) r.push(""); });
-
-            appHistoryStates.push({
-                cols: [...appColumns],
-                colWidths: [...appColumnWidths],
-                data: JSON.parse(JSON.stringify(appDataRows)),
-                cellColors: JSON.parse(JSON.stringify(appCellColors))
-            });
-
-            if (appHistoryStates.length > 30) {
-                appHistoryStates.shift();
-            } else {
-                currentHistoryIndex++;
-            }
-
-            saveAllDataToLocalStorage();
-        }
-
-        function performUndo() {
-            if (currentHistoryIndex > 0) {
-                currentHistoryIndex--;
-                const s = appHistoryStates[currentHistoryIndex];
-                appColumns = [...s.cols];
-                appColumnWidths = [...s.colWidths];
-                appDataRows = JSON.parse(JSON.stringify(s.data));
-                if (s.cellColors) appCellColors = JSON.parse(JSON.stringify(s.cellColors));
-                renderColumnWidthSliders();
-                renderPaperPages();
-            }
-        }
-
-        function performRedo() {
-            if (currentHistoryIndex < appHistoryStates.length - 1) {
-                currentHistoryIndex++;
-                const s = appHistoryStates[currentHistoryIndex];
-                appColumns = [...s.cols];
-                appColumnWidths = [...s.colWidths];
-                appDataRows = JSON.parse(JSON.stringify(s.data));
-                if (s.cellColors) appCellColors = JSON.parse(JSON.stringify(s.cellColors));
-                renderColumnWidthSliders();
-                renderPaperPages();
-            }
-        }
-
-        // ============== الصفوف والأعمدة ==============
-        function recalculateRowNumbers() {
-            let n = 1;
-            appDataRows.forEach(r => {
-                if (r[1] !== 'المجموع الكلي:') {
-                    r[0] = n.toString();
-                    n++;
-                } else {
-                    r[0] = '';
-                }
-            });
-        }
-
-        function addNewRowToTable() {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            if (appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return;
-
-            const newRow = Array(appColumns.length).fill("");
-            const newColors = Array(appColumns.length).fill("");
-
-            if (activeFocusRow > -1 && activeFocusRow < appDataRows.length) {
-                appDataRows.splice(activeFocusRow + 1, 0, newRow);
-                appCellColors.splice(activeFocusRow + 1, 0, newColors);
-                activeFocusRow++;
-            } else {
-                appDataRows.push(newRow);
-                appCellColors.push(newColors);
-            }
-            recalculateRowNumbers();
-            saveCurrentStateToHistory();
-            renderPaperPages();
-        }
-
-        function addNewColumnToTable() {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            const idx = (activeFocusCol > -1) ? activeFocusCol + 1 : appColumns.length;
-            appColumns.splice(idx, 0, "عمود جديد");
-            appColumnWidths.splice(idx, 0, 100);
-            appDataRows.forEach(r => r.splice(idx, 0, ""));
-            appCellColors.forEach(r => r.splice(idx, 0, ""));
-            if (activeFocusCol > -1) activeFocusCol++;
-            saveCurrentStateToHistory();
-            renderColumnWidthSliders();
-            renderPaperPages();
-        }
-
-        function deleteActiveRow() {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            if (appDataRows.length === 0) return;
-            if (!confirm("هل أنت متأكد من حذف هذا الصف؟")) return;
-            if (activeFocusRow > -1 && activeFocusRow < appDataRows.length) {
-                appDataRows.splice(activeFocusRow, 1);
-                appCellColors.splice(activeFocusRow, 1);
-                activeFocusRow = -1;
-            } else {
-                appDataRows.pop();
-                appCellColors.pop();
-            }
-            recalculateRowNumbers();
-            saveCurrentStateToHistory();
-            renderPaperPages();
-        }
-
-        function deleteActiveColumn() {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            if (appColumns.length <= 1) return;
-            const idx = (activeFocusCol > -1 && activeFocusCol < appColumns.length) ? activeFocusCol : appColumns.length - 1;
-            if (idx === 0) { alert("لا يمكن حذف التسلسل"); return; }
-            if (!confirm("هل أنت متأكد من حذف هذا العمود؟")) return;
-
-            appColumns.splice(idx, 1);
-            appColumnWidths.splice(idx, 1);
-            appDataRows.forEach(r => r.splice(idx, 1));
-            appCellColors.forEach(r => r.splice(idx, 1));
-            activeFocusCol = -1;
-            saveCurrentStateToHistory();
-            renderColumnWidthSliders();
-            renderPaperPages();
-        }
-
-        function moveActiveRowBy(step) {
-            if (isEditingLocked) return;
-            if (activeFocusRow < 0 || activeFocusRow >= appDataRows.length) return;
-            const target = activeFocusRow + step;
-            if (target < 0 || target >= appDataRows.length) return;
-
-            [appDataRows[activeFocusRow], appDataRows[target]] = [appDataRows[target], appDataRows[activeFocusRow]];
-            [appCellColors[activeFocusRow], appCellColors[target]] = [appCellColors[target], appCellColors[activeFocusRow]];
-            activeFocusRow = target;
-            recalculateRowNumbers();
-            saveCurrentStateToHistory();
-            renderPaperPages();
-        }
-
-        // ============== المجموع التلقائي ==============
-        function calculateAutomaticSum() {
-            if (appDataRows.length === 0 || appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return;
-            const sumRow = Array(appColumns.length).fill("");
-            sumRow[0] = "";
-            sumRow[1] = "المجموع الكلي:";
-            let hasNumbers = false;
-
-            for (let c = 2; c < appColumns.length; c++) {
-                let total = 0;
-                let hasData = false;
-                for (let r = 0; r < appDataRows.length; r++) {
-                    if (appDataRows[r][1] === 'المجموع الكلي:') continue;
-                    const n = parseFloat(appDataRows[r][c]);
-                    if (!isNaN(n)) { total += n; hasData = true; hasNumbers = true; }
-                }
-                if (hasData) sumRow[c] = total.toString();
-            }
-
-            if (!hasNumbers) { alert("لم يتم العثور على أرقام لجمعها!"); return; }
-            appDataRows.push(sumRow);
-            appCellColors.push(Array(appColumns.length).fill(""));
-            saveCurrentStateToHistory();
-            renderPaperPages();
-        }
-
-        // ============== اللصق من Excel ==============
-        async function pasteDataFromExcel() {
-            if (isEditingLocked) { alert("تم قفل السجل."); return; }
-            try {
-                if (!navigator.clipboard || !navigator.clipboard.readText) {
-                    alert('متصفحك يمنع اللصق المباشر. قم بلصق البيانات يدوياً داخل أي مربع باستخدام لوحة المفاتيح.');
-                    return;
-                }
-                const txt = await navigator.clipboard.readText();
-                if (!txt.trim()) return;
-
-                txt.split(/\r?\n/).forEach(line => {
-                    if (!line.trim() || appDataRows.length >= MAXIMUM_ALLOWED_ROWS) return;
-                    const parts = line.split('\t');
-                    const newRow = Array(appColumns.length).fill("");
-                    for (let i = 1; i < appColumns.length; i++) {
-                        newRow[i] = parts[i - 1] || "";
-                    }
-                    appDataRows.push(newRow);
-                    appCellColors.push(Array(appColumns.length).fill(""));
-                });
-
-                recalculateRowNumbers();
-                saveCurrentStateToHistory();
-                renderPaperPages();
-            } catch (error) {
-                alert('يرجى النقر داخل المربع ولصق البيانات يدوياً (Paste).');
-            }
-        }
-
-        // ============== أرقام عربية ==============
-        function formatPageNumLocal(num, lang) {
-            if (lang === 'en') return String(num);
-            const map = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-            return String(num).split('').map(d => map[d] || d).join('');
-        }
-
-        // ============== رندر الأوراق ==============
-        let renderDelayTimeout;
-        function renderPaperPages() {
-            clearTimeout(renderDelayTimeout);
-            renderDelayTimeout = setTimeout(() => {
-                saveAllDataToLocalStorage();
-
-                const mainContainer = document.getElementById('previewAreaContainer');
-                if (!mainContainer) return;
-
-                let maxH = 297;
-                if (globalPaperSizeMode === 'a4' && globalPaperOrientationMode === 'landscape') maxH = 210;
-                if (globalPaperSizeMode === 'a3' && globalPaperOrientationMode === 'portrait') maxH = 420;
-                if (globalPaperSizeMode === 'a3' && globalPaperOrientationMode === 'landscape') maxH = 297;
-
-                const pageNumActive = document.getElementById('checkShowPageNumber')?.checked;
-                let rowsPerPage = Math.floor((maxH - (settingMargin * 2) - 45 - (pageNumActive ? 10 : 0) - (settingRowHeight + 2)) / settingRowHeight) + settingRowAdjust;
-                if (isNaN(rowsPerPage) || rowsPerPage < 2) rowsPerPage = 5;
-
-                const stripedClass = document.getElementById('checkStripedRows')?.checked ? 'striped' : '';
-                const displaySig1 = document.getElementById('checkSignature1')?.checked ? 'block' : 'none';
-                const displaySig2 = document.getElementById('checkSignature2')?.checked ? 'block' : 'none';
-                const displaySig3 = document.getElementById('checkSignature3')?.checked ? 'block' : 'none';
-
-                const docNum = document.getElementById('inputDocumentNumber')?.value || '';
-                const docDate = document.getElementById('inputDocumentDate')?.value || '';
-                let metaHeaderHtml = '';
-                if (docNum || docDate) {
-                    metaHeaderHtml = `<div class="ph-meta"><span id="print_num">${docNum ? 'العدد: ' + escapeDangerousHtml(docNum) + '<br>' : ''}</span><span id="print_date">${docDate ? 'التاريخ: ' + escapeDangerousHtml(docDate) : ''}</span></div>`;
-                }
-
-                const showWm = (document.getElementById('checkShowWatermark')?.checked) && globalLogoImageBase64;
-                const useCond = document.getElementById('checkConditionalFormat')?.checked;
-
-                const fragment = document.createDocumentFragment();
-                let totalPages = Math.ceil(appDataRows.length / rowsPerPage);
-                if (totalPages === 0) totalPages = 1;
-
-                const safeTitle = escapeDangerousHtml(document.getElementById('inputMainTitle')?.value || '');
-                const safeDir = escapeDangerousHtml(document.getElementById('inputDirectorate')?.value || '');
-                const safeSchool = escapeDangerousHtml(document.getElementById('inputSchoolName')?.value || '');
-
-                for (let p = 0; p < totalPages; p++) {
-                    const start = p * rowsPerPage;
-                    const slice = appDataRows.slice(start, start + rowsPerPage);
-
-                    const paper = document.createElement('div');
-                    paper.className = `paper size-${globalPaperSizeMode} ${globalPaperOrientationMode}`;
-
-                    const wmHtml = showWm ? `<div class="watermark" style="background-image: url('${globalLogoImageBase64}')"></div>` : '';
-
-                    const headerHtml = `
-                    <div class="p-header">
-                        <div class="ph-right"><h3 id="print_dir">${safeDir}</h3><h2 id="print_school">${safeSchool}</h2></div>
-                        <div class="ph-center"><h1 id="print_title">${safeTitle}</h1></div>
-                        <div class="ph-left">${metaHeaderHtml}<img src="${globalLogoImageBase64}" style="display:${globalLogoImageBase64 ? 'block' : 'none'};"></div>
-                    </div>`;
-
-                    let thead = '<tr>';
-                    appColumns.forEach((c, ci) => {
-                        const editable = isEditingLocked ? 'contenteditable="false"' : 'contenteditable="true"';
-                        thead += `<th class="header-col-${ci}" style="width:${appColumnWidths[ci]}px; min-width:${appColumnWidths[ci]}px; max-width:${appColumnWidths[ci]}px;">
-                            <div style="display:flex; align-items:center; width:100%; height:100%;">
-                                <div ${editable} class="e-cell" id="head_${ci}" onfocus="updateCellFocusPosition(-1, ${ci})" onblur="updateMemoryValue('header', -1, ${ci}, this.innerText)">${escapeDangerousHtml(c)}</div>
-                                <span style="cursor:pointer; opacity:0.5; font-size:1.1rem; user-select:none; flex-shrink: 0; padding-left: 5px;" onclick="sortDataByColumn(${ci})" title="فرز عمود">⇅</span>
-                            </div>
-                        </th>`;
-                    });
-                    thead += '</tr>';
-
-                    let tbody = '';
-                    slice.forEach((row, ri) => {
-                        const gIdx = start + ri;
-                        const isSummary = (row[1] === 'المجموع الكلي:');
-                        const rowStyle = isSummary ? 'font-weight:bold; background:var(--app-primary-light) !important;' : '';
-
-                        tbody += `<tr style="${rowStyle}">`;
-                        row.forEach((cellVal, ci) => {
-                            const editable = (isEditingLocked || isSummary) ? 'contenteditable="false"' : 'contenteditable="true"';
-                            let condClass = '';
-                            if (useCond && !isSummary && ci > 1) {
-                                const n = parseFloat(cellVal);
-                                if (!isNaN(n) && n < 50 && cellVal !== "") {
-                                    condClass = "cond-fail";
-                                } else if (cellVal.includes("غائب") || cellVal.includes("اجازة") || cellVal.includes("إجازة")) {
-                                    condClass = "cond-warn";
-                                }
-                            }
-
-                            // ✅ إصلاح أمني: تعقيم الألوان قبل الحقن
-                            const colorStr = (appCellColors[gIdx] && appCellColors[gIdx][ci]) ? appCellColors[gIdx][ci] : "";
-                            let cellStyle = "";
-                            if (colorStr !== "" && !isSummary) {
-                                const parts = colorStr.split('|');
-                                const bg = sanitizeColor(parts[0]);
-                                const fg = sanitizeColor(parts[1]);
-                                if (bg && fg) {
-                                    cellStyle = `background-color: ${bg} !important; color: ${fg} !important; font-weight: 900 !important; border-radius: 4px; box-shadow: inset 0 0 0 2px ${fg};`;
-                                }
-                            }
-
-                            tbody += `<td><div ${editable} class="e-cell ${condClass}" style="${cellStyle}" id="cell_${gIdx}_${ci}" onfocus="updateCellFocusPosition(${gIdx}, ${ci})" onblur="updateMemoryValue('cell', ${gIdx}, ${ci}, this.innerText)">${escapeDangerousHtml(cellVal)}</div></td>`;
-                        });
-                        tbody += '</tr>';
-                    });
-
-                    let pageNumHtml = '';
-                    if (pageNumActive) {
-                        const lang = document.getElementById('inputPageNumberLanguage')?.value || 'ar';
-                        pageNumHtml = `<div class="page-num">${formatPageNumLocal(p + 1, lang)}</div>`;
-                    }
-
-                    const sT1 = escapeDangerousHtml(document.getElementById('inputSigTitle1')?.value || '');
-                    const sN1 = escapeDangerousHtml(document.getElementById('inputSigName1')?.value || '');
-                    const sT2 = escapeDangerousHtml(document.getElementById('inputSigTitle2')?.value || '');
-                    const sN2 = escapeDangerousHtml(document.getElementById('inputSigName2')?.value || '');
-                    const sT3 = escapeDangerousHtml(document.getElementById('inputSigTitle3')?.value || '');
-                    const sN3 = escapeDangerousHtml(document.getElementById('inputSigName3')?.value || '');
-
-                    paper.innerHTML = `
-                        ${wmHtml}
-                        <div class="paper-wrap">
-                            ${headerHtml}
-                            <table class="t-print ${stripedClass}">
-                                <thead>${thead}</thead>
-                                <tbody>${tbody}</tbody>
-                            </table>
-                        </div>
-                        <div class="p-sigs">
-                            <div class="sig-box" style="display:${displaySig1}"><h4 id="print_s1">${sT1}</h4><p id="print_s1n">${sN1}</p></div>
-                            <div class="sig-box" style="display:${displaySig2}"><h4 id="print_s2">${sT2}</h4><p id="print_s2n">${sN2}</p></div>
-                            <div class="sig-box" style="display:${displaySig3}"><h4 id="print_s3">${sT3}</h4><p id="print_s3n">${sN3}</p></div>
-                        </div>
-                        ${pageNumHtml}`;
-
-                    fragment.appendChild(paper);
-                }
-
-                mainContainer.innerHTML = '';
-                mainContainer.appendChild(fragment);
-                executeSearch();
-            }, 100);
-        }
-
-        // ============== القوالب ==============
-        function loadReadyTemplate(type) {
-            // ✅ إصلاح: تأكيد قبل استبدال البيانات
-            if (appDataRows.length > 3) {
-                if (!confirm("تحميل القالب سيستبدل البيانات الحالية. هل أنت متأكد؟")) return;
-            }
-
-            const titleEl = document.getElementById('inputMainTitle');
-            const setTitle = (t) => { if (titleEl) { titleEl.value = t; updateMemoryValue('title'); } };
-
-            if (type === 'attendance') {
-                appColumns = ["ت", "الطالب", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-                appColumnWidths = [50, 150, 80, 80, 80, 80, 80];
-                setTitle("سجل غيابات وحضور الطلاب");
-                setTableAlignment('center');
-            } else if (type === 'grades') {
-                appColumns = ["ت", "اسم الطالب", "السعي", "النهائي", "الملاحظات"];
-                appColumnWidths = [50, 180, 80, 80, 150];
-                setTitle("سجل درجات الطلاب");
-                setTableAlignment('center');
-            } else if (type === 'employees') {
-                appColumns = ["ت", "اسم الموظف", "العنوان الوظيفي", "القسم التابع له"];
-                appColumnWidths = [50, 180, 120, 120];
-                setTitle("سجل الملاك والموظفين");
-                setTableAlignment('right');
-            } else if (type === 'inventory') {
-                appColumns = ["ت", "اسم المادة", "الكمية", "السعر", "ملاحظات وتفاصيل"];
-                appColumnWidths = [50, 150, 100, 100, 150];
-                setTitle("سجل الجرد والمخزون المالي");
-                setTableAlignment('center');
-            } else if (type === 'daily') {
-                appColumns = ["ت", "البيان", "الرقم", "الوصف", "الملاحظات"];
-                appColumnWidths = [50, 150, 100, 200, 150];
-                setTitle("سجل اليومية العامة");
-                setTableAlignment('center');
-            } else if (type === 'expenses') {
-                appColumns = ["ت", "الجهة المستفيدة", "المبلغ", "التاريخ", "التوقيع"];
-                appColumnWidths = [50, 180, 100, 100, 120];
-                setTitle("سجل النفقات والمصروفات");
-                setTableAlignment('center');
-            } else if (type === 'library') {
-                appColumns = ["ت", "اسم الكتاب", "المستعير", "تاريخ الإعارة", "تاريخ الإرجاع"];
-                appColumnWidths = [50, 200, 150, 100, 100];
-                setTitle("سجل إعارة الكتب المدرسية");
-                setTableAlignment('center');
-            } else if (type === 'visits') {
-                appColumns = ["ت", "اسم الزائر", "الجهة", "سبب الزيارة", "الوقت"];
-                appColumnWidths = [50, 180, 120, 150, 80];
-                setTitle("سجل زيارات المدرسة");
-                setTableAlignment('center');
-            } else if (type === 'tasks') {
-                appColumns = ["ت", "المهمة المطلوبة", "المسؤول", "الحالة", "ملاحظات"];
-                appColumnWidths = [50, 200, 120, 80, 150];
-                setTitle("سجل متابعة المهام");
-                setTableAlignment('center');
-            } else if (type === 'clinic') {
-                appColumns = ["ت", "اسم الطالب", "الصف", "الشكوى", "الإجراء المتخذ"];
-                appColumnWidths = [50, 150, 80, 150, 200];
-                setTitle("سجل الإحالات الصحية");
-                setTableAlignment('center');
-            } else if (type === 'maintenance') {
-                appColumns = ["ت", "العطل أو الخلل", "الموقع", "تاريخ التبليغ", "تاريخ الإنجاز"];
-                appColumnWidths = [50, 200, 100, 100, 100];
-                setTitle("سجل الصيانة المدرسية");
-                setTableAlignment('center');
-            } else if (type === 'empty') {
-                appColumns = ["ت", "العمود الأول", "العمود الثاني", "العمود الثالث"];
-                appColumnWidths = [50, 150, 150, 150];
-                setTitle("سجل فارغ");
-                setTableAlignment('center');
-            }
-
-            appDataRows = [];
-            appCellColors = [];
-            for (let i = 0; i < 3; i++) {
-                const r = Array(appColumns.length).fill("");
-                r[0] = i + 1;
-                appDataRows.push(r);
-                appCellColors.push(Array(appColumns.length).fill(""));
-            }
-
-            saveCurrentStateToHistory();
-            renderColumnWidthSliders();
-            renderPaperPages();
-
-            const btnTab1 = document.querySelector('.tab-btn');
-            if (btnTab1) switchControlTab('tab1', btnTab1);
-
-            if (window.innerWidth <= 900) {
-                toggleMobileInterface('controls');
-            }
-        }
-
-        // ============== التهيئة ==============
-        window.addEventListener('load', function () {
-            initializeColorThemesUI();
-            loadAllDataFromLocalStorage();
-            renderColumnWidthSliders();
-            if (appHistoryStates.length === 0) {
-                saveCurrentStateToHistory();
-            }
-            renderPaperPages();
-            checkWelcomeModal();
-        });
-    </script>
+    });
+});
+</script>
 
 </body>
 </html>
